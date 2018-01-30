@@ -6,21 +6,23 @@
 
 
 ###(1) Using the 'data1.csv' dataframe, make a figure with raw data points and a regression line
-### make sure and code all necessary information to distinguish 'Species"
+### make sure and code all necessary information to distinguish between 'Species"
 
 flowers <- read.csv("raw_data/data1.csv")
 
-###(2) Using 'data2.csv' make a boxplot/boxplots that summarizes the fuel efficiency of different cars 
-###based on the number of engine cylinders (hwy/city)
+###(2) Using 'data2.csv' make a boxplot/boxplots that summarizes the fuel efficiency of different 
+###cars based on the number of engine cylinders (hwy/city)
+?boxplot()
 
 cars <- read.csv("raw_data/data2.csv")
 
 ###(3) Using 'data3.csv' explore the relationship between height and mass of Stars Wars characters
 ### that reside on planets 'Tatooine' and 'Naboo'. On your figure, please distinguish between both
-### the homeworld and species of each character. Please make sure your height and mass are 
+### the homeworld and species of each character. Please make sure height and mass are 
 ### presented in metric units.
 
 starwars_chars <- read.csv("raw_data/data3.csv")
+
 
 ###ONCE you have your plots finished, use:
 
