@@ -1,0 +1,102 @@
+---
+title: "Rmarkdown Tutorial"
+author: "Court Campany"
+date: "February 1, 2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+# Introduction to Rmarkdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. . The knitr package (as used by RStudio) will take a markdown-formatted text file and produce nicely-formatted output. Go ahead and install it if you dont have it. Thats is really all you need to know.
+
+## Here are the basics for typing in a markdown file
+
+You can do all normal typing operations in this file. See the use of hashtags for headers and subheaders. They look 'alright' as a html output, but look nicer if you output a word document. Next time I will show you how to 'steal' the style formatting of a existing word docment (appropirate header colors, line spacing, etc).  
+
+Once you get the hang of it, you wont have to point and click you mouse everyting you want to make a ~subscript~ or a ^superscipt^. **How cool is that!**. Since I am a scientist, I might also want to let you know that my spirit animal is a *Enhydra lutris*.  
+
+There are a few ways to make a line break. You will need to tell knitr when these need to occur.  The first is to to end a sentence with two or more spaces plus return.   
+
+Another way, which is more visual, is to use return + backslash.  I like this way because I can see it. The spacing is slightly different, so just choose one.
+
+\
+To be honest that is really all you need to know to get started. **Pretty dang easy**!. If you really become interested we can learn how to cite articles with an automatically generated bibliography. Dont freak out...you can also check spelling in the 'Edit' tab above.
+
+## Code Chunks
+
+If you are viewing this in RStudio you will see a grew box below.  This is called a 'code chunk'. Here we will place working code that performs a useful operation for us, that we can write around.  Obviously, I mean that we can use code chunks to make figures and tables. We can give the code chunk options (e.g. echo=false), that only show the output (not the code) once we render the document.
+
+\
+So we can write a scientific report, do analyses and make figures in one place!!!!! We can setup the markdown file to output exactly like a scientific paper, including section headings, subheadings, title page, text, figures and even citations!! So you can make a full report/assignment/paper in one place, for free, with the most common desired outputs.
+
+```{r test}
+summary(cars)
+```
+
+Lets breakdown code chucks. The chunk starts and ends with three accent characters, which are found left of the number keys. You can use this to make your own chunk...or...just click 'Insert' tab above and choose 'R'.  You can code everything inside the code chuck as normal. However, I usually have a seperate Rscript were I work out all the kinks of making the pretty figure. I dont like having to render the markdown over and over to look at a figure. This is more of the final product. The only important caveat is that all the scripts/data used in the code chunk need to be a one folder with the Rmardown files (not a big deal).
+
+\
+## Lets Review:
+
+* Markdown lets you combine code and text
+* You can output the most used formats
+* Rmarkdown >= Word + Sigmaplot + SPSS/SAS + Endnote/Zotero/Mendeley
+* **WOW!!!**
+
+# Results
+
+## The relationship between petal width and length
+
+```{r flowers, echo=FALSE, message=FALSE, warning=FALSE}
+#read data
+flowers <- read.csv("data/data1.csv")
+
+#simple linera model:
+petal_mod <- lm(Petal.Length ~ Petal.Width, data=flowers)
+
+#plot bits:
+library(scales)
+library(wesanderson)
+library(plotrix)
+mycols <- wes_palette("FantasticFox", 3, type = "discrete")
+mycols2 <- alpha(mycols, .75)
+lengthlab <- "Petal Length (mm)"
+widthlab <- "Petal Width (mm)"
+
+#plot
+par(mar=c(4,4,1,1))
+plot(Petal.Length ~ Petal.Width, data=flowers, ylim=c(0, 9), xlim=c(0, 2.75),
+     pch=21, bg=mycols2[Species], cex=1.5, ylab=lengthlab, xlab=widthlab)
+ablineclip(petal_mod, x1=min(flowers$Petal.Width), x2=max(flowers$Petal.Width), lty=2, lwd=2)
+legend("topleft", legend=levels(flowers$Species), pch=21, pt.bg=mycols, bty='n', inset=0.01)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Fuel efficiency, city vs highway, based on the number of engine cyclinders
+
+```{r cars, echo=FALSE, message=FALSE, warning=FALSE}
+cars <- read.csv("data/data2.csv")
+
+par(mar=c(4,4,1,1))
+boxplot(cty~ cyl, data=cars, xlab = "Engine Cylinders (#)", ylab= "City Fuel Efficiency (mpg)",
+        ylim=c(0, 40), outline=FALSE)
+
+boxplot(hwy~ cyl, data=cars, xlab = "Engine Cylinders (#)", ylab= "Highway Fuel Efficiency (mpg)",
+        ylim=c(0, 40), outline=FALSE)
+
+```
+
+
+## Size and height relationship for a subset of Star Wars characters
+
+```{r starwars,echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=8,}
+source("rmardown_tutorial/starwars_figure.R")
+```
+
+You can also 'source' scripts directly. This is very useful.  If you have a tested/working script you can just run the scripts (using filepath) in the code chuck.  Just make sure that the script only outputs one thing (the plot).  This also teaches simple coding workflow with efficient scripts. To do this you need to add another line of code to the default knitr code chunk.  Since I want to see your code for assignments, we wont use this.  However, it is super efficient and clean!!
