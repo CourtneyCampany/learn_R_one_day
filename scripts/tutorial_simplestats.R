@@ -26,10 +26,10 @@ qqnorm(traits$lamina_area_cm2)
 # simple linear regression ------------------------------------------------
 
 ##lets assume that our previous plot looked remotely linear
-model <- lm(frond_length_cm~ lamina_area_cm2, data=traits)
+model <- lm(frond_length_cm ~ lamina_area_cm2, data=traits)
 summary(model)
 
-plot(frond_length_cm ~ lamina_area_cm2, data=traits)
+plot(frond_length_cm ~ lamina_area_cm2, data=traits, xlim=c(0, 1800))
 abline(model)
 
 ##we can plot the model object to get some diagnostics of the fit
@@ -39,13 +39,15 @@ qqPlot(model) #with confidence intervals to better understand departures from no
 norm <- residuals(model)
 hist(norm)
 
+traits$loglamina <- log10(traits$lamina_area_cm2)
+
 ###we could perform a data transformation
 logmodel <- lm(log10(frond_length_cm) ~ log10(lamina_area_cm2), data=traits)
 summary(logmodel)
 plot(logmodel)
 #R points out the row numbers of the outliers on diagnostic plots
 
-plot(frond_length_cm ~ lamina_area_cm2, data=traits, log='xy')
+plot(log10(frond_length_cm) ~ log10(lamina_area_cm2), data=traits)
 abline(logmodel)
 
 ###Lets remake our figure with regression line
@@ -70,12 +72,13 @@ par(mar=c(4,4,1,1), cex.axis=.8, cex.lab=1.1, mgp=c(2.5, 1, 0))
 plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 1800),
       ylab=FLlabel, xlab=LAlabel, type = 'n') 
 
-ablineclip(model2, x1=min(traits$lamina_area_cm2), x2=max(traits$lamina_area_cm2),
-           lty=2, lwd=2)
+
 points(frond_length_cm ~ lamina_area_cm2, data=traits, bg=mycols2[niche], pch=21, cex=1.5)
+ablineclip(model, x1=min(traits$lamina_area_cm2), x2=max(traits$lamina_area_cm2),
+           lty=2, lwd=2, col="black")
 
 legend("bottomright", levels(traits$niche), pch=21,inset=0.01, 
        pt.bg=mycols2, bty='n')
 
 #adding text to the figure
-text(1600, 170, r2lab)
+text(1600, 170, "r2 =.56")

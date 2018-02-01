@@ -99,15 +99,15 @@ nums2 <- c(7,11,12,8,14,10,80)
 nums1/nums2
 
 #there are so many logical functions to apply to vectors which are key to learn
-length()
-sort()
-order()
-head()
+length(nums1)
+sort(nums1)
+order(nums2)
+head(nums2)
 tail()
 unique()
-round()
-which.max()
-max() #note the difference (one is the value the other is the location in the vector)
+round(nums2, digits=2)
+which.max(nums1)
+max(nums1) #note the difference (one is the value the other is the location in the vector)
 which.min()
 min()
 mean()
@@ -120,7 +120,7 @@ sd()
 mean(nums1)^2
 
 # Mean of the log of vec2:
-mean(log(nums1))
+mean(log10(nums1))
 
 # The sum of squared deviation from the sample mean:
 sum((nums1 - mean(nums1))^2)
@@ -165,6 +165,8 @@ rep(c(4,5), each=3)
 # meaning there is an equal probability of any number being chosen.
 
 runif(10)
+
+plot(runif(1000))
 # Lots of random numbers between 100 and 1000
 a <- runif(425, 100, 1000)
 
@@ -207,13 +209,13 @@ rm(newdata)
 # column names
 names(traits)
 
-names(traits) <- #c("S","D","SP","N","Pno", "g", "h' ")
+names(traits) <- #c("Species","Date","SPp","N","Pno", "g", "h' ")
   
-# rename first vairable
-names(traits)[1] <- "Location"
+# # rename first vairable
+# names(traits)[1] <- "Location"
 
 # rename 1st and 2nd:
-names(traits)[1:2] <- c("Place","Date")
+# names(traits)[1:2] <- c("Place","Date")
 
 #INDEXING (super mega very important) ****PAY ATTENTION*****---------------------------
 
@@ -254,13 +256,15 @@ nums2[nums2 > 10 & !nums2 == 80]
 
 traits[4,4] #the value for the 4th row in the 4th column
 traits[,3]
-traits[1:5, "stipe_length_cm"] #use variable name
+traits[1:5, 4:7] #use variable name
 #common error:
 traits[1:5, stipe_length_cm] #object not found = you need quotations
 
 fern_chl <- traits[, c("site", "niche", "plant_no","chl_mg_m2")] #new dataframe
 
-traits[which.max(traits$laminalength_cm), "chl_mg_m2"] #logical indexing at its best
+traits[max(traits$laminalength_cm), "chl_mg_m2"] 
+
+#logical indexing at its best
 #what is the cholorophyll content of the longest leaf? 
 #This is evaluated as the the row number, in the chl column, which has the largest lamina length
 
@@ -269,13 +273,13 @@ levels(traits$niche)
 chl_epi <- traits[traits$niche=="epiphyte", c("plant_no", "chl_mg_m2", "niche")]
 
 str(traits)
-traits_nochl <- traits[,-11 ] #new datafrae without chl variables
+traits_nochl <- traits[,-11 ] #new dataframe without chl variables
 
 ##EXPORTING:-------------------------------------------
 
 #now that we made new dataframes (datasets)...we can save them for later use
 
-write.csv(chl_epi, "calculated_data/chl_data.csv", row.names = FALSE)
+write.csv(traits_nochl, "calculated_data/newdata.csv", row.names = FALSE)
 #just like read.csv, but in reverse
 
 # good data science practices : 

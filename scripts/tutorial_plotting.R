@@ -26,12 +26,12 @@ plot(frond_length_cm ~ lamina_area_cm2, data=traits,
      bg=niche, pch=25) #choose a symbol type and color by factor 'niche'
 
 #that pretty cool but the colors are soooo ugly
-mycols <- c("red","forestgreen","cornflowerblue","gold","pink")
+mycols <- c("red","forestgreen","cornflowerblue","gold")
 levels(traits$niche)
 length(mycols)
 
-plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 1800),
-     bg=mycols[niche], pch=21)
+plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), 
+     xlim=c(0, 1800),bg=mycols[niche], pch=21)
 
 #so often you have points that overlap, so we can add transparency and change point type
 
@@ -48,7 +48,7 @@ plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180),  xlim=c(0, 1
 ##we need to make some better axis titles (use ylab, xlab)
 plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 1800),
      cex=1.5, bg=mycols2[niche], pch=21, ylab="Frond Length (cm)", 
-     xlab=expression(Lamina~area~~(cm^2))) #expression allows sub/superscripts
+     xlab="Lamina area (cm^2)") #expression allows sub/superscripts
 
 #what if you need to use the super long lamina area label for many plots???
 LAlabel <- expression(Lamina~area~~(cm^2))
@@ -62,7 +62,7 @@ plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 18
 #look at the plotting box, too much white space at top
 #we can setup some global plotting parameters which will work for all subsequent plots
 
-windows()
+windows(7,7)
 par(mar=c(4,4,1,1), cex.axis=.8, cex.lab=1.1, mgp=c(2.5, 1, 0))
 
 plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 1800),
@@ -73,8 +73,7 @@ plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 18
 ?legend() #lots and lots of options
 #key ones: placements, 
 
-legend("bottomright", levels(traits$niche), pch=21,inset=0.01, 
-       pt.bg=mycols2, bty='n') 
+legend("bottomright", levels(traits$niche), pch=21, pt.bg=mycols2, bty='n') 
 
 
 ##There are several ways to save figures, lets practive with making a pdf

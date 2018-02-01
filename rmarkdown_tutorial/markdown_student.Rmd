@@ -54,7 +54,7 @@ Lets breakdown code chucks. The chunk starts and ends with three accent characte
 
 ```{r flowers, echo=FALSE, message=FALSE, warning=FALSE}
 #read data
-flowers <- read.csv("rmarkdown_tutorial/data/data1.csv")
+flowers <- iris
 
 #simple linera model:
 petal_mod <- lm(Petal.Length ~ Petal.Width, data=flowers)
@@ -81,7 +81,8 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 ## Fuel efficiency, city vs highway, based on the number of engine cyclinders
 
 ```{r cars, echo=FALSE, message=FALSE, warning=FALSE}
-cars <- read.csv("rmarkdown_tutorial/data/data2.csv")
+library(ggplot2)
+cars <- mpg
 
 par(mar=c(4,4,1,1))
 boxplot(cty~ cyl, data=cars, xlab = "Engine Cylinders (#)", ylab= "City Fuel Efficiency (mpg)",
@@ -91,12 +92,7 @@ boxplot(hwy~ cyl, data=cars, xlab = "Engine Cylinders (#)", ylab= "Highway Fuel 
         ylim=c(0, 40), outline=FALSE)
 
 ```
-See how you can set the size of the figure in the output document. You can also set the quality but thats not necessary for us.
 
-## Size and height relationship for a subset of Star Wars characters
+\
 
-```{r starwars,echo=FALSE, message=FALSE, warning=FALSE, fig.width=7, fig.height=7,}
-source("rmarkdown_tutorial/starwars_figure.R")
-```
-
-You can also 'source' scripts directly. This is very useful.  If you have a tested/working script you can just run the scripts (using filepath) in the code chuck.  Just make sure that the script only outputs one thing (the plot).  This also teaches simple coding workflow with efficient scripts. To do this you need to add another line of code to the default knitr code chunk.  Since I want to see your code for assignments, we wont use this.  However, it is super efficient and clean!!
+See how you can set the size of the figure in the output document. You can also set the quality, which we will learn later.
