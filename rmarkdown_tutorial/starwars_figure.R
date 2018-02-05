@@ -21,9 +21,14 @@ spp_names <- levels(twoplanets$species)
 
 par(mar=c(4,4,1,1))
 plot(mass_kg ~ height_m, data=twoplanets, ylab="Body Mass (kg)", 
-     xlab="Height (m)", ylim=c(0, 1000), xlim=c(0 ,4),
+     xlab="Height (m)", ylim=c(0, 200), xlim=c(0 ,4),
      pch=pchs[homeworld], 
-     bg=swcols2[species], cex=2)
+     bg=swcols2[species], cex=2, type='n')
+
+points(mass_kg ~ height_m, data=twoplanets[twoplanets$species == "Droid",],pch=21 ,bg=swcols[1], cex=2)
+points(mass_kg ~ height_m, data=twoplanets[twoplanets$species == "Gungan",],pch=21 ,bg=swcols[2], cex=2)
+points(mass_kg ~ height_m, data=twoplanets[twoplanets$species == "Human",],pch=21 ,bg=swcols[3], cex=2)
+
 legend("topright", legend = c("Tatooine", "Naboo", spp_names),inset=0.01, bty='n',
        pch=c(pchs[1], pchs[2], rep(21, 3)), 
        pt.bg=c("black", "black", swcols2[1], swcols2[2], swcols2[3]))
