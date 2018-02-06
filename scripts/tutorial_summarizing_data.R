@@ -36,12 +36,13 @@ str(sometime)
 head(traits$date)
 ?as.Date
 ?strptime
-traits$date <- as.Date(traits$date, format= "%d/%m/%Y", tz="UTC")
+traits$date <- 
+
 #did it work?
 max(traits$date)
 str(traits$date)
 
-exp_duration <- max(traits$date) - min(traits$date) 
+exp_duration <- 
 
 #Manipulating data-----------------------------------------------------
 
@@ -50,13 +51,13 @@ exp_duration <- max(traits$date) - min(traits$date)
 dfr$trt <- paste(dfr$co2, dfr$wp, sep="-") #this is the format, see ?paste()
 
 #lets pretend that we had different sites for the traits dataset
+
 traits$id <- paste(traits$site, traits$species, sep="-")
 #or use with()
 traits$id2 <- with(traits, paste("site", "niche", sep="."))
 
-#make new variables
+#make new variables (unit converisons)
 traits$laminalength_m <- with(traits, laminalength_cm/100)
-
 
 # missing values ----------------------------------------------------------
 
