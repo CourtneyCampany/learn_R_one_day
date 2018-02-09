@@ -52,7 +52,7 @@ Lets breakdown code chucks. The chunk starts and ends with three accent characte
 
 ## The relationship between petal width and length
 
-```{r flowers, echo=FALSE, message=FALSE, warning=FALSE}
+```{r flowers, echo=FALSE, message=FALSE, warning=FALSE,fig.width=7, fig.height=7}
 #read data
 flowers <- iris
 

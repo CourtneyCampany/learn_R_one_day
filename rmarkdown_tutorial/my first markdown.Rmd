@@ -76,6 +76,7 @@ ablineclip(petal_mod, x1=min(flowers$Petal.Width), x2=max(flowers$Petal.Width), 
 legend("topleft", legend=levels(flowers$Species), pch=21, pt.bg=mycols, bty='n', inset=0.01)
 ```
 
+\
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 ## Fuel efficiency, city vs highway, based on the number of engine cyclinders
@@ -91,11 +92,13 @@ boxplot(hwy~ cyl, data=cars, xlab = "Engine Cylinders (#)", ylab= "Highway Fuel 
         ylim=c(0, 40), outline=FALSE)
 
 ```
+
+\
 See how you can set the size of the figure in the output document. You can also set the quality but thats not necessary for us.
 
 ## Size and height relationship for a subset of Star Wars characters
 
-```{r starwars,echo=FALSE, message=FALSE, warning=FALSE, fig.width=7, fig.height=7,}
+```{r starwars,echo=FALSE, message=FALSE, warning=FALSE, fig.width=7, fig.height=7}
 source("rmarkdown_tutorial/starwars_figure.R")
 ```
 
