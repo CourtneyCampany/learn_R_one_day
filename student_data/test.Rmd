@@ -1,0 +1,17 @@
+---
+title: 'Learn R #2'
+author: "Shana Shapiro"
+date: "2/11/2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+
+```{r , echo=FALSE}
+#readdata
+classdata <- read.csv("student_data/classdata.csv")
+```

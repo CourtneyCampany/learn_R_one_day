@@ -1,0 +1,64 @@
+d---
+title: "Learn R Assignment 2"
+author: "Marie Pugliese"
+date: "February 13, 2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+classdata <- read.csv("classdata.csv")
+library(plotrix)
+```
+
+```{r, echo=FALSE}
+instasnapcols <- c("coral3", "cadetblue4")
+instasnap <- classdata[classdata$instagram >0 & classdata$snapchat >0,
+                       c("snapchat", "instagram", "bae_in_class")]
+yesbae <- instasnap[instasnap$bae_in_class == "yes",
+                    c("snapchat", "instagram", "bae_in_class")]
+nobae <- instasnap[instasnap$bae_in_class == "no",
+                   c("snapchat", "instagram", "bae_in_class")]
+yesmodel <- lm(snapchat ~ instagram, data=yesbae)
+nomodel <- lm(snapchat ~ instagram, data=nobae)
+
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+plot(snapchat ~ instagram, data=instasnap,
+     ylab="Snapchat (visits per day)", xlab="Instagram (visits per day)", type='n')
+points(snapchat ~ instagram, data=instasnap, cex=1.5, pch=21, bg=instasnapcols[bae_in_class])
+ablineclip(yesmodel, x1=min(yesbae$instagram), x2=max(yesbae$instagram), lty=2, lwd=1.5, col="cadetblue4")
+ablineclip(nomodel, x1=min(nobae$instagram), x2=max(nobae$instagram), lty=2, lwd=1.5, col="coral3")
+legend("bottomright", levels(instasnap$bae_in_class), pch=21, inset=0.01, pt.bg=instasnapcols,
+       title="Bae in Class")
+```
+
+Figure 1. Snapchat views per day as a function of Instagram views per day. Only data with at least some usage for both social media platforms was used. A direct correlation between Instagram usage and Snapchat usage exists. The data was further divided into two groups: those with a bae in the ecology class and those without. Those with a bae trended a higher snapchat usage comparitively. Perhaps, this is a result of those with a bae using Snapchat to take pictures of them during class.
+
+
+```{r, echo=FALSE}
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+boxplot(text_prowess ~ food_pref, data=classdata,
+        ylab="Texts Sent Per Day (#)", xlab="Favorite Food")
+```
+
+Figure 2. Mean number of texts sent per day for each group of favorite food. All three food groups exhibited roughly the same mean texts per day (about 20-25). However, the sushi group trended the highest amount of texts per day, while the least amount of variability existed among the burrito group.
+
+
+```{r, echo=FALSE}
+cpt <- table(classdata$captainplanet_theme)
+cpt2 <- data.frame(cpt)
+pielab <- cpt2$Var1
+pieslices <- cpt2$Freq
+piepct <- round(pieslices/sum(pieslices)*100)
+pielab2 <- paste(pielab, piepct)
+pielab3 <- paste(pielab2, "%", sep="")
+cptcols <- c("darkolivegreen4", "darkorange2", "dodgerblue4", "cornsilk3")
+
+par(mar=c(1,1,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+pie(pieslices, labels=pielab3, col=cptcols)
+```
+
+Figure 3. Pie chart of chosen *Captain Planet* power. 50% of the students surveyed (8/16) chose "water", 25% (4/16) chose "earth", 19% (3/16) chose "fire", and 6% (1/16) chose "wind". Though the small sample size may account for the large variation in power choices, it is likely that none of the students chose the "heart" power because STEM sudents are not allowed to have feelings.
