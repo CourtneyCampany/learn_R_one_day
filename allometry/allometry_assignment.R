@@ -20,7 +20,7 @@
 
 ###Hendrik Poorter has 2 papers which might help with this concept (2012/2015).
 
-#I am giving you two weeks for this assignemnt, for several reasons:
+#I am giving you two weeks for this assignment, for several reasons:
 #1) We have presentations next week.
 #2) This is our first data exercise, so you will need a buffer
 #3) However, with the extra time I want a little more.....
@@ -29,8 +29,8 @@
 ###Please produce a Markdown file with 5 publication quality figures
 ###There is no requirement on the type of figures
 
-###You are free to explore the data as broadly (all trees) or as narrow (only deciduous trees) 
-### as you would like
+###You are free to explore the data as broadly (all trees) or as narrow (plant type) 
+###as you would like
 
 ###Intrepret what report! You can interpret each individual figure 
 ###or build a story around your findings

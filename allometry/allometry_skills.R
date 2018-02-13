@@ -17,7 +17,7 @@ plot(m.so ~ h.t, data=trees) ##aboveground mass as a function of tree height
 
 #log transformations change the scale of the data. 
 #Normally data is expressed on a linear scale, so each tickmark increasess by the same amount
-##Our data doesnt appear to follow this constand linear trend anyway
+##Our data doesnt appear to follow this constant linear trend
 
 #Using a log scale we shift to a multiplicative scale, so data will be expressed by multipliers
 #if we use log10, then we can express the data in scales of ten---"orders of magnitude'
@@ -28,6 +28,9 @@ plot(m.so ~ h.t, data=trees, log='xy') #in base graphics you can choose which ax
 
 ##learn magic axis
 install.packages("magicaxis")
+install.packages("scales")
+install.packages("wesanderson")
+
 library(magicaxis)
 ??magaxis
 
@@ -62,3 +65,14 @@ lmf <- massinleaves/totalmass
 
 lma <- massinleaves/areaofleaves #investment in leaf longevity (fast vs slow)
 
+
+###If you have 2 figures with a shared axis you may want to make a panel figure
+### this is fairly easy in base graphics wiht the mfrow() argument in ?par
+
+windows(10,7)
+par(mfrow=c(2,1)) #By switching order (1,2) makes either 2 horizontal of vertical panes
+plot(m.so ~ h.t, data=trees, log='xy')
+plot(m.so ~ h.t, data=trees, log='xy')
+
+##if you enter these in your markdown chunk remember that you can change 
+##the size of the total figure in chunk options
