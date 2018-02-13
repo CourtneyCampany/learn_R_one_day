@@ -21,7 +21,7 @@ dfr$co2 <- as.factor(dfr$co2)
 #if you delete a certain factor in your dataframe all the factors levels will still remain
 epi_dat <- traits[!traits$niche == "terrestrial",]
 levels(epi_dat$niche) #this can be very important for stats
-droplevels(traits) #if you want it really gone.
+epi_dat <- droplevels(epi_dat) #if you want it really gone.
 
 
 # DATES: there is a standard format for dates with coding:
@@ -36,13 +36,13 @@ str(sometime)
 head(traits$date)
 ?as.Date
 ?strptime
-traits$date <- 
+traits$date <- as.Date(traits$date, format="%d/%m/%Y")
 
 #did it work?
 max(traits$date)
 str(traits$date)
 
-exp_duration <- 
+max(traits$date)-min(traits$date)
 
 #Manipulating data-----------------------------------------------------
 
@@ -58,6 +58,7 @@ traits$id2 <- with(traits, paste("site", "niche", sep="."))
 
 #make new variables (unit converisons)
 traits$laminalength_m <- with(traits, laminalength_cm/100)
+traits$laminalength_m <- traits$laminalength_cm/100
 
 # missing values ----------------------------------------------------------
 
@@ -87,7 +88,7 @@ table(traits$niche) #table() is a easy summary to inspect factor levels in a dat
 library(doBy)
 #summaryBy(Yvar1 + Yvar2 ~ Groupvar1 + Groupvar2, FUN=c(mean,sd), data=mydata)
 
-chl_agg <- summaryBy(chl_mg_m2 ~ species + niche, FUN=mean, data=traits)
+chl_agg <- summaryBy(chl_mg_m2 ~ niche, FUN=mean, data=traits)
 
 traits_agg <- summaryBy(chl_mg_m2 + frond_length_cm + lamina_area_cm2 ~ 
                           niche, FUN=mean, data=traits)
@@ -98,16 +99,16 @@ species_agg <- summaryBy(chl_mg_m2 + frond_length_cm + lamina_area_cm2 ~
 
 ##this function is pretty smart too, so you apply to all variables
 ## assuming your factors are properly assigned
-traits_agg2 <- summaryBy(. ~ species + niche, FUN=mean, data=traits, keep.names = TRUE)
+traits_agg2 <- summaryBy(. ~ niche, FUN=mean, data=traits, keep.names = TRUE)
 
 #if we add more FUN, we very likley need to get rid of any missing values
 traits_nona <- traits[complete.cases(traits),]
-
+traits_agg3 <- summaryBy(chl_mg_m2 ~ niche, FUN=mean, data=traits_nona, keep.names = TRUE)
 
 ##first function!!! A way to automate repeated processes 
 se <- function(x) sd(x)/sqrt(length(x))
 
-traits_summ <- summaryBy(chl_mg_m2 ~ species + niche,data=traits_nona,FUN=c(mean, se))
+traits_summ <- summaryBy(chl_mg_m2 ~ niche,data=traits_nona,FUN=c(mean, se))
 traits_summ2 <- summaryBy(. ~ species + niche,data=traits_nona,FUN=c(mean, se))
 
 ##we can save this summary dataframe to make a table later...we didnt do it super clean
@@ -115,7 +116,8 @@ traits_summ2 <- summaryBy(. ~ species + niche,data=traits_nona,FUN=c(mean, se))
 str(traits_summ2)
 fernsumm <- traits_summ2[, -c(3, 10)]
 
-write.csv(fernsumm, "output/fern_traits_summary.csv", row.names = FALSE)
+traits2 <- traits[,2:5]
+write.csv(traits2, "output/fern_traits_summary.csv", row.names = FALSE)
 
 
 ### merging data---------------------------------------------
@@ -194,3 +196,4 @@ traits_leaf <- traits[,1:9]
 traits_cholor <- traits[,c(3,5,10:11)]
 #inspect the data and use the appropirate variablesto merge
 
+newtraits <- merge(traits_cholor, traits_leaf, by = c("species", "plant_no"))
