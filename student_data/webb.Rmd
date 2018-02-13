@@ -1,0 +1,88 @@
+---
+title: "Assignment2"
+author: "MaryannWebb"
+date: "2/12/2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+
+## How does Social Media affect your sleep?
+
+Combining the number of visits each student made to Instagram, snapchat, and facebook an overall "social" statistic was created. This number was then compared to the average hours of sleep each student gets to see if social media usage and sleep were correlated. The figure shows there is not a strong correlation between the two variables, reporting an r^2^ value of 0.36. 
+
+```{r screens, echo=FALSE}
+classdata <- read.csv("student_data/classdata.csv")
+classdata$social <- with (classdata, facebook+instagram+snapchat)
+color<- c("blue", "forest green", "gray")
+library(plotrix)
+model <- lm(sleep_hrs ~ social, data=classdata)
+plot(sleep_hrs ~ social, data=classdata,
+     col="blue", pch =19, ylim = c(5, 10), xlim=c(0, 100),
+     xlab="Visits to social media (per day)", ylab="Sleep (hrs)")
+ablineclip(model, x1=min(classdata$social), x2=max(classdata$social))
+r2mod <- round(summary(model)$r.squared, 2)
+legend("topright", "r squared = 0.36", inset=0.05)
+```
+##Where you're from and where you want to go
+
+This plot compares the coast people come from to the coasts they want to end up on. The number 1 on both axes represent the West coast, number 2 is the East coast, and the number three represents those from international locations on the x axis and those who have not decided where they want to be after graduation on the y axis. The darkest points correspsond to the number of students who fall into a combination of locations. For example, the darkest point shows that the majority of students in our class are from the east coast and are undecided on where they want to be after graduation. 
+
+
+```{r Geography, echo=FALSE}
+
+classdata$coast <- ifelse(classdata$future_state %in%
+                                  c("california", "colorado", "hawaii"), 
+                                "west", 
+                                "undecided")
+
+classdata$coast <- ifelse(classdata$future_state %in%
+                            c("massachutes", "new_jersey", "washington", "vermont"), 
+                          "east",
+                            classdata$coast)
+
+classdata$current <- ifelse(classdata$home_city_state %in%
+                               c("vermont", "pennsylvania", "new_york", "maryland",
+                                 "massachutes", "new_jersey", "north_carolina",
+                                 "district_of_columbia", "connecticut", "rhode_island"),
+                             "east", "international")
+
+classdata$current <- ifelse(classdata$home_city_state %in%
+                              c("califorinia"), "west", classdata$current)
+
+classdata$location_now <- ifelse(classdata$current %in%
+                                "west", "1", "3")
+classdata$location_now <-ifelse(classdata$current %in%
+                              "east", "2", classdata$location)
+classdata$future <- ifelse(classdata$coast %in%
+                             "west", "1", "3")
+classdata$future <- ifelse(classdata$coast %in%
+                             "east", "2", classdata$future)
+library(plotrix)
+library(scales)
+clr <- c("forest green")
+colors_fade <- alpha(clr, .30)
+
+plot(future ~ location_now, data=classdata,
+     col=colors_fade, pch=19,
+     xlab="Home Coast", ylab="Future Coast")
+
+```
+
+## Is temperature related to pain tolerance?
+
+The final boxplot shows a surprising relationship between the temperature people prefer and their tolerance for pain. 
+```{r Pain Tolerance, echo=FALSE}
+
+library(plotrix)
+
+
+plot(pain_tolerance ~ temp_pref, data=classdata,
+     xlab="Temperature Preference", ylab="Pain Tolerance (Scale of 1-8)",
+     ylim=c(1,8))
+```
+
