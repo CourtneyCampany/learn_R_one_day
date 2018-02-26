@@ -1,0 +1,32 @@
+Column,Notes
+Genus species,Species name
+Family,Taxonomic family
+Order,Taxonomic order
+Name_orig,Name in source dataset
+TaxonGroup,"angiosperm, fern, gymnosperm"
+woody_non-woody,"woody, non-woody"
+Growth form,"Epi (epiphyte), Fern, Grass (graminoid), Herb (herbaceous dicots), HmEpi (hemi-epiphytes), Liana (woody climbers, scramblers etc), Palm, Shrub, Succulent, Tree, Vine (herbaceous climbers, scramblers, etc)"
+DecidEver (woody only),"D (deciduous), E (evergreen); categories assigned to woody species only"
+Compound_Simple,"leaf type: C (compound), or S (simple)"
+Leaf size (cm2),"leaf area (= area of leaflets, for compound-leaved species), in cm2"
+Whole leaf size (cm2),"leaf area (= area of the whole leaf, for compound-leaved species; same data as ""leaf size"", for simple-leaved species), in cm2"
+Country,Country (political entity)
+Latitude,"latitude, in decimal degrees"
+Longitude,"longitude, in decimal degrees"
+Elevation (m),elevation (m)
+MAT,Mean annual temperature (oC)
+Tgs,mean temperature during the growing season (oC)
+TCM,mean temperature of the coldest month (oC)
+TCMgs,mean temperature of the coldest month during the growing season (oC)
+TWM,mean temperature of the warmest month (oC)
+MAP,mean annual precipitation (mm)
+PPTgs,mean precipitation during the growing season (mm)
+cvPPT,coefficient of variation between monthly precipitation mean values (mm)
+MIann,"moisture index, annual (mm/mm)"
+MIgs,"moisture index, during the growing season (mm/mm)"
+ETq,Equilibrium evapotranspiration (mm)
+ETqgs,"Equilibrium evapotranspiration, during the growing season (mm)"
+RADann,"daily irradiance, annual (W/m2)"
+RADgs,"daily irradiance, during the growing season (W/m2)"
+RHann,"relative humidity, annual mean (%)"
+RHgs,"relative humidity, growing season mean (%)"

@@ -1,0 +1,63 @@
+---
+title: "Trees"
+author: "Alexis Laskowski"
+date: "2/13/2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+#Mystery Data Set #1
+
+```{r cars, include = FALSE}
+trees <- read.csv("allometry/tree_allometry.csv")
+library("magicaxis")
+library("scales")
+library("wesanderson")
+
+```
+
+## Plot 1
+
+```{r massstemfraction, echo = FALSE}
+# trees2 <- droplevels(trees[complete.cases(trees$m.rt) &
+#                   complete.cases(trees$m.lf) &
+#                   complete.cases(trees$m.st), ])
+
+
+# gradient <- colorRampPalette(c("orange","green"))
+# cols <- palette(gradient(9))
+# cols2 <- alpha(cols, .8)
+
+mycol <- c("#FFA500CC", "#DFB000CC" ,"#BFBB00CC" ,"#9FC600CC", "#7FD200CC", "#5FDD00CC","#3FE800CC", "#1FF300CC", "#00FF00CC")
+mycols2 <- alpha(mycol, .8)
+
+trees$smf <- trees$m.st/trees$m.to
+
+plot(log10(smf) ~ log10(h.t), data=trees, xlab = "Tree Height (m)", ylab = "Stem Mass Fraction", 
+     axes=FALSE, pch=18,col=mycols2[vegetation])
+
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+
+legend("bottomright", legend=levels(trees$vegetation), pch=18, col=mycols2, bty='n',inset=0.02)
+```
+
+# 2nd fig
+
+```{r leafstemfraction, echo = FALSE}
+trees$lmf <- trees$m.lf/trees$m.to
+
+# gradient <- colorRampPalette(c("orange","green"))
+# cols <- palette(gradient(7))
+# cols2 <- alpha(cols, .8)
+
+plot(log10(lmf) ~ log10(h.t), data=trees, xlab = "Tree Height (m)", ylab = "Leaf Mass Fraction", 
+     axes=FALSE, pch=18,col=mycols2[vegetation])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomleft", legend=levels(trees$vegetation), pch=18, col=mycols2, bty='n',inset= 0.005)
+```
+
+Figure 2. [caption]
