@@ -1,41 +1,16 @@
 
-data(ozone)
+leafsize <- read.csv("leaf_area/leafarea_global.csv")
+
 
 library(maps) #build into base R
 
+map('world')
+cols <- c("gold", "forestgreen")
+
 windows()
 map('world')
+points(Latitude ~ Longitude, col=cols[Decid_or_Ever], data=leafsize, pch=16, cex=.5)
 
-##add ozone data to a map
-map('state', xlim=range(ozone$x), ylim=range(ozone$y)) #uses usa boundaries to start, then trimmed
-  #text(ozone$x, ozone$y, ozone$median) #plot the actual values
-  points(ozone$x, ozone$y, pch=21, bg="cornflower blue") #plot the locations
-
-##points size representative of the variable value
-map('state', xlim=range(ozone$x), ylim=range(ozone$y))
-  points(ozone$x, ozone$y, pch=21, bg="dodgerblue", cex=sqrt(ozone$median/100))
-#scaling usually done with squareroot transformation 
-#data may need to be decreased by a order of magnitude to cex= a reasonable #
-
-
-## plot but with color breaks for range of ozones
-library(RColorBrewer)
-colors <- brewer.pal(9, "YlOrRd") #another way for a ramped color choice
-
-library(classInt)  #determine break points (bins) of a variable
-brks<-classIntervals(ozone$median,  style="pretty") #non-overlapping breaks (lots of options)
-brkcols <- findColours(brks, colors)
-brklab<- brks$brks
-
-par(mar=c(1,1,1,1))
-map('state', xlim=range(ozone$x), ylim=range(ozone$y))
-points(ozone$x, ozone$y, pch=21, bg=brkcols) #plot the locations
-legend("topleft", pch=21, pt.bg=brkcols, legend=brklab, title="Ozone Levels", 
-       xpd=TRUE, inset=-.1)
-
-
-
-leafsize <- read.csv(leafsize_global.csv)
 
 
 # https://journal.r-project.org/archive/2011-1/RJournal_2011-1_South.pdf
