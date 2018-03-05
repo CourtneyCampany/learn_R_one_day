@@ -13,17 +13,13 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
+```{r maps, echo=FALSE}
+library(maps)
+leaves<-read.csv("leafarea_global.csv")
 
-library(rworldmap)
-library(rworldxtra)
-
-newmap <- getMap(resolution = "high")
-plot(newmap,
-     xlim = c(-20, 59),
-     ylim = c(35, 71),
-     asp = 1
-)
+map('world')
+points(leaves$Longitude, leaves$Latitude, cex=sqrt(leaves$Leaf.size_cm2/1000),
+       pch=21, bg="dodgerblue")
 
 ```
 

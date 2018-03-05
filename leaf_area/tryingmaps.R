@@ -2,6 +2,18 @@
 leafsize <- read.csv("leaf_area/leafarea_global.csv")
 leafsize2 <- leafsize[complete.cases(leafsize$Leaf.size_cm2),]
 
+
+leafsize <- read.csv("leaf_area/leafarea_global.csv")
+library(maps)
+map('world')
+cols <- c("gold", "forestgreen")
+
+map('world')
+points(Latitude ~ Longitude, col=cols[Decid_or_Ever], data=leafsize, pch=16, cex=.5)
+
+
+
+
 library(RColorBrewer)
 colors <- brewer.pal(6, "Greens")
 
