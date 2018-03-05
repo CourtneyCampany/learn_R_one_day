@@ -1,0 +1,151 @@
+---
+title: "Tree Allometry Analysis"
+author: "Keith Hankowsky"
+date: "February 27th, 2018"
+output: word_document
+---
+
+```{r setup,  echo=FALSE, warning=FALSE, message=FALSE}
+library(plotrix)
+library(wesanderson)
+library(magicaxis)
+library(scales)
+```
+
+##Mass Fractions 
+
+
+```{r Leaf Mass Fraction, echo=FALSE, warning=FALSE, message=FALSE}
+trees <- read.csv("allometry/tree_allometry.csv")
+trees5 <- droplevels(trees[complete.cases(trees$m.lf), ])
+trees6 <- droplevels(trees5[complete.cases(trees5$m.lf) & complete.cases(trees5$m.to), ])
+
+trees6$LMF <- trees6$m.lf/trees6$m.to
+
+pftfac <- length(levels(trees$pft))
+pftcols <- wes_palette('Zissou', pftfac, type = 'continuous')
+pftcols <- alpha(pftcols, .25)
+
+pftnames <- c("Evergreen Angiosperm", "Deciduous Angiosperm", "Evergreen Gymnosperm", "Deciduous Gymnosperm")
+LMFname <- expression("LMF (kg kg"^"-1"*")")
+
+
+plot(LMF ~ log10(m.to), data=trees6, 
+     ylab=LMFname, xlab="Total Mass (kg)",
+     axes=FALSE, pch=21, bg=pftcols, col=pftcols, cex=0.7)
+axis(2, tck=0.02, cex=0.9)
+magaxis(side=1, unlog=1, frame.plot=TRUE)
+legend("topright", legend=(pftnames), pch=21, 
+       pt.bg=pftcols, col=pftcols, cex=0.7, 
+       inset=0.02)
+```
+
+**Figure 1.** Leaf mass fraction (LMF) as a function of total tree mass.Points are colored based on plant functional type 
+
+  
+```{r Root Mass Fraction, echo=FALSE, warning=FALSE, message=FALSE}
+trees7 <- droplevels(trees[complete.cases(trees$m.rt), ])
+trees8 <- droplevels(trees7[complete.cases(trees7$m.rt) & complete.cases(trees7$m.to), ])
+
+trees8$RMF <- trees8$m.rt/trees8$m.to
+
+RMFname <- expression("RMF (kg kg"^"-1"*")")
+
+plot(RMF ~ log10(m.to), data=trees8, 
+     ylab=RMFname, xlab="Total Mass (kg)",
+     axes=FALSE, pch=21, bg=pftcols, col=pftcols, cex=0.7)
+axis(2, tck=0.02, cex=0.9)
+magaxis(side=1, unlog=1, frame.plot=TRUE)
+legend("topright", legend=(pftnames), pch=21, 
+       pt.bg=pftcols, col=pftcols, cex=0.7, 
+       inset=0.02)
+```
+
+**Figure 2.** Root Mass Fraction (RMF) as a  function of total of total tree mass. Points are colored based on plant functional type
+
+
+```{r Stem Mass Fraction, echo=FALSE, warning=FALSE, message=FALSE}
+trees9 <- droplevels(trees[complete.cases(trees$m.st), ])
+trees10 <- droplevels(trees9[complete.cases(trees9$m.st) & complete.cases(trees9$m.to), ])
+
+trees10$SMF <- trees10$m.st/trees10$m.to
+
+SMFname <- expression("SMF (kg kg"^"-1"*")")
+
+plot(SMF ~ log10(m.to), data=trees10, 
+     ylab=SMFname, xlab="Total Mass (kg)",
+     axes=FALSE, pch=21, bg=pftcols, col=pftcols, cex=0.7)
+axis(2, tck=0.02, cex=0.9)
+magaxis(side=1, unlog=1, frame.plot=TRUE)
+legend("topleft", legend=(pftnames), pch=21, 
+       pt.bg=pftcols, col=pftcols, cex=0.7, inset=0.02)
+```
+
+**Figure 3.** Stem Mass Fraction (SMF) as a  function of total of total tree mass. Points are colored based on plant functional type
+
+Leaf mass fraction decreases as trees increase in size (Fig 1). Trees are allocating less carbon to leaf production. Root mass fraction also decreases as trees increase in size (Fig 2). Additionally, as trees increase in size the stem mass fraction increases (Fig 3). Trees are allocation more carbon to stem production instead of leaf or root production as they get larger and older. 
+
+
+##Canpy Dynamics
+```{r Crown Surface Area, echo=FALSE, warning=FALSE, message=FALSE}
+trees <- read.csv("allometry/tree_allometry.csv")
+trees2 <- droplevels(trees[complete.cases(trees$a.cs), ])
+trees3 <- droplevels(trees[complete.cases(trees$a.cs) & complete.cases(trees$h.t), ])
+trees4 <- droplevels(trees3[complete.cases(trees3$vegetation),])
+
+trees4$logacs <- log10(trees4$a.cs)
+trees4$loght <- log10(trees4$h.t)
+
+modelTempF<-lm(logacs ~ loght, data=trees4[trees4$vegetation == "TempF",])
+modelTempRF<-lm(logacs ~ loght, data=trees4[trees4$vegetation == "TempRF",])
+modelTropRF<-lm(logacs ~ loght, data=trees4[trees4$vegetation == "TropRF",])
+
+temprcols <- alpha("forestgreen", 0.75)
+temprfcols <- alpha("dodgerblue3", 0.75)
+troprfcols <- alpha("firebrick2", 0.75)
+vegpch <- c(21, 22, 23)
+vegnames <- c("Temperate Forest", "Temperate Rainforest", "Tropical Rainforest")
+TempF <- trees4[trees4$vegetation == "TempF",]
+TempRF <- trees4[trees4$vegetation == "TempRF",]
+TropRF <- trees4[trees4$vegetation == "TropRF",]
+
+plot(logacs ~ loght, data=trees4, type='n',
+     xlab="Tree Height (m)", ylab=expression("Crown Surface Area (m"^"2"*")"), 
+     axes=FALSE)
+points(logacs ~ loght, data=trees4[trees4$vegetation == "TempF",], pch=21, bg=temprcols)
+points(logacs ~ loght, data=trees4[trees4$vegetation == "TempRF",], pch=22, bg=temprfcols)
+points(logacs ~ loght, data=trees4[trees4$vegetation == "TropRF",], pch=23, bg=troprfcols)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=(vegnames), pch=vegpch, 
+       pt.bg=c("forestgreen", "dodgerblue3", "firebrick2"), cex=0.8, 
+       inset=0.04)
+ablineclip(modelTempF, x1=min(TempF$loght),x2=max(TempF$loght), lwd=3)
+ablineclip(modelTempRF, x1=min(TempRF$loght),x2=max(TempRF$loght), lwd=4, lty=3)
+ablineclip(modelTropRF, x1=min(TropRF$loght),x2=max(TropRF$loght), lwd=4, lty=5)
+```
+
+**Figure 4.** Crown Surface Area as a function of tree height. 
+
+Crown surface area increase as tree height increases. Crown surface area is an inidcator of photosynthetic potential, so as trees get taller they have a higher photosynthetic capacity. All three vegetation types should a significant positive trend (*p* < 0.001). 
+```{r Leaf Nitrogen Content, echo=FALSE, warning=FALSE, message=FALSE}
+trees11 <- droplevels(trees[complete.cases(trees$n.lf), ])
+
+trees11$lognlf <- log10(trees11$n.lf)
+trees11$logmailf <- log10(trees11$ma.ilf)
+
+modelN<-lm(lognlf ~ logmailf, data=trees11)
+
+plot(lognlf ~ logmailf, data=trees11, 
+     ylab=expression("Leaf Nitrogen Content (kg kg"^"-1"*")"), 
+     xlab=expression("Leaf Mass per Area (kg m"^"2"*")"), 
+     axes=FALSE, pch=21, bg=pftcols, col=pftcols)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomleft", legend=(pftnames), pch=21, 
+       pt.bg=pftcols, col=pftcols, cex=0.7)
+```
+
+**Figure 5.** Leaf Nitrogen Content as a function of Leaf Mass per Area. 
+
+Leaf mass per area can be used as a proxy measurement for leaf thickness. Leaf nitrogen shows a slight decrease as the thickness of leaves increases. Leaf thickness only explains about 8% of the variation in leaf nitrogen content (R^2^ = 0.083)
+
+

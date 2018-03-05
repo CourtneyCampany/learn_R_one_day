@@ -1,0 +1,185 @@
+---
+title: "Diameter of stem at breast height as an indicator of plant and leaf traits"
+author: "Ashlea Raemer"
+date: "February 26, 2018"
+output: word_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Analysis
+
+  Figure 1 shows that with increasing diameter of stem at breast height there are also increases in total aboveground biomass and total root biomass. These relationships indicate the validity of diameter of stem at breast height as a measure of plant size as whole. These relationships also appear to be similar across all vegetation types without any particular clustering of plants by vegetation type (Figure 1). 
+  
+  To further the analysis of the relationhip between biomass and diameter of stem at breast height, Figure 2 compares how leaf mass fraction, root mass fraction, and stem mass fraction change with increasing diameter of stem at breast height. Leaf and root mass fraction both decrease with increasing diameter of stem at breast height and stem mass fraction increases (Figure 2). This indicates that with increasing diameter of stem at breast height there is a shift in the way the plant allocates resources, with more dedicated to the stem. Figure 2 indicates that different plant vegetation types all follow the same trends in biomass allocation. 
+  
+  Figure 3 examines how these patterns of allocation change as a plant ages. Leaf mass fraction and root mass fraction decreased with increasing age, and stem mass fraction increases (Figure 3). This is the same pattern as exhibited by Figure 2 indicating that the same relationship exists between biomass allocation and diameter of stem at breast height and plant age. This is a logical pattern when considering the increasing total plant biomass with increasing diameter of stem at breast height (Figure 1) and the general knowledge that organisms grow over time. 
+  
+  Figure 4 considers biomass allocation with relation to total plant height. Again, leaf mass fraction, root mass fraction, and stem mass fraction exhibit the same patterns as they did in Figures 2 and 3. This indicates that diameter of stem at breast height, age, and plant height are all similar indicators of biomass allocation. As a plant gets larger and older it allocates more mass to the stem and less to the leaves and roots, presumably because of the need for increased support for a bigger plant. In this figure the symbolization based on plant vegetation type indicates some clustering based on biome. Plants from the tropical rainforest exhibited intermediate heights, while temperate forests appear to be either shorter or taller than tropical rainforest plants. These clusters can not be used to make definitive conclusions about their respective biomes because the magnitude of the sample size forces the layering of points on the plot and may potentially obscure some data. 
+  
+  Figures 2, 3, and 4 all indicate a decrease in leaf mass fraction as a plant's diameter of stem at breast height, age, and height increase. To better understand why this happens I analyzed how specific plant leaf traits with increasing diameter of stem at breast height. Figure 5 shows that leaf mass per area, total leaf mass, and total leaf area all increased with increasing diameter of stem at breast height. There was also little change in leaf nitrogen with increasing diameter of stem at breast height (Figure 5). The increase in leaf mass area and little change in leaf nitrogen with increasing diameter at breast height indicate that there is not a decrease in leaf investment with increasing diameter of stem at breast height. These data also indicate that leaf mass fraction decreases with increasing diameter of stem at breast height (Figure 2) because of changes in another plant components outwighing the increases in leaf mass. 
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+trees <- read.csv("../output/tree_allometry.csv")
+trees$lmf <- trees$m.lf / trees$m.to
+trees$rmf <- trees$m.rt / trees$m.to
+trees$smf <- trees$m.st / trees$m.to
+trees2 <- trees[complete.cases(trees$d.bh),]
+trees3 <- trees[complete.cases(trees$age),]
+trees4 <- trees[complete.cases(trees$h.t),]
+library(scales)
+library(magicaxis)
+library(plotrix)
+mycols <- c("chartreuse2", "blue2", "darkorchid3", "yellow", "forestgreen", "blueviolet", "darkblue", "deepskyblue", "darkslategray")
+mycols2 <- alpha(mycols, 0.25)
+mycols3 <- alpha (mycols, 0.75)
+xlab <- " "   
+model1 <- lm(log10(lmf)~ log10(d.bh), data=trees2)
+model2 <- lm(log10(rmf)~ log10(d.bh), data=trees2)
+model3 <- lm(log10(smf)~ log10(d.bh), data=trees2)
+model4 <- lm(log10(lmf)~ log10(age), data=trees3)
+model5 <- lm(log10(rmf)~ log10(age), data=trees3)
+model6 <- lm(log10(smf)~ log10(age), data=trees3)
+model7 <- lm(log10(lmf)~ log10(h.t), data=trees4)
+model8 <- lm(log10(rmf)~ log10(h.t), data=trees4)
+model9 <- lm(log10(smf)~ log10(h.t), data=trees4)
+model10 <- lm(log10(m.so)~ log10(d.bh), data=trees2)
+model11 <- lm(log10(m.rt)~ log10(d.bh), data=trees2)
+model12 <- lm(log10(ma.ilf)~ log10(d.bh), data=trees2)
+model13 <- lm(log10(m.lf)~ log10(d.bh), data=trees2)
+model14 <- lm(log10(a.lf)~ log10(d.bh), data=trees2)
+model15 <- lm(log10(n.lf)~ log10(d.bh), data=trees2)
+r2mod1 <- round(summary(model1)$r.squared, 2)
+r2lab1 <- paste(expression(R^2), r2mod1, sep = " = ")
+r2mod2 <- round(summary(model2)$r.squared, 2)
+r2lab2 <- paste(expression(R^2), r2mod2, sep = " = ")
+r2mod3 <- round(summary(model3)$r.squared, 2)
+r2lab3 <- paste(expression(R^2), r2mod3, sep = " = ")
+r2mod4 <- round(summary(model4)$r.squared, 2)
+r2lab4 <- paste(expression(R^2), r2mod4, sep = " = ")
+r2mod5 <- round(summary(model5)$r.squared, 2)
+r2lab5 <- paste(expression(R^2), r2mod5, sep = " = ")
+r2mod6 <- round(summary(model6)$r.squared, 2)
+r2lab6 <- paste(expression(R^2), r2mod6, sep = " = ")
+r2mod7 <- round(summary(model7)$r.squared, 2)
+r2lab7 <- paste(expression(R^2), r2mod7, sep = " = ")
+r2mod8 <- round(summary(model8)$r.squared, 2)
+r2lab8 <- paste(expression(R^2), r2mod8, sep = " = ")
+r2mod9 <- round(summary(model9)$r.squared, 2)
+r2lab9 <- paste(expression(R^2), r2mod9, sep = " = ")
+r2mod10 <- round(summary(model10)$r.squared, 2)
+r2lab10 <- paste(expression(R^2), r2mod10, sep = " = ")
+r2mod11 <- round(summary(model11)$r.squared, 2)
+r2lab11 <- paste(expression(R^2), r2mod11, sep = " = ")
+r2mod12 <- round(summary(model12)$r.squared, 2)
+r2lab12 <- paste(expression(R^2), r2mod12, sep = " = ")
+r2mod13 <- round(summary(model13)$r.squared, 2)
+r2lab13 <- paste(expression(R^2), r2mod13, sep = " = ")
+r2mod14 <- round(summary(model14)$r.squared, 2)
+r2lab14 <- paste(expression(R^2), r2mod14, sep = " = ")
+r2mod15 <- round(summary(model15)$r.squared, 2)
+r2lab15 <- paste(expression(R^2), r2mod15, sep = " = ")
+```
+
+## Figures 
+```{r , echo=FALSE, message=FALSE, warning=FALSE, fig.height= 8, fig.width= 6}
+par(mfrow=c(2,1))
+plot(log10(m.so) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Total Aboveground Biomass (kg)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model10, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)),
+           lty=2, lwd=2)
+text(log10(0.01), log10(100), r2lab10)
+plot(log10(m.rt) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[vegetation], xlab= "Diameter of Stem at Breast Height (m)", ylab= "Total Root Biomass (kg)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model11, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)),
+           lty=2, lwd=2)
+text(log10(0.01), log10(100), r2lab11)
+legend("bottomright", legend=levels(trees2$vegetation), pch=16, col=mycols, bty='n',inset=0.01, ncol=2)
+```
+
+Figure 1:Diameter of stem at breast height (m) versus total aboveground biomass (kg) and total root biomass (kg). Both relationships have high r^2^ values for linear regression once data for both axes were log-transformed. Diameter of stem at breast height versus total aboveground biomass had a higher r^2^ value (0.97) than that of diameter of stem at breast height versus total root biomass (0.80). Different colors indicate vegetation types.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 8, fig.width = 6}
+par(mfrow=c(3,1))
+plot(log10(lmf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Leaf Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model1, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)),lty=2, lwd=2)
+text(log10(0.005), log10(0.05), r2lab1)
+plot(log10(rmf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Root Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model2, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)),lty=2, lwd=2)
+text(log10(0.005), log10(0.05), r2lab2)
+plot(log10(smf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[vegetation], xlab= "Diameter of Stem at Breast Height (m)", ylab="Stem Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model3, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)),lty=2, lwd=2)
+text(log10(0.005), log10(0.15), r2lab3)
+legend("right", legend=levels(trees2$vegetation), pch=16, col=mycols, bty='n',inset=0.02, ncol=2)
+```
+
+Figure 2: Diameter of stem at breast height (m) versus Leaf Mass Fraction (g/g), Root Mass Fraction (g/g), and Stem Mass Fraction (g/g). Leaf Mass Fraction decreased with increasing diameter of stem at breast height (r^2^=0.11), root mass fraction decreased (r^2^=0.12), and stem mass fraction increased (r^2^=0.32). Different colors indicate vegetation types.
+
+```{r MF v Age, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 8, fig.width = 6}
+par(mfrow=c(3,1))
+plot(log10(lmf) ~ log10(age), data=trees3, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Leaf Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model4, x1=log10(min(trees3$age)), x2=log10(max(trees3$age)),
+           lty=2, lwd=2)
+text(0.01, log10(0.05), r2lab4)
+plot(log10(rmf) ~ log10(age), data=trees3, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Root Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model5, x1=log10(min(trees3$age)), x2=log10(max(trees3$age)),
+           lty=2, lwd=2)
+text(0.01, log10(0.05), r2lab5)
+plot(log10(smf) ~ log10(age), data=trees3, pch=1, col=mycols3[vegetation], xlab= "Age (yr)", ylab="Stem Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model6, x1=log10(min(trees3$age)), x2=log10(max(trees3$age)),
+           lty=2, lwd=2)
+text(0.01, log10(0.05), r2lab6)
+legend("right", legend=levels(trees3$vegetation), pch=16, col=mycols, bty='n',inset=0.02, ncol=2)
+
+```
+
+Figure 3: Age of plant (yrs) versus Leaf Mass Fraction (g/g), Root Mass Fraction (g/g), and Stem Mass Fraction (g/g). Leaf Mass Fraction decreased with increasing age (r^2^=0.51), root mass fraction decreased (r^2^=0.22), and stem mass fraction increased (r^2^=0.57). Different colors indicate vegetation types.
+
+```{r MF v Height, echo=FALSE, message=FALSE, warning=FALSE, fig.height = 8, fig.width = 6}
+par(mfrow=c(3,1))
+plot(log10(lmf) ~ log10(h.t), data=trees4, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Leaf Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model7, x1=log10(min(trees4$h.t)), x2=log10(max(trees4$h.t)),lty=2, lwd=2)
+text(log10(0.01), log10(0.01), r2lab7)
+plot(log10(rmf) ~ log10(h.t), data=trees4, pch=1, col=mycols3[vegetation], xlab= xlab, ylab= "Root Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model8, x1=log10(min(trees4$h.t)), x2=log10(max(trees4$h.t)),lty=2, lwd=2)
+text(log10(0.01), log10(0.01), r2lab8)
+plot(log10(smf) ~ log10(h.t), data=trees4, pch=1, col=mycols3[vegetation], xlab= "Height (m)", ylab="Stem Mass Fraction (g/g)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model9, x1=log10(min(trees4$h.t)), x2=log10(max(trees4$h.t)),lty=2, lwd=2)
+text(log10(0.01), log10(0.01), r2lab9)
+legend("bottomright", legend=levels(trees4$vegetation), pch=16, col=mycols, bty='n', ncol=2)
+```
+
+Figure 4: Plant height (m) versus Leaf Mass Fraction (g/g), Root Mass Fraction (g/g), and Stem Mass Fraction (g/g). Leaf Mass Fraction decreased with increasing height (r^2^=0.33), root mass fraction decreased (r^2^=0.06), and stem mass fraction increased (r^2^=0.35). Different colors indicate vegetation types.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height= 8, fig.width=8}
+par(mfrow=c(2,2))
+plot(log10(ma.ilf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[pft], xlab= xlab, ylab= "Leaf Mass per Area (kg/m^2^)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model12, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)),lty=2, lwd=2)
+text(log10(1), log10(0.4), r2lab12)
+plot(log10(m.lf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[pft], xlab= xlab, ylab= "Total Leaf Mass (kg)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model13, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)), lty=2, lwd=2)
+text(log10(0.005), log10(100), r2lab13)
+plot(log10(a.lf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[pft], xlab= "Diameter of Stem at Breast Height (m)", ylab= "Total Leaf Area (m^2^)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model14, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)), lty=2, lwd=2)
+text(0.01, 0.01, r2lab14)
+plot(log10(n.lf) ~ log10(d.bh), data=trees2, pch=1, col=mycols3[pft], xlab= "Diameter of Stem at Breast Height (m)", ylab= "Total Leaf Nitrogen (kg/kg)", axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model15, x1=log10(min(trees2$d.bh)), x2=log10(max(trees2$d.bh)), lty=2, lwd=2)
+text(log10(1), log10(0.04), r2lab15)
+legend("bottomright", legend=levels(trees2$pft), pch=16, col=mycols, bty='n',inset=0.02, ncol=2)
+```
+
+Figure 5: Diameter of stem at breast height (m) versus Leaf Mass per Area (kg/m^2^), Total Leaf Mass (kg), Total Leaf Area (m^2^), and Total Leaf Nitrogen (kg/kg). Leaf Mass per Area increased with increasing diameter of stem at breast height (r^2^=0.35), total leaf mass increased (r^2^=0.85), total leaf area increased (r^2^=0.87), and total leaf nitrogen slightly increased (r^2^=0.02). Different colors indicate plant functional types.

@@ -1,0 +1,82 @@
+---
+title: "Trees"
+author: "Alexis Laskowski"
+date: "2/13/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+#Biomass Allocation Patterns for Nine Vegetation Types
+
+##Analysis
+
+**Body Part Mass Fractions in Respect to Plant Height**
+
+As tree height increases the stem mass fraction tends to increase (Figure 1) and as tree height increases the leaf mass fraction tends to decrease (Figure 2). This suggests that there is a relationship between mass allocation and ontogeny. As a plant gets larger with age, and thus increases in height, more mass is allocated to the stems than to the leaves. Plants drop their leaves throughout their lifespan whereas the stems are not dropped. Thus, it makes sense for plants to invest more of their mass into these particular parts. These overall trends are consistent across vegetation types.
+
+As tree height increases the root mass fraction tends to remain constant with some variation depending on vegetation type (Figure 3). The mass allocation to roots does not follow any particular trend like stem and leaf mass allocation as plant size increases. Root mass fractions also appear to vary much more than stem and leaf mass fractions. This variability may be due to the environments these plants occupy. Some areas of a particular environment may require less root mass to acquire enough nutrients from the ground while other areas in an environment may have less access to nutrients, requiring more mass to be allocated to the roots. This variability also seems to depend on vegetation type. For instance, the Boreal Forest vegetation seems to vary more in respect to root mass fraction with increasing plant size whereas Tropical vegetation seems to vary less in respect to root mass fraction with increasing plant size (Figure 3). This also likely reflects the varying environmental situations in the different biomes these plants inhabit. Due to this our data reveals more about patterns in aboveground mass allocation than belowground mass allocation.
+
+
+**Variability in Vegetation Types**
+
+These nine different vegetation types (Boreal Forest, Grassland, Savanna, Shrubland, Temperate Forest, Temperate Rainforest, Tropical Rainforest, Subtropical Forest and Woodland) vary in respect to their leaf mass fraction (Figure 4) and stem mass fraction (Figure 5). The Temperate Rainforest, Tropical Rainforest and Subtropical Forest vegetation have very similar distributions for both stem (Figure 5) and leaf (Figure 4) mass fractions in respect to their median values and overall spread. For these vegetation types the stem mass fractions (Figure 5) have a lower median than the leaf mass fractions (Figure 4), which also had larger variability. This is interesting as the other vegetation types with comparable statistics (BorF, Gr, Sh & TempF) displayed higher medians for their stem mass fractions (Figure 5) than for their leaf mass fractions (Figure 4). The data for BorF, Gr, Sh and TempF vegetation is consistent with a higher allocation of mass into stems than leaves as plants grow. This also shows that these types tend to allocate more mass to stems than to leaves overall. The data for TempRF, TropSF and Trop RF is not consistent with this trend with growth, suggesting that these types tend to allocate more mass to leaves than to stems overall. This is despite the relationships shown in Figures 1 and 2 that mass allocation to stems increase with plant size for all of these vegetation types. The samples from these vegetation types may thus be younger, and thus have a smaller plant size compared to their potential growth, compared to samples taken from other vegetation types. This may be due to some disruptive events in these environments resulting in newer growth. There is not enough data to analyze trends in biomass allocation for Savanna and Woodland vegetation.
+
+##Figures
+```{r cars, include = FALSE}
+trees <- read.csv("tree_allometry.csv")
+library("magicaxis")
+library("scales")
+library("wesanderson")
+
+mycol <- c("#FFA500CC", "#DFB000CC" ,"#BFBB00CC" ,"#9FC600CC", "#7FD200CC", "#5FDD00CC","#3FE800CC", "#1FF300CC", "#00FF00CC")
+mycols2 <- alpha(mycol, .8) 
+```
+
+```{r stemmassfraction, echo = FALSE}
+
+
+trees$smf <- trees$m.st/trees$m.to
+plot(log10(smf) ~ log10(h.t), data=trees, xlab = "Tree Height (m)", ylab = "Stem Mass Fraction (g/g)", 
+     axes=FALSE, pch=18,col=mycols2[vegetation])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomright", legend=levels(trees$vegetation), pch=18, cex=.8, col=mycols2, bty='n',inset=0.005)
+```
+
+**Figure 1.** Stem mass fraction (SMF) in relation to tree height across nine different vegetation types. SMF was calculated using the stem mass and total mass of plants. As tree height increases the stem mass fraction generally tends to increase.
+
+```{r leafmassfraction, echo = FALSE}
+trees$lmf <- trees$m.lf/trees$m.to
+
+plot(log10(lmf) ~ log10(h.t), data=trees, xlab = "Tree Height (m)", ylab = "Leaf Mass Fraction (g/g)", 
+     axes=FALSE, pch=18,col=mycols2[vegetation])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomleft", legend=levels(trees$vegetation), pch=18, cex=.8, col=mycols2, bty='n',inset= 0.005)
+```
+
+**Figure 2.** Leaf mass fraction (LMF) in relation to tree height across nine different vegetation types. LMF was calculated using the leaf mass and total mass of plants. As tree height increases the leaf mass fraction generally tends to decrease.
+
+```{r rootmassfraction, echo = FALSE}
+trees$rmf <- trees$m.rt/trees$m.to
+
+plot(log10(rmf) ~ log10(h.t), data=trees, xlab = "Tree Height (m)", ylab = "Root Mass Fraction (g/g)", 
+     axes=FALSE, pch=18,col=mycols2[vegetation])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomleft", legend=levels(trees$vegetation), pch=18, cex=.8, col=mycols2, bty='n',inset= 0.005)
+```
+
+**Figure 3.** Root mass fraction (RMF) in relation to tree height across nine different vegetation types. RMF was calculated using the root mass and total mass of plants. Overall this plot shows that root mass fraction is relatively constant as tree height increases with some variation depending on vegetation type.  
+
+```{r , echo = FALSE}
+boxplot(lmf ~ vegetation, data = trees, xlab = "Vegetation Type", ylab = "Leaf Mass Fraction (g/g)", par(cex.axis=0.5), ylim = c(0,1.2))
+```
+
+**Figure 4.** The distribution of leaf mass fraction across nine different vegetation types. LMF was calculated using the leaf mass and total mass of plants. There are no leaf mass fraction observations for the Savanna vegetation type.
+
+```{r , echo = FALSE}
+boxplot(smf ~ vegetation, data = trees, xlab = "Vegetation Type", ylab = "Stem Mass Fraction (g/g)", par(cex.axis=0.5), ylim = c(0,1.2))  
+```
+
+**Figure 5.** The distribution of stem mass fraction across nine different vegetation types. SMF was calculated using the stem mass and total mass of plants. There are no stem mass fraction observations for the Savanna or Woodland vegetation type.

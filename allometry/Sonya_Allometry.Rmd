@@ -1,0 +1,97 @@
+---
+title: "Allometry"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Mass Fractions
+
+As plants grow, they have a limited number of resources available to them and they must allocate where these resources go. In terms of carbon, trees most often allocate it to the stems, roots, and leaves. It is believed that the limiting resource in the environment dictates where the resources will be allocated. In addition, plant functional type (angiosperm or gymnosperm and deciduous or evergreen) may influence resource allocation. 
+
+```{r stem, echo=FALSE, warning=FALSE, message=FALSE}
+trees <- read.csv("tree_allometry.csv")
+
+#massfrac
+stem<-c(trees$m.st/trees$m.to)
+root<-c(trees$m.rt/trees$m.to)
+leaf<-c(trees$m.lf/trees$m.to)
+total<-c(trees$m.to)
+
+#Stem Mass Frac
+#install.packages("magicaxis")
+#install.packages("scales")
+#install.packages("wesanderson")
+library(magicaxis)
+library(scales)
+library(wesanderson)
+vegfac <- length(levels(trees$pft))
+vegcols <- wes_palette('Zissou', vegfac, type = 'continuous')
+vegcols2 <- alpha(vegcols, .25)
+plot(stem ~ log10(total), data=trees, xlab="Log total mass (kg)", ylab="Stem mass fraction (kg)",
+     axes=FALSE, pch=16,col=vegcols2[pft]) 
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomright", legend=levels(trees$pft), pch=16, col=vegcols, bty='n',inset=0.02)
+
+```
+
+Figure 1. The allometric relationship between stem mass and total plant mass. Colors differentiate plant functional type (DA= Deciduous angiosperm, DG= Deciduous gymnosperm, EA= Evergreen angiosperm, EG= evergreen gymnosperm). 
+
+```{r leaves, echo=FALSE}
+vegfac <- length(levels(trees$pft))
+vegcols <- wes_palette('Zissou', vegfac, type = 'continuous')
+vegcols2 <- alpha(vegcols, .25)
+plot(leaf ~ log10(total), data=trees, xlab="Log total mass (kg)", ylab="Leaf mass fraction (kg)",
+     axes=FALSE, pch=16,col=vegcols2[pft]) 
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=vegcols, bty='n',inset=0.02)
+
+```
+
+Figure 2. The allometric relationship between leaf mass and total plant mass.
+```{r ROOTS, echo=FALSE}
+vegfac <- length(levels(trees$pft))
+vegcols <- wes_palette('Zissou', vegfac, type = 'continuous')
+vegcols2 <- alpha(vegcols, .25)
+plot(root ~ log10(total), data=trees, xlab="Log total mass (kg)", ylab="Root mass fraction (kg)",
+     axes=FALSE, pch=16,col=vegcols2[pft]) 
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=vegcols, bty='n',inset=0.02)
+```
+
+Figure 3. The allometric relationship between leaf mass and total plant mass.
+
+Mass allocation between plant parts changes with the size of the trees (indicated by total mass) Overall it appears that trees increase their proportional stem mass with increasing size regardless of plant functional type (Figure 1). One possible explanation is that trees will need more structural integrity as they grow and this is true regardless of their functional group. 
+  In terms of leaf mass, trees generally allocate proportionate less resources (shown by a lower mass) to their leaves as they increase in size across all functional groups (Figure 2). The evergreen angiosperms allocate proportionate the most to their leaves, especially on trees of intermediate mass. This makes sense if they are not dropping their leaves every winter. 
+  Root mass also decreases with increasing size (Figure 3). Evergreen gymnosperm trees allocate the least to their roots in terms of mass where as both angiosperms generally follow the same trends. 
+
+##Leaf Allocation with Height
+
+```{r Leaf Mass Height, echo=FALSE}
+vegfac <- length(levels(trees$pft))
+vegcols <- wes_palette('Zissou', vegfac, type = 'continuous')
+vegcols2 <- alpha(vegcols, .25)
+plot(log10(m.lf) ~ log10(h.t), data=trees, xlab="Log tree height (m)", ylab="Log leaf mass (kg)",
+     axes=FALSE, pch=16,col=vegcols2[pft]) 
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=vegcols, bty='n',inset=0.02)
+
+```
+
+Figure 4. The allometric relationship between leaf mass and total tree height. Leaf mass is significantly positively correlated with tree height. 
+
+```{r crown area, echo=FALSE}
+vegfac <- length(levels(trees$pft))
+vegcols <- wes_palette('Zissou', vegfac, type = 'continuous')
+vegcols2 <- alpha(vegcols, .25)
+LAlabel <- expression(Surface~crown~area~~(m^2))
+plot(log10(a.cs)~ log10(h.t), data=trees, xlab="Log tree height (m)", ylab=LAlabel, axes=FALSE, pch=16,col=vegcols2[pft])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=vegcols, bty='n',inset=0.02)
+```
+
+Figure 5. The allometric relationship between surface crown area and tree height. They are positively correlated. 
+
+As trees get taller, they are increasing their leaf mass (and likely their number of leaves produced). This is true across all plant types (Figure 4). Leaf crown area helps to explain the amount of leaves produced on the tops of tree. This variable was only measured in evergreen species. There was an overall trend of increasing crown surface area with increasing height. Overall the angiosperms had larger crown surface areas and taller trees than the gymnosperm species. Crown surface area is correlated to the photosynthesis occurring in a tree because those are the leaves in the most direct sunlight. 

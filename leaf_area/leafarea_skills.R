@@ -52,10 +52,11 @@ map('world')
 data(ozone)
 ##add ozone data to a map
 map('state', xlim=range(ozone$x), ylim=range(ozone$y)) #uses usa boundaries to start, then trimmed
-#text(ozone$x, ozone$y, ozone$median) #plot the actual values
+text(ozone$x, ozone$y, ozone$median) #plot the actual values
 points(ozone$x, ozone$y, pch=21, bg="cornflower blue") #plot the locations
 
 ##points size representative of the variable value
+windows()
 map('state', xlim=range(ozone$x), ylim=range(ozone$y))
 points(ozone$x, ozone$y, pch=21, bg="dodgerblue", cex=sqrt(ozone$median/100))
 #scaling usually done with squareroot transformation 
@@ -67,7 +68,8 @@ library(RColorBrewer)
 colors <- brewer.pal(8, "Greens") #another way for a ramped color choice
 
 library(classInt)  #determine break points (bins) of a variable
-brks<-classIntervals(ozone$median,style="pretty") #non-overlapping breaks (lots of options)
+brks<-classInt::classIntervals(ozone$median,style="pretty") 
+#non-overlapping breaks (lots of options)
 bins<- brks$brks
 
 ozone$ozone_bin <- cut(ozone$median, breaks = bins)

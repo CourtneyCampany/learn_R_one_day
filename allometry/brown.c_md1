@@ -1,0 +1,88 @@
+---
+title: "Mystery Data #1"
+author: "Cheyenne Brown"
+date: "February 27, 2018"
+output: word_document
+reference_docx: manuscriptstyle.docx
+---
+```{r Figure 1, echo=FALSE}
+correlations <-read.csv("E:/Projects/allometry/test/tree_allometry.csv")
+tropical <- droplevels(correlations[correlations$vegetation %in% c("TropSF", "TropRF", "TropF"),])
+
+par(mar=c(5,5,1,1))
+labels <-levels(correlations$pft)
+mycols <- c("red", "orange", "yellow", "green")
+plot(h.t~mat, data=correlations, xlim=c(0,31), ylim=c(0,115), pch=16, col=mycols[pft], xlab="Mean Annual Temperature for Wild Plants (Degrees)", ylab="Total Height of Plant (m)")
+legend("topleft", legend = labels, inset=0.01, col=c(mycols), pch=c(16,16,16,16), bty='n')
+```
+\
+Figure 1. Total Height of Plant by the Mean Annual Temperature.
+This figure looks at how the mean annual tempature of wild plants impacts the height of the plant based on plant function type. DA symbolizes Deciduous Angiosperm, DG symbolizes Deciduous Gymnosperm, EA symbolizes Evergreen Angiosperm, and EG symbolizes Evergreen Angiosperm.
+\
+\
+This figure demonstrates that certain plant function types experience different annual temperatures based on the environment in which they grow and live. Based on this data, it is evident that Evergreen Gynosperms and Angiosperms grow the tallest, whereas Deciduous Angiosperm grow smaller and are likely to experience lower mean annual temperatures.
+
+```{r Figure 2, echo=FALSE}
+par(mar=c(5,5,1,1))
+labels2 <-levels(correlations$pft)
+mycols2 <- c("blue", "purple", "pink", "turquoise")
+plot(h.t~map, data=correlations, xlim=c(0,5085), ylim=c(0,115), pch=17, col=mycols2[pft], xlab="Mean Annual Rainfall for Wild Plants (mm)", ylab="Total Height of Plant (m)")
+legend("topleft", legend = labels2, inset=0.01, col=c(mycols2), pch=c(17,17,17,17), bty='n')
+```
+\
+Figure 2. The Height of Plants Based on Mean Annual Rainfall/Precipitation
+This figure looks at how the mean annual rainfall of wild plants impacts the height of the plant based on plant function type. DA symbolizes Deciduous Angiosperm, DG symbolizes Deciduous Gymnosperm, EA symbolizes Evergreen Angiosperm, and EG symbolizes Evergreen Angiosperm.
+\
+\
+This graph demonstrates that certain plant function types experience different annual rainfall and precipitation based on the environment in which they grow and reside. Based on this data, it is evident that Evergreen Gynosperms and Angiosperms grow the tallest, whereas Deciduous Angiosperm grow smaller and are likely to experience lower mean annual temperatures.Evergreen Angiosperm experience more preceiptation than both Evergreen Gynosperm plants and Deciduous Angiosperms.
+\
+``` {r Figure 3, echo=FALSE}
+mycols3 <- c("red", "pink", "magenta", "maroon", "gold", "coral", "purple", "firebrick", "indianred2", "mediumpurple1")
+label1<-levels(correlations$vegetation)
+par(mar=c(5,5,1,1))
+correlations$lmf <- correlations$m.lf/correlations$m.to
+plot(lmf~mat, data=correlations, xlim=c(0,35), ylim=c(0,1.15), pch=13, col=mycols3[vegetation], cex=1.5, xlab ="Mean Annual Temperature (Degrees)", ylab="Leaf Mass Fraction (kg)")
+legend("topright", "(34,1.0)", legend =label1, pch =c(13,13,13,13,13,13,13,13,13,13), col=c(mycols3), inset=0.01,bty='n' )
+```
+\
+Figure 3. The Leaf Mass Fraction Based on Mean Annual Temperature
+This figure looks at how the mean annual temperature of wild plants impacts the leaf mass fraction of the plant based on vegetation type or the biome. Leaf Mass fraction is determined by dividing the mass of leaves by the total mass of the plant. In this figure, BorF represents Borreal Forests, Gr represents Grasslands, Sav represents Savannahs, Sh represents Shrubland, TempF represents Temperate Forests, TempRF represents Temperate Rainforests, TropRF represents Tropical Rainforests, TropSF represents Tropical Seasonal Forests, and finally Wo represents Woodland. 
+\
+\
+This figure demonstrates that temperature impacts the leaf mass fraction of a plant and therefore impacts the biomass investment of that respective plant as well as the change in turnover. As we found as a trend in a few papers we discussed, as the temperature dropped or it got cold, the leaf mass fraction also decreased. However, in this figure, it exhibits the annual temperature in differernt biomes, but it seams as though the leaf mass fraction increases notwithstanding a higher or lower temperature. However, it shows that tropical forests have higher temperatures when compared to temperate forests as well as grasslands and other biomes. There seems to be more variation in temperatures in temperate forests whereas with tropical forests, there is less variation in temperature.When there is a decrease in turnover of leaves, there is a decrease in mass allocation (Reich, Temperature Drivers, 2014). 
+\
+
+``` {R Figure 4, echo=FALSE}
+library(plotrix)
+par(mar=c(5,5,1,1))
+mycols4 <- c("cyan", "dodgerblue4", "skyblue", "blue")
+labels4 <- c(levels(correlations$pft))
+
+plot(log10(d.cr)~log10(age), data = correlations, xlim=c(-.5,3), ylim=c(-1.5,1.5), pch=16, col=mycols4[pft], xlab="Age (years)", ylab="Diameter of Crown (m)")
+legend("bottomright", legend=labels4, inset=0.01, col=c(mycols4), pch=c(16,16,16,16), bty='n')
+
+model2 <- lm(log10(d.cr)~log10(age), data=correlations)
+abline(model2)
+ablineclip(model2)
+```
+\
+Figure 4. How the Diameter of the Crown of a Tree Varies Based on Age
+This particular figure did look at the log10 of various ages because there was a large sample and much data on within this study or parameter. This particular figure looks at the diameter in meters as a function of age in years and looks at four plant function types-DA symbolizes Deciduous Angiosperm, DG symbolizes Deciduous Gymnosperm, EA symbolizes Evergreen Angiosperm, and EG symbolizes Evergreen Angiosperm.
+\
+\
+Within this figure, it is clear that as a tree gets older and goes up in age, the diameter is expected to increase. This pertains to things dicussed in class and various papers we examined pertaining to scaling and how various assessments of biomass change with age. For instance, some papers found that small plants had a 1:1 ratio, where as there appeared to be a noticeable difference in the scaling ratio between parts of the tree such as diameter of crown, branches, trunks, leaves, and roots (Poorter, How does biomass, 2015). There appears to be a somewhat linear trend in this instance, with a few outliers. Within this data set, the oldest trees were Evergeen Angiosperms (for the most part), and younger trees tended to be Evergreen Angiosperms. However, the Evergreen Angiosperms had a large diameter in general, but did show growth of the crown with regards to age nonetheless.
+
+``` {R Figure 5, echo=FALSE}
+label5<-levels(correlations$pft)
+mycols5 <-c("coral1", "mediumspringgreen", "steelblue", "mediumorchid1")
+par(mar=c(5,5,1,1))
+correlations$rmf <- correlations$m.rt/correlations$m.to
+plot(rmf~mat, data=correlations, xlim=c(0,30), ylim=c(0,1.0), pch=13, col=mycols5[pft], cex=1.5, xlab ="Mean Annual Temperature (Degrees)", ylab="Root Mass Fraction (kg)")
+legend("top", "(15,1.0)", legend =label5, pch =c(13,13,13,13), col=c(mycols5), inset=0.01,bty='n' )
+```
+\
+Figure 5. How Mean Annual Temperature impacts the Root Mass Fraction.
+This figure looks at how the mean annual tempature of wild plants impacts theroot mass fraction based on plant function type. DA symbolizes Deciduous Angiosperm, DG symbolizes Deciduous Gymnosperm, EA symbolizes Evergreen Angiosperm, and EG symbolizes Evergreen Angiosperm.
+\
+\
+In this figure, the root mass fraction is hiest overall for Deciduous Angiosperm as well as Evergreen Angiosperms. Evergreen Gymnosperms appear to be in the middle of the mix in terms of the mean annual temperature and also have smaller root mass fractions. Some studies in scholarly works have shown that biomass in roots of plants increase with colder temperatures. Therefore, one would expect the root mass fraction to increase as the mean annual temperature increases (Poorter, How Does Biomass, 2015). Under certain temperatures, plants tend to allocate their resources and mass and tend to adjust to their external environment. In this particular dataset however, there doesn't appear to be a positive relationship with root mass fraction and mean annual temperature and there also doesn't appear to be a negative relationship. There appears to be a great deal of variation in this data set. However, Deciduous Angiosperms increase their root mass fraction at varying tempatures, but moreso the extremes of the spectrum (at lower and higher temperatures but not at intermediate temperatures).  

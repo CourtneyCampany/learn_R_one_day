@@ -1,5 +1,30 @@
 
 leafsize <- read.csv("leaf_area/leafarea_global.csv")
+leafsize2 <- leafsize[complete.cases(leafsize$Leaf.size_cm2),]
+
+library(RColorBrewer)
+colors <- brewer.pal(6, "Greens")
+
+
+library(classInt) 
+brks<-classIntervals(leafsize2$Leaf.size_cm2,style="fixed",
+                     fixedBreaks=c(0, 500, 1000, 1500, 2000, 2600)) 
+#non-overlapping breaks (lots of options)
+bins<- brks$brks
+
+leafsize2$la_bin <- cut(leafsize2$Leaf.size_cm2, breaks = bins)
+
+par(mar=c(1,1,1,1))
+
+windows()
+map('world')
+points(Latitude ~ Longitude, col=colors[la_bin], data=leafsize2, pch=16, cex=.5)
+
+legend("topleft", pch=21, pt.bg=colors, legend=leafsize2$la_bins, title="Ozone Levels", 
+       xpd=TRUE, inset=-.1)
+
+
+
 
 
 library(maps) #build into base R

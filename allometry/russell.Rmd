@@ -1,0 +1,115 @@
+---
+title: "Trees"
+author: "Alex Russell"
+date: "3/1/18"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r figure 1, echo=FALSE, message=FALSE, warning=FALSE, summary=FALSE, results='hide'}
+trees <- read.csv("tree_allometry.csv")
+library(magicaxis)
+library(scales)
+library(wesanderson)
+vegfac <- length(levels(trees$vegetation))
+vegcols <- wes_palette('Zissou', vegfac, type = 'continuous')
+vegcols2 <- alpha(vegcols, .25)
+
+plot(log10(age)~log10(h.t), data=trees, xlab="Tree Height (m)", ylab="Age (yr)", 
+     axes=FALSE, pch=16,col=vegcols2[vegetation])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$vegetation), pch=16, col=vegcols, bty='n',inset=0.02)
+library("plotrix", lib.loc="/Library/Frameworks/R.framework/Versions/3.4/Resources/library") 
+model5 <- lm(log10(age)~log10(h.t), data=trees)
+abline(model5)
+```
+Figure 1. Tree age versus tree height. Colors represent ecosystem vegitation type as follows: BorF = Boreal forest;Gr = Grassland; Sav = Savannah;Sh = Shrubland; TempF = Temperate forest;TempRF = Temperate rainforest; TropRF = Tropical rainforest; ; TropSF = Tropical seasonal forest; ; Wo = Woodland.
+\
+\
+There is a clear positive correlation between tree age and height. As one may expect height of the tree increases with age in all ecosystems studied and thus a significant correlation exists between the two (p < 0.05). While this is the case, there is still quite a  bit of variation from the regression line (R-squared =0.5005). This may be due to differences in tree species and could use more investigation.
+
+
+```{r figure 2, echo=FALSE, message=FALSE, warning=FALSE, summary=FALSE, results='hide'}
+plot(log10(m.lf)~log10(h.t), data=trees, xlab="Tree Height (m)", ylab="Leaf Mass (kg)", 
+     axes=FALSE, pch=16,col=vegcols2[vegetation])
+
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$vegetation), pch=16, col=vegcols, bty='n',inset=0.02)
+
+library("plotrix", lib.loc="/Library/Frameworks/R.framework/Versions/3.4/Resources/library") 
+model1 <- lm(log10(m.lf)~log10(h.t), data=trees)
+abline(model1)
+
+```
+Figure 2. Leaf mass by tree height. Colors represent ecosystem vegitation type as follows: BorF = Boreal forest;Gr = Grassland; Sav = Savannah;Sh = Shrubland; TempF = Temperate forest;TempRF = Temperate rainforest; TropRF = Tropical rainforest; ; TropSF = Tropical seasonal forest; ; Wo = Woodland.
+\
+\
+There is a clear positive linear relationship between leaf mass and tree height (R-squared=0.8978). What is interesting is the apparent clustering of woodland vegitation in the middle of the regression line with the temeprate and tropical vegitation appeared more spread along the regression line. This may be an indication of different forest growth stages in these different vegitation type samples. The Borreal, Grassland and Savannah vegitation appreached to be higher along the regression line as well which I suspect may also be due to varying tree species and plant functional types. Regardless, while there may potentially be some small trends in the data, for the most part nothing is clear enough
+```{r figure 3, echo=FALSE, message=FALSE, warning=FALSE, summary=FALSE, results='hide'}
+pftfac <- length(levels(trees$pft))
+pftcols <- wes_palette('Zissou', pftfac, type = 'continuous')
+pftcols2 <- alpha(pftcols, .25)
+
+plot(log10(m.lf)~log10(h.t), data=trees, xlab="Tree Height (m)", ylab="Leaf Mass (kg)", 
+     axes=FALSE, pch=16,col=pftcols2[pft])
+
+
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=pftcols, bty='n',inset=0.02)
+
+library("plotrix", lib.loc="/Library/Frameworks/R.framework/Versions/3.4/Resources/library") 
+model1 <- lm(log10(m.lf)~log10(h.t), data=trees)
+abline(model1)
+
+```
+Figure 3. Leaf mass by tree height. Colors represent plant functional type as follows: DA = deciduous angiosperm; DG = deciduous gymnosperm; EA = evergreen angiosperm; EG = evergreen gymnosperm.
+\
+\
+There is a clear positive linear relationship between leaf mass and tree height as also seen in figure 2 (R-squared=0.8978). The distribution of plant functional types appears to be spread along the line of best fit for all types. This indicates that leaf mass by tree height is more closely related to functional plant type than vegitation type seen in figure 2. One can make this assumption because the pattern appears to better fit the regression line for all funtional types whereas it was harder to see patterns emerge for vegitation types. 
+```{r figure 4,echo=FALSE, message=FALSE, warning=FALSE, summary=FALSE, results='hide'}
+pftfac <- length(levels(trees$pft))
+pftcols <- wes_palette('Zissou', pftfac, type = 'continuous')
+pftcols2 <- alpha(pftcols, .25)
+
+plot(log10(age)~log10(h.t), data=trees, xlab="Tree Height (m)", ylab="Tree Age (yr)", 
+     axes=FALSE, pch=16,col=pftcols2[pft])
+
+
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=pftcols, bty='n',inset=0.02)
+
+library("plotrix", lib.loc="/Library/Frameworks/R.framework/Versions/3.4/Resources/library") 
+abline(model5)
+```
+Figure 4. Tree age versus tree height. Colors represent plant functional type as follows: DA = deciduous angiosperm; DG = deciduous gymnosperm; EA = evergreen angiosperm; EG = evergreen gymnosperm.
+\
+\
+This figure reveals a clear positive correlation between tree age and height(p < 0.05). As one may expect height of the tree increases with age. While this is the case, there is still quite a  bit of variation from the regression line (R-squared =0.5005). In looking at plant functional typesno clear patterns appear to emerge within the data.  
+```{r figure 5,echo=FALSE, message=FALSE, warning=FALSE, summary=FALSE, results='hide'}
+
+pftfac <- length(levels(trees$pft))
+pftcols <- wes_palette('Zissou', pftfac, type = 'continuous')
+
+pftcols2 <- alpha(pftcols, .25)
+
+plot(log10(m.to)~log10(map), data=trees, ylab="Branch Mass (kg)", xlab="Mean Annual Precipitation (mm)", 
+     axes=FALSE, pch=16,col=pftcols2[pft])
+
+
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("topleft", legend=levels(trees$pft), pch=16, col=pftcols, bty='n',inset=0.02)
+
+library("plotrix", lib.loc="/Library/Frameworks/R.framework/Versions/3.4/Resources/library") 
+model2 <- lm(log10(m.to)~log10(map), data=trees)
+abline(model2)
+```
+Figure 5. Branch mass (kg) by mean annual precipitation(mm).Colors represent plant functional type as follows: DA = deciduous angiosperm; DG = deciduous gymnosperm; EA = evergreen angiosperm; EG = evergreen gymnosperm.
+\
+\
+Branch mass by mean annual precipitation (MAP) appears to have very little correlation (R-squared=0.0319). This suggests that branch mass is unaffectd by ammount of precipitation. Additionally, when considering plant functional type there no clear association can be made.

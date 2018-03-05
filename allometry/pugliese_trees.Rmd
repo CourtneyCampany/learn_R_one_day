@@ -1,0 +1,158 @@
+---
+title: "Mass Fractions and Size/Height Analyses of Deciduous and Evergreen Angiosperms and Gymnosperms"
+author: "Marie Pugliese"
+date: "February 27, 2018"
+output:
+ word_document:
+   reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r, echo=FALSE}
+trees <- read.csv("tree_allometry.csv")
+trees2 <- trees[,c("m.to", "m.lf", "m.st", "m.rt", "pft", "vegetation")]
+trees3 <- trees2[complete.cases(trees2$m.rt) & 
+                   complete.cases(trees2$m.lf) & 
+                   complete.cases(trees2$m.st), ]
+trees4 <- trees[,c("m.lf", "h.t", "pft")]
+trees5 <- trees4[complete.cases(trees4$m.lf) &
+                   complete.cases(trees4$h.t), ]
+trees6 <- trees[,c("d.ba", "h.c", "pft")]
+trees7 <- trees6[complete.cases(trees6$d.ba) &
+                   complete.cases(trees6$h.c), ]
+
+library(magicaxis)
+library(scales)
+library(plotrix)
+
+pftcols <- c("darkred", "goldenrod3", "forestgreen", "dodgerblue4")
+pftcols2 <- alpha(pftcols, .25)
+pftlab <- c("Dec Ang", "Dec Gym", "Eve Ang", "Eve Gym")
+```
+
+
+#Mass Fractions
+
+There has been much debate surrounding plant biomass allocation. Specifically, whether it is static, following a "God Equation", or dynamic, changing in more nuanced ways as plants grow and survive. Plotting and comparing relationships between biomass of various parts of the plant against the total biomass allows one to explore the mechanisms behind plant biomass allocation. Mass factors were used in order to account for ontogeny. It is already known that as plants grow (with age), they total a larger biomass. Plotting the mass factor (part mass / total mass) against the total mass thus takes into account the size of the plant, as the biomass cancels out.
+
+Overall, it was found that as plants increase in biomass, the allocation to various parts of plant changes. Specifically, as total biomass increases, an increase in stem mass fraction (SMF) occurs, while a decrease in leaf mass fraction (LMF) and root mass fraction (RMF) occurs (Figures 1-3). Considering the mean mass factor and observing the data position relative to the mean at varying biomass levels allows one to obtain a sense of how the biomass allocation changes overtime. The LMF is generally more above the mean in plants with a smaller biomass and generally more below the mean in plants with a larger biomass (Figure 1). This suggests that as plants grow, there is comparatively fewer biomass allocation to the leaves. The same trend is apparent regarding RMF (Figure 3), also suggesting that as more growth occurs there is comparatively fewer biomass allocation to the roots. However, STM is generally more below the mean in plants with a smaller biomass and generally more above the mean in plants with a larger biomass (Figure 2). Overall, the data suggests that as plants accumulate more biomass, a comparatively greater allocation exists to the stem. This makes sense given our current knowledge of tree structure and function. Tree leaves and roots die, but the stem (or trunk) remains for the entirety of its life. In other words, though trees invest in biomass for all three of these parts, the allotment for leaves and the roots is eventually lost and replaced, but the allotment for the stem stays and builds up. Overtime, (as the tree accumulates more biomass) the SMF increases. Since these are parts of a whole, the LMF and RMF must decrease.
+
+In addition, the relationship may be observed among different plant functional types: deciduous angiosperms, deciduous gymnosperms, evergreen angiosperms, and evergreen gymnosperms. Sub-setting the data may provide a more nuanced outlook. For example, evergreen angiosperms are shown to have the highest mean LMF, and deciduous gymnosperms the lowest (Figure 1). However this is flipped for STM (Figure 2). Perhaps these differences in mean mass factor and thus biomass allocation are related to the plant functional type - the way in which these types of plants exhibit their body plans and life strategies may be reflected in biomass allocation patterns.
+
+
+
+```{r, echo=FALSE}
+leaf_DA <- trees3[trees3$pft == 'DA', c("m.to", "m.lf", "pft")]
+leaf_DG <- trees3[trees3$pft == 'DG', c("m.to", "m.lf", "pft")]
+leaf_EA <- trees3[trees3$pft == 'EA', c("m.to", "m.lf", "pft")]
+leaf_EG <- trees3[trees3$pft == 'EG', c("m.to", "m.lf", "pft")]
+
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+plot((m.lf/m.to) ~ log10(m.to), data=trees3, xlab="Total Mass (kg)",
+     ylab="Leaf Mass Fraction (%)", 
+     ylim=c(0.0, 1.0), xaxt='n', pch=16, col=pftcols2[pft])
+magaxis(side=c(1), unlog=c(1), frame.plot=TRUE)
+abline(h=mean(leaf_DA$m.lf/leaf_DA$m.to), lty=2, lwd=1.5, col="darkred")
+abline(h=mean(leaf_DG$m.lf/leaf_DG$m.to), lty=2, lwd=1.5, col="goldenrod3")
+abline(h=mean(leaf_EA$m.lf/leaf_EA$m.to), lty=2, lwd=1.5, col="forestgreen")
+abline(h=mean(leaf_EG$m.lf/leaf_EG$m.to), lty=2, lwd=1.5, col="dodgerblue4")
+legend("topright", legend=pftlab, pch=16, col=pftcols,
+       bty='n', inset=0.02, cex=.8)
+```
+**Figure 1.** Leaf mass fraction (LMF) as a function of total mass. Generally, at smaller masses, the LMF exists above the mean, while at larger masses, the LMF exists below the mean. LMF was calculated by dividing the leaf mass by the total mass. Red, yellow, green, and blue points represent data for deciduous angiosperms (n=2856), deciduous gymnosperms (n=5), evergreen angiosperms (n=5229), and evergreen gymnosperms (n=551), respectively. Dashed lines represent the mean LMF across the respective plant functional type.
+
+
+
+```{r, echo=FALSE}
+stem_DA <- trees3[trees3$pft == 'DA', c("m.to", "m.st", "pft")]
+stem_DG <- trees3[trees3$pft == 'DG', c("m.to", "m.st", "pft")]
+stem_EA <- trees3[trees3$pft == 'EA', c("m.to", "m.st", "pft")]
+stem_EG <- trees3[trees3$pft == 'EG', c("m.to", "m.st", "pft")]
+
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+plot((m.st/m.to) ~ log10(m.to), data=trees3, xlab="Total Mass (kg)",
+     ylab="Stem Mass Fraction (%)",
+     ylim=c(0.0, 1.0), xaxt='n', pch=16, col=pftcols2[pft])
+magaxis(side=c(1), unlog=c(1), frame.plot=TRUE)
+abline(h=mean(stem_DA$m.st/stem_DA$m.to), lty=2, lwd=1.5, col="darkred")
+abline(h=mean(stem_DG$m.st/stem_DG$m.to), lty=2, lwd=1.5, col="goldenrod3")
+abline(h=mean(stem_EA$m.st/stem_EA$m.to), lty=2, lwd=1.5, col="forestgreen")
+abline(h=mean(stem_EG$m.st/stem_EG$m.to), lty=2, lwd=1.5, col="dodgerblue4")
+legend("bottomright", legend=pftlab, pch=16, col=pftcols,
+       bty='n', inset=0.02, cex=.8)
+```
+**Figure 2.** Stem mass fraction (SMF) as a function of total mass. Generally, at smaller masses, the SMF exists below the mean, while at larger masses, the SMF exists above the mean. SMF was calculated by dividing the stem mass by the total mass. Red, yellow, green, and blue points represent data for deciduous angiosperms (n=2856), deciduous gymnosperms (n=5), evergreen angiosperms (n=5229), and evergreen gymnosperms (n=551), respectively. Dashed lines represent the mean SMF across the respective plant functional type.
+
+
+
+```{r, echo=FALSE}
+root_DA <- trees3[trees3$pft == 'DA', c("m.to", "m.rt", "pft")]
+root_DG <- trees3[trees3$pft == 'DG', c("m.to", "m.rt", "pft")]
+root_EA <- trees3[trees3$pft == 'EA', c("m.to", "m.rt", "pft")]
+root_EG <- trees3[trees3$pft == 'EG', c("m.to", "m.rt", "pft")]
+
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+plot((m.rt/m.to) ~ log10(m.to), data=trees3, xlab="Total Mass (kg)",
+     ylab="Root Mass Fraction (%)", 
+     ylim=c(0.0, 1.0), xaxt='n', pch=16, col=pftcols2[pft])
+magaxis(side=c(1), unlog=c(1), frame.plot=TRUE)
+abline(h=mean(root_DA$m.rt/root_DA$m.to), lty=2, lwd=1.5, col="darkred")
+abline(h=mean(root_DG$m.rt/root_DG$m.to), lty=2, lwd=1.5, col="goldenrod3")
+abline(h=mean(root_EA$m.rt/root_EA$m.to), lty=2, lwd=1.5, col="forestgreen")
+abline(h=mean(root_EG$m.rt/root_EG$m.to), lty=2, lwd=1.5, col="dodgerblue4")
+legend("topright", legend=pftlab, pch=16, col=pftcols,
+       bty='n', inset=0.02, cex=.8)
+```
+**Figure 3.** Root mass fraction (RMF) as a function of total mass. Generally, at smaller masses, the RMF exists above the mean, while at larger masses, the RMF exists below the mean. RMF was calculated by dividing the root mass by the total mass. Red, yellow, green, and blue points represent data for deciduous angiosperms (n=2856), deciduous gymnosperms (n=5), evergreen angiosperms (n=5229), and evergreen gymnosperms (n=551), respectively. Dashed lines represent the mean RMF across the respective plant functional type.
+
+
+
+#Size / Height Analyses
+
+##Height and Leaf Mass
+
+A direct, positive correlation is shown to exist between total height and leaf mass of various plants (Figure 4), giving way to multiple interpretations First, as plants grow, they get taller and bigger. As a result, they are able to invest in more leaves. They physically have the space and support, as well as the access to a greater amount of resources (via more roots, larger reserves, etc.). There may be more to the story than just plants growing larger as the correlation may be related to photosynthesis. Like all living beings, trees need energy. Since plants obtain their energy from photosynthesis, and ultimately light, the correlation may demonstrate adaptive strategies plants have evolved to have access to more light. They may grow taller so as to have increased access to direct sunlight - or at the very least, reduced shading from neighbors. Plants may also increase the number or size of leaves to allow for more photosynthesis to occur.
+
+```{r, echo=FALSE}
+figure4_model <- lm(log10(m.lf) ~ log10(h.t), data=trees5)
+
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+plot(log10(m.lf) ~ log10(h.t), data=trees5, xlab="Total Height (m)", ylab="Leaf Mass (kg)",
+     axes=FALSE, pch=16,col=pftcols2[pft])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomright", legend=pftlab, pch=16, col=pftcols,
+       bty='n', inset=0.02, cex=.8)
+ablineclip(figure4_model, x1=min(log10(trees5$h.t), x2=max(log10(trees5$h.t))),
+           lty=2, lwd=1.5, col="black")
+text(x=log10(.01), y=log10(100), "r^2 = 0.8978", cex=.8)
+
+```
+**Figure 4.** Leaf mass as a function of total height (ground to highest leaf). A direct, positive correlation between the variables exists (r^2=0.8978). Red, yellow, green, and blue points represent data for deciduous angiosperms (n=4373), deciduous gymnosperms (n=103), evergreen angiosperms (n=8604), and evergreen gymnosperms (n=2995), respectively. The black, dashed regression line represents all plant functional types.
+
+
+
+##Crown Base Height and Stem Size
+
+A direct, positive correlation is shown to exist between height to crown base and diameter of stem at base (Figure 5). However, it is more nuanced than that. The correlation is only more apparent in plants with a height to crown base of ~ 0.03m or taller. Not much correlation exists in plants shorter than that. The lack of correlation in these smaller plants explains the low r^2 value of 0.6747 observed (Figure 5). Overall, this trend highlights the mechanisms of tree support. As plants grow larger and taller, they need more support. Having a wider base is one way to sustain this growth. Of course, this isn't really an issue for very small plants who do not need this extra support.
+
+```{r, echo=FALSE}
+figure5_model <- lm(log10(d.ba) ~ log10(h.c), data=trees7[trees7$h.c>0, ])
+
+par(mar=c(4,4,1,1), cex.axis=0.75, cex.lab=1, mgp=c(2,1,0))
+plot(log10(d.ba) ~ log10(h.c), data=trees7, xlab="Height to Crown Base (m)", 
+     ylab="Diameter of Stem at Base (m)",
+     axes=FALSE, pch=16, col=pftcols2[pft])
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomright", legend=pftlab, pch=16, col=pftcols,
+       bty='n', inset=0.02, cex=.8)
+ablineclip(figure5_model, x1=min(log10(trees7$d.ba), x2=max(log10(trees7$d.ba))),
+           lty=2, lwd=1.5, col="black")
+text(x=log10(.001), y=log10(1), "r^2 = 0.6747", cex=.8)
+```
+**Figure 5.**
+Stem size (diameter at base) as a function of crown base height (ground to crown base). Overall, a direct, positive correlation between the variables exists (r^2=0.6747). However, little correlation exists among trees with a smaller height to crown base, while the correlation becomes much stronger in those with a larger height to crown base. Red, yellow, green, and blue points represent data for deciduous angiosperms (n=1263), deciduous gymnosperms (n=0), evergreen angiosperms (n=2748), and evergreen gymnosperms (n=794), respectively. The black, dashed regression line represents all plant functional types.
+
+
