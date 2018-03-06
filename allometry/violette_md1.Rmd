@@ -1,0 +1,108 @@
+---
+title: "Trees"
+author: "Alicia Violette"
+date: "February 26, 2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+## Realtionship Between Stem and Root Mass
+Figure 1 show the relationship between total stem mass and total root mass in this data set. The relationship that is depicted here appears to show a positive correlation between the two, meaning that as the total stem mass of a tree increases, the total root mass will as well (Figure 1). The tree functional types that are represented here are mainly deciduous angiosperms and evergreen gymnosperms (Figure 1). In the Poorter 2015 paper that we read, the authors show this correlation between these two variables as well as between leaf mass and root mass and stem mass and root mass.
+
+```{r stem and root, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=6}
+
+trees <- read.csv("tree_allometry.csv")
+
+library(magicaxis)
+library(scales)
+library(wesanderson)
+
+mycols <- c("cornflowerblue", "pink", "gold", "palegreen1", "violet", "tan1", "blue")
+mycols2 <- alpha(mycols, .4)
+
+trees2 <- trees[complete.cases(trees$m.rt) &
+                  complete.cases(trees$m.lf) &
+                  complete.cases(trees$m.st), ]
+
+trees2$smf <- trees2$m.st/trees2$m.to
+trees2$lmf <- trees2$m.lf/trees2$m.to
+trees2$rmf <- trees2$m.rt/trees2$m.to
+trees2$lma <- trees2$m.lf/trees2$a.lf
+
+trees2$vegetation <- as.factor(trees2$vegetation)
+trees2$status <- as.factor(trees2$status)
+trees2$pft <- as.factor(trees2$pft)
+
+model <- lm(trees$m.rt ~ trees$m.st)
+
+par(mar = c(5, 5, 1, 1))
+
+with(trees2, plot(m.st, m.rt, cex = 0.7, xlab = "Total Stem Mass (kg)", 
+                  ylab = "Total Root Mass (kg)", col = mycols[pft]))
+ablineclip(model, x1 = min(trees2$m.st), x2 = max(trees2$m.st), lty=2)
+legend("bottomright", legend=c("Deciduous Angiosperm", "Deciduous Gymnosperm",
+                               "Evergreen Angiosperm", "Evergreen Gymnosperm"),
+       pch=16, col=mycols, bty='n', inset=0.02, cex = .85)
+
+```
+**Figure 1.** The relationship of total stem mass versus total root mass. The different colors represent the tree functional type. The regression line indicates the line of best fit between these variables.
+
+
+
+##Variations in Stem Mass Fraction, Leaf Mass Fraction, Root Mass Fraction
+Figures 2a-c show the relationships between stem mass fraction, leaf mass fraction, root mass fraction and total mass of the trees in this data set. The different colors shown here depict the different tree functional types that are represented in this data (Figures 2a-c). Figure 2a shows how stem mass fraction relates to total mass with the line throuh the datanshowing the mean stem mass fraction for this data, which is 0.33348. Based on this line we can see that when trees have lower total masses their stem mass fractions tend to fall below the mean, but for trees with greater total masses, their stem mass fractions tend to increase to the point that they fall above the mean (Figure 2a). This means that larger trees tend to have higher stem mass fractions, or stems tend to make up a larger portion of their mass. Figure 2b shows the relationship between leaf mass fraction and total mass with the line on the graph depicting the mean at 0.3497754. This shows that when the total mass of the tree is smaller the leaf mass fraction is often larger than the mean, but when the total mass of the tree is larger the leaf mass fraction tends to be smaller than the mean(Figure 2a). This means that leaves generally make up a smaller portion of the mass in larger trees. The last portion of the tree that we must consider is that of root mass fraction in relation to total mass, which is depicted in Figure 2c. The line depicted here shows the mean root mass fraction for this data which is 0.3159699 (Figure 2c). With this data we can see that the mean root mass fraction hovers around the mean in smaller trees, but for larger trees, their root mass fraction generally dips below the mean (Figure 2c). This means that often larger trees have lower root masses compared to their total mass than do smaller trees (Figure 2c). This data is similar to what Poorter and colleagues found in their 2015 paper. 
+
+```{r all, echo=FALSE, message=FALSE, warning=FALSE, fig.height=2.25, fig.width=6}
+
+par(mar = c(1.5, 5, 1, 1))
+
+with(trees2, plot(log(m.to), log(smf), cex = 0.7, xlab = "Total Mass (kg)", 
+                 ylab = "Stem Mass Fraction", col = mycols2[pft], axes = FALSE))
+magaxis(side=c(1, 2), unlog=c(1, 2), frame.plot=TRUE)
+legend("bottomright", legend=c("Deciduous Angiosperm", "Deciduous Gymnosperm",
+                               "Evergreen Angiosperm", "Evergreen Gymnosperm"),
+       pch=16, col=mycols2, bty='n', inset=0.02, cex = .85)
+abline(h = log(mean(trees2$smf)))
+legend("bottomleft", legend="a", bty = 'n', inset = 0.01)
+
+with(trees2, plot(log(m.to), log(lmf), cex = 0.7, xlab = "Total Mass (kg)", 
+                  ylab = "Leaf Mass Fraction", col = mycols2[pft], axes = FALSE))
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+abline(h = log(mean(trees2$lmf)))
+legend("bottomleft", legend="b", bty = 'n', inset = 0.01)
+```
+```{r rmf, echo=FALSE, message=FALSE, warning=FALSE, fig.height=2.75, fig.width=6}
+par(mar = c(5, 5, 1, 1))
+with(trees2, plot(log(m.to), log(rmf), cex = 0.7, xlab = "Total Mass (kg)", 
+                  ylab = "Root Mass Fraction", col = mycols2[pft], axes = FALSE))
+ magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+abline(h = log(mean(trees2$rmf)))
+legend("bottomleft", legend="c", bty = 'n', inset = 0.01)
+
+```
+**Figure 2.** Relationship between stem mass fraction (a), leaf mass fraction (b), and root mass fraction (c), and total mass of trees. The colors represent the different tree functional types. The solid lines represent the mean value of the stem mass fraction (a), leaf mass fraction (b), and root mass fraction (c).
+
+##Relationship Between Leaf Mass and Leaf Nitrogen Content
+Figure 3 shows the relationship between leaf mass and leaf nitrogen content. Based on the distribution of this data, leaf nitrogen content appears to be fairly similar even as leaf mass increases. Originally I had thought that as the mass of the leaves increase there might be more nitrogen in the the leaves, as nitrogen is needed in order for photosynthesis to occur in trees. However, the leaf mass doesn't necessarily mean that the leaf is taking in more sunlight or that it is preforming photosynthesis at a higher rate, so there must be other things that can affect nitrogen levels in the leaves. The different colors in this figure show the different vegetation types that are present in this data. One thing that we can see from this is that woodland trees tend to have higher masses than most other vegetation types, tropical rain forest tend to fall in the middle, and temperate forests tend to fall on the lower side of leaf mass (Figure 3).
+
+```{r n.lf, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=6}
+
+mycols3 <- c("cornflowerblue", "orangered3", "gold", "palegreen1", "violet", "yellowgreen", "blue", "darkorange", "gray")
+mycols4 <- alpha(mycols3, .4)
+
+par(mar = c(5, 5, 1, 1))
+
+with(trees, plot(log(m.lf), log(n.lf), cex = 0.7, xlab = "Leaf Mass (kg)",
+                  ylab = "Leaf Nitrogen Content (kg/kg)", col = mycols4[vegetation], axes = FALSE))
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+legend("bottomleft", legend = levels(trees$vegetation), pch=16, col=mycols4, 
+       bty='n',inset=0.02, cex = 0.9)
+
+```
+**Figure 3.** The relationship between leaf mass and leaf nitrogen content. The different colors represent different vegetation types.
