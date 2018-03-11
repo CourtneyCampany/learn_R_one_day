@@ -1,0 +1,115 @@
+---
+title: "Mystery Data 2"
+author: "Max Israelit"
+date: "3/5/2018"
+output: 
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r pre, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(magicaxis)
+library(scales)
+library(wesanderson)
+library(plotrix)
+library(RColorBrewer)
+library(rworldmap)
+library(sp)
+library(maps)
+
+leaf <- read.csv("leafarea_global.csv")
+leaf2 <- leaf[complete.cases(leaf$Leaf.size_cm2),]
+leaf3 <- leaf2[leaf2$Decid_or_Ever=="D" | leaf2$Decid_or_Ever=="E",]
+leaf3 <- droplevels(leaf3)
+
+maincol <- alpha("olivedrab4", 0.15)
+MATylab <- expression(Log~Leaf~Size~(cm^2))
+```
+
+##Global Drivers of Leaf Size  
+  
+I first narrowed down the mystery data set to only include entries with complete information for Leaf size (cm^2^). Leaf size is a major driver of leaf processes and is likely influenced heavily by environmental variables. Here, I will explore how climactic and environmental factors can lead to changes in leaf size. The data set of leaf size includes both compound and simple leaves across all growth forms. For compound leaves, it is equal to the total leaflet area.  
+  
+  
+##Global Distribution of Leaf Size  
+  
+In order to visualize the full data set of leaf size, I mapped it on a global scale (Figure 1).  
+
+```{r globe, echo=FALSE, message=FALSE, warning=FALSE}
+par(mai=c(0,0,0,0))
+map("world", xlim=range(leaf$Longitude), ylim=range(leaf$Latitude))
+points(leaf$Longitude, leaf$Latitude, pch=19, col=alpha("palegreen4", 0.25), cex=sqrt(leaf$Leaf.size_cm2/300))
+```
+**Figure 1.** Global distribution of leaf sizes for individual plants. The radius of the circle is proportional to leaf size. Compound leaf sizes are representative of total leaflet area.  
+  
+A general trend of larger leaf areas close to the equator is apparent, with the largest leaf areas occurring in Central and South America. Somewhat large leaf areas are also present in the rain forests of Sub-Saharan Africa, as well as Indonesia and surrounding islands. In general, leaf areas further from the equator are smaller. However, this data set is somewhat limited by a small sample size, so that not all countries are represented. With a larger sample size, we may see more nuanced trends. Given that equatorial areas tend to have larger leaves, we can hypothesize several environmental factors that may be influencing size.  
+  
+##Solar Irradiance  
+  
+The amount of solar radiation received by plants may drive leaf sizes. If solar radiation in an area is high, having larger leaves may allow plants to be more productive. In areas with low solar radiation, plants may have to invest a prohibitive amount of resources into increasing leaf area before benefits to productivity manifest. Thus, it is possible that areas with higher solar radiation tend to have larger leaves.  
+
+```{r rad, echo=FALSE, message=FALSE, warning=FALSE}
+RADlabann <- expression(Average~Daily~Irradiance~Annually~(W/m^2))
+RADlabgs <- expression(Average~Daily~Irradance~During~Growing~Season~(W/m^2))
+par(mar=c(4,4,1,1), mgp=c(2.5, 1, 0), mfrow=c(2,1))
+plot(log10(Leaf.size_cm2) ~ RADann, data=leaf2, pch=20, col=maincol, ylab=MATylab, 
+     xlab=RADlabann,cex.lab=0.75, cex.axis=0.75,
+     xlim=c(0, 300), ylim=c(-2.5, 3.5))
+plot(log10(Leaf.size_cm2) ~ RADgs, data=leaf2, pch=20, col=maincol, ylab=MATylab, 
+     xlab=RADlabgs, cex.lab=0.75, cex.axis=0.75,
+     xlim=c(0, 300), ylim=c(-2.5, 3.5))
+```
+**Figure 2.** The effect of daily irradiance on leaf size. Daily irradiance here is calculated as an average across a full year (annually), or within a single growing season. Leaf size is transformed by Log~10~.  
+  
+There was no meaningful relationship between daily irradiance and leaf size using either irradiance calculation method (Figure 2). This indicates that leaf size is not necessarily driven by photosynthetic need, but likely is derived from more nuanced factors. This is especially underscored by the lack of a notable difference between average daily irradiance as calculated from an annual mean or from a single growing season, as were photosynthesis an important process to leaf size we would expect to see a stronger relationship in means derived from growing season than annually. However, given that photosynthesis is not a direct influence on leaf size, it is likely that productivity needs are modulated by environmental conditions.  
+  
+##Precipitation and Leaf Size  
+  
+Photosynthesis occurs in the leaves and involves a transformation of carbon dioxide and water into oxygen and sugars. For carbon dioxide uptake to occur and in order to transport water to the leaf, transpiration and diffusion must occur through stomatal opening. If a plant exists in a moisture-limited environment, it may need to decrease leaf size in order to maintain sustainable water use. We can hypothesize that larger leaves could lead to greater moisture loss, either through transpiration or evaporation. Thus, plants in areas receiving less precipitation would have smaller leaves than those in wetter climates.   
+
+
+```{r map, echo=FALSE, message=FALSE, warning=FALSE}
+par(mar=c(4,4,1,1), mgp=c(2.5, 1, 0))
+MAPlm <- lm(log10(Leaf.size_cm2) ~ log10(MAP), data=leaf2)
+plot(log10(Leaf.size_cm2) ~ log10(MAP), data=leaf2, pch=20, col=maincol, ylab=MATylab, xlab="Log Mean Annual Precipitation (mm)",
+     xlim=c(1.5,4.5), ylim=c(-2.5,3.5), cex.lab=0.75, cex.axis=0.75)
+ablineclip(MAPlm, x1=min(log10(leaf2$MAP)), x2=max(log10(leaf2$MAP)), lwd=2)
+text(4.25, 2, paste("R^2", round(summary(MAPlm)$r.squared, 2), sep="="))
+```
+**Figure 3.** The effects of mean annual precipitation on leaf size. Both variables are transformed by Log~10~.  
+  
+Our hypothesis is somewhat supported by Figure 3. There is something of a positive relationship between leaf size and mean annual precipitation. This indicates that water availability and subsequent stress does correlate with leaf size. The logarithmic scale also means that leaf sizes are more sensitive to increases in precipitation at lower mean annual precipitation levels, which supports the notion that leaf sizes of plants in areas of extreme water limitation are limited by precipitation and further supporting our hypothesis. However, mean annual precipitation only accounts for 23 percent of the variation in leaf size. Thus, it is likely that other environmental factors are important to leaf size.  
+  
+##Temperature and Leaf Size  
+  
+Another factor influencing water stress is temperature. Warmer areas may place greater evaporative demands on leaves, as they would need to transpire more water to maintain a cool temperature and every stomatal opening may lead to greater transpiration.  
+
+
+```{r mat, echo=FALSE, message=FALSE, warning=FALSE}
+par(mar=c(4,4,1,1), mgp=c(2.5, 1, 0))
+leafMAT <- leaf2[complete.cases(leaf2$MAT),]
+MATlm <- lm(log10(Leaf.size_cm2) ~ MAT, data=leafMAT)
+plot(log10(Leaf.size_cm2) ~ MAT, data=leafMAT, pch=20, col=maincol, ylab=MATylab, xlab="Mean Annual Temperature (Celsius)",
+     xlim=c(-25, 35), ylim=c(-2.5, 3.5), cex.lab=0.75, cex.axis=0.75)
+ablineclip(MATlm, x1=min(leafMAT$MAT), x2=max(leafMAT$MAT), lwd=2)
+text(-17, 1, paste("R^2", round(summary(MATlm)$r.squared, 2), sep="="))
+```
+**Figure 4.** The effects of mean annual temperature on leaf size. Leaf size is transformed by Log~10~.  
+  
+There is a generally positive relationship between mean annual temperature and leaf size (Figure 4). One explanation for this trend is that leaves need to transpire more water in order to cool themselves in warmer areas, thus leading to an increase in leaf size to facilitate potential for evapotranspiration. If larger leaves became warmer than smaller leaves in warmer temperatures, then we may have expected a negative trend, but the results presented here make that mechanism unlikely. Another possibility is that warmer air tends to be wetter, which makes evapotranspiration more difficult because vapor pressure deficit is smaller. In order to maintain similar transpiration rates, leaves would need to be larger and have more stomata. A final possibility is that trees in warmer areas have higher metabolisms than those in colder areas due to differences in temperature, thereby requiring a larger leaf size to accommodate additional productivity needs. Regardless of the exact causal mechanism, the relationship between leaf size and mean annual temperature is still fairly weak, indicating that other drivers are present.  
+  
+##Growth Form and Leaf Area  
+  
+Another possibility not discussed so far is that of growth form. While environmental factors may inform some variation in leaf size, it is possible that leaf size is primarily determined by ecological niche or phylogenetics.  
+  
+```{r gf, echo=FALSE, message=FALSE, warning=FALSE}
+boxplot(log10(Leaf.size_cm2) ~ Growth_form, data=leaf2, ylab=MATylab, xlab="Growth Form", col=maincol, cex.lab=0.75, cex.axis=0.65, las=3)
+```
+**Figure 5.** The effect of growth form on leaf size. Leaf size is transformed by Log~10~. Growth forms are coded as follows: Epi=Epiphyte, Grass=Graminoid, Herb=Herbaceous dicots, HmEpi=hemi-epiphyte, Liana=Woody climbers, Vine=Herbaceous climbers.  
+  
+Though I didn't incorporate a statistical analysis, there are visible differences in leaf size due to growth form. Generally, palms, liana, and hemi-epiphytes tend to consistently have higher leaf sizes than other forms with larger variations. Thus, it is very likely that growth form at least partially drives leaf size. In reality, it's likely that a combination of all of these factors combine to determine leaf size. A multivariate regression would be needed in order to determine the relative significance of all effects.

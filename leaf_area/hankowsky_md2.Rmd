@@ -1,0 +1,105 @@
+---
+title: "Leaf Area Analysis"
+author: "Keith Hankowsky"
+date: "February 27th, 2018"
+output: 
+  word_document:
+   reference_docx: manuscriptstyle.docx
+
+---
+
+```{r setup, include=FALSE, fig.width=6}
+library(maps)
+library(RColorBrewer)
+library(classInt)
+library(scales)
+library(magicaxis)
+```
+
+##Map of Leaf Area 
+
+```{r Map of Leaf Area, echo=FALSE, fig.width=6}
+leaves <- read.csv("leafarea_global.csv")
+leaves1 <- droplevels(leaves[complete.cases(leaves$Leaf.size_cm2), ])
+
+mapcolors <- brewer.pal(6, "Greens")
+brks<-classIntervals(leaves1$Leaf.size_cm2, style="fixed",
+                     fixedBreaks=c(0, 500, 1000, 1500, 2000, 2600))
+bins<- brks$brks
+leaves1$ls_bins <- cut(leaves1$Leaf.size_cm2, breaks = bins)
+LAlab=expression(Leaf~Area~~(cm^2))
+
+map()
+points(leaves1$Longitude, leaves1$Latitude, cex=sqrt(leaves1$Leaf.size_cm2/500), 
+       pch=21, bg=mapcolors[leaves1$ls_bins])
+legend(x=-180, y=10, pch=21, pt.bg=mapcolors, legend=bins, title="Leaf Size Levels",
+       cex=0.8, bg="white")
+```
+
+**Figure 1.** Global Map of leaf size (cm^2^). Point size and color correlate with leaf size. 
+
+
+
+##Leaf Size Dynamics
+
+```{r irradiance, echo=FALSE, fig.width=7}
+leaves1$logls <- log10(leaves1$Leaf.size_cm2)
+RADlab=expression(Daily~Irradiance~During~Growing~Season~~(W~cm^-2))
+GFnames <- c("Epiphyte", "Fern", "Grass", "Herb", "Liana", "Palm", "Shrub", 
+             "Succulent", "Tree", "Vine")
+GFcols <- brewer.pal(11, "Set3")
+GFcolsR <- alpha(GFcols, 0.5)
+
+modelRAD <- lm(logls ~ RADgs, data=leaves1)
+
+par(mar=c(4,7,2,7))
+plot(logls ~ RADgs, data=leaves1, axes=FALSE,ylab=LAlab, xlab=RADlab, 
+     pch=21, col=GFcolsR[Growth_form], bg=GFcolsR[Growth_form])
+magaxis(side=2, unlog=2, frame.plot=TRUE)
+axis(1)
+legend(x=275, y=0.95,legend=GFnames, pch=21, col=GFcolsR, pt.bg=GFcolsR, cex=0.7, 
+       xpd = TRUE)
+```
+
+**Figure 2.** Correlation between daily irradiance during the growing season (W cm^-2^) and leaf area (cm^2^). Point colors corresponds to plant growth form.  
+
+
+```{r temperature, echo=FALSE, fig.width=7}
+par(mar=c(4,7,2,7))
+plot(logls ~ Tgs, data=leaves1, pch=21, axes=FALSE, ylab=LAlab, 
+     xlab=expression(paste("Mean Annual Temperature (",degree,"C)")), col=GFcolsR[Growth_form], bg=GFcolsR[Growth_form])
+magaxis(side=2, unlog=2, frame.plot=TRUE)
+axis(1)
+legend(x=31, y=0.95, legend=GFnames, pch=21, col=GFcolsR, pt.bg=GFcolsR, cex=0.7, 
+       xpd = TRUE)
+```
+
+**Figure 3.** Correlation between mean annual temperature (&deg;C) and leaf area (cm^2^). Point colors corresponds to plant growth form.
+
+
+```{r MAP, echo=FALSE, fig.width=7}
+par(mar=c(4,7,2,7))
+plot(logls ~ MAP, data=leaves1, pch=21, axes=FALSE, ylab=LAlab, 
+     xlab="Mean Annual Precipitation (mm)", 
+     col=GFcolsR[Growth_form], bg=GFcolsR[Growth_form])
+magaxis(side=2, unlog=2, frame.plot=TRUE)
+axis(1)
+legend(x=7000, y=0.95, legend=GFnames, pch=21, col=GFcolsR, pt.bg=GFcolsR, cex=0.7, 
+       xpd=TRUE)
+```
+
+**Figure 4.** Correlation between mean annual precipitation (mm) and leaf area (cm^2^). Point colors corresponds to plant growth form.
+
+
+
+##Discussion 
+  13,461 observations spanning 7,865 species were analyzed to compare differences in leaf area across the globe. Leaf area increased significantly as all three variables increased. 
+  Leaf size seems to be greater near the equator (Fig. 1). This phenomenon could be due to the fact that those areas receive more sunlight and the plants are trying to maximize their photosynthetic capacity by creating larger areas to capture solar radiation and photosynthesize. Additionally, hot and arid regions seems to have plants with smaller leaf size (Fig 1). This pattern could be explained by the plants need to conserve water in these environments and smaller leaves have less surface area for water loss due to evapotranspiration. 
+  Leaf area increased significantly (*p* < 0.001) with daily irradiance during growing season (Fig 2). However, the daily irradiance during growing season explained only one percent of variation in leaf size (*R^2^* = 0.013). As daily irradiance increases during the growing season, plants could allocate more resources to create a larger leaf area to increase photosynthetic capacity. 
+  Leaf area increased significantly (*p* < 0.001) with mean annual temperature (Fig 3). Mean annual temperature during the growing season explained 21 percent of the variation within the data (*R^2^* = 0.21). As temperature rises leaf size could increase because the larger surface area allows for greater stomatal conductance letting the leaf cool via transpiration. 
+  Leaf area increased significantly (*p* < 0.001) with mean annual precipitation (Fig 4). Mean annual precipitation explained 14 percent of the variation (*R^2^* = 0.14). Leaf area increased until mean annual precipitation reached a threshold and then leaf area started to decrease. Leaf area can be considered as a index for photosynthetic capacity. This pattern is consistent with Schuur (2001) findings that there is a decline in aboveground net primary productivity (ANPP) beyond a threshold with increased mean annual precipitation. ANPP decreases once precipitation reaches a certain threshold because it restricted soil oxygen availability causing slower rates of decomposition, decreasing N availability, resulting in less plant growth.  
+  
+  
+
+##References:
+Schuur, E., Chadwick, O., Matson, P. (2001). CARBON CYCLING AND SOIL CARBON STORAGE IN MESIC TO WET HAWAIIAN MONTANE FORESTS. *Ecology* 82(11): 3182-3196. 

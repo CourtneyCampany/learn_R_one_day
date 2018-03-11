@@ -1,0 +1,75 @@
+---
+title: "Leaf Area"
+author: "Alexis Laskowski"
+date: "3/5/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+#Correlations Between Leaf Area, Leaf Type and Climate 
+
+##Analysis
+**Leaf Area in Relation to Climate Variables**
+
+As elevation increases leaf area decreases (Figure 2). As mean annual temperature (Figure 3) and mean annual  relative humidity increases (Figure 4), leaf area tends to increase as well. This makes sense as producing larger leaves requires a higher investment of energy and resources. In respect to relative humidity there is likely an advantage to higher amounts of moisture in the area, allowing leaves to maintain larger sizes. Higher levels of moisture likely helps to promote photosynthesis. Warmer temperatures seem to similarly allow plants to grow larger leaves (Figure 3). In warmer climates trees may drop their leaves less compared to trees in cooler climates, which may drop their leaves more regularly. Thus these plants can afford to input materials into the production of larger leaves in these climates. Temperature decreases as elevation increases. This explains the inverse relationship between leaf area and elevation (Figure 2). 
+
+Overall, this suggests that both moisture and temperature influence the potential for plants to maintain larger leaf sizes. The combination of both higher temperatures and higher amounts of moisture in the air likely promote higher photosynthesis rates and growth. Due to this, plants in drier, cooler climates likely tend to have a low investment in leaf area compared to plants in wetter, warmer climates. Based on Figure 2 lower elevations appear optimal for larger leaf sizes, and likely have a tendency to experience warmer, wetter climates. Plants in less favorable climates in relation to climate likely invest in other areas of the plant. For instance, there may be more investment in root growth in order to locate more water resources, making up for a lack of moisture in the environment.
+
+**Leaf Area in Relation to Leaf Type**
+
+Overall, regardless of elevation (Figure 2), mean annual temperature (Figure 3) or relative humidity (Figure 4), simple leaves tend to have larger leaf areas than compound leaves. This suggests that compound leaves are  limited in some way by their structure, preventing them from reaching particularly large sizes. It may also be an advantage for compound leaves to be smaller. This may be due to the manner in which compound leaves maximize photosynthetic rates in various environments. Although compound leaves have smaller leaf areas, the branching of leaves may allow them to spread out and reach spaces that larger leaves would be unable to if structured in the same way. This likely aids in light capture for photosynthesis. Overall, the lack of preference for either compound or simple leaves in different climates suggests that neither one is significantly more efficient in a certain environment. Over a range of elevation (Figure 2), temperature (Figure 3) and humidity (Figure 4) compound and simple leaves were both utilized. This shows that both leaf types are capable of effectively maximizing photosynthesis in a variety of climates.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+leaf_area <- read.csv("leafarea_global.csv")
+
+library(maps)
+library("scales")
+
+mycol <- c("seagreen3", "royalblue4")
+mycols2 <- alpha(mycol, .8)
+```
+
+##Figures
+
+```{r}
+map('world', xlim=range(leaf_area$Longitude), ylim=range(leaf_area$Latitude))
+points(leaf_area$Longitude, leaf_area$Latitude, pch=21, bg="palegreen3",
+  cex=sqrt(leaf_area$Leaf.size_cm2/1000))
+```
+
+**Figure 1.** Map showing the distribution of leaf samples. The size of the points correlates with the leaf area (cm^2^) of the leaves sampled. The placement of the points show the longitude and latitude of each sample's location.
+
+```{r}
+label1 <- expression(Leaf~Size~~(cm^2))
+
+par(mar=c(5,5,1,1))
+plot(Leaf.size_cm2 ~ Elevation..m., data=leaf_area,
+     pch=18, ylab = label1, xlab = "Elevation (m)", col= mycols2[Compound_Simple])
+legend("topright", legend=c("Compound", "Simple"), pch=18, col=mycols2, bty='n',inset=0.05)
+```
+
+**Figure 2.** Leaf area (cm^2^) in relation to elevation (m). Leaf types, compound and simple, are distinguished.
+
+```{r}
+label2 <- expression(Mean~Annual~Temperature~~(~degree~C))
+
+par(mar=c(5,5,1,1))
+plot(Leaf.size_cm2 ~ MAT, data=leaf_area,
+     pch=18, ylab = label1, xlab = label2, col= mycols2[Compound_Simple])
+legend("topleft", legend=c("Compound", "Simple"), pch=18, col=mycols2, bty='n',inset=0.05)
+```
+
+**Figure 3.** Leaf area (cm^2^) in relation to mean annual temperature (°C). Leaf types, compound and simple, are distinguished.
+
+```{r}
+label3 <- expression(Average~Annual~Relative~Humidity~~('%'))
+
+par(mar=c(5,5,1,1))
+plot(Leaf.size_cm2 ~ RHann, data=leaf_area,
+     pch=18, ylab = label1, xlab = label3, col= mycols2[Compound_Simple])
+legend("topleft", legend=c("Compound", "Simple"), pch=18, col=mycols2, bty='n',inset=0.05)
+```
+
+**Figure 4.** Leaf area (cm^2^) in relation to annual average relative humidity (%). Leaf types, compound and simple, are distinguished.

@@ -1,0 +1,110 @@
+---
+title: "Leaf Area"
+author: "Alicia Violette"
+date: "3/5/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Map of Leaf Size and Mean Annual Precipitation
+Figure 1 shows where the data in this data set come from, which is all over the world. Based on the size of the points on this map of the world we can get an idea about the size of the leaves in these different locations relative to one another (Figure 1). We can see that many of the large dots, indicating larger leaves, can be found close to the equator in the tropics (Figure 1).The fact that leaves near the equator often grow larger than those that are further away makes sense when we think about how leaves that are in the tropics are most likely exposed to warmer temperatures and more sunlight, so they are more likely to have large sun leaves that allow the leaves to perform photosynthesis at a higher rate. However, there also appears to be more variation in these regions that are closer to the equator, as we can see from the fact that there are also many small points in this area, which represent smaller leaves (Figure 1). This increased amount of variation in the tropics could be due partially to the fact that the tropics have a high Leaf Area Index (LAI) meaning that projected leaf area per unit ground area is very high. High LAI might affect the amount of light that leaves are able to receive due to light extinction through the canopy, which can have an affect on the size of the leaves in these areas. Another trait that can affect leaf size is the variability in the species of plants that are present in different biomes around the world. In Figure 1 we can also see the mean annual precipitation (MAP) at these locations around the world, which can also have an effect on the sizes of the leaves that we find in these areas, with places that have more rain most likely having larger leaves due to increased rates of nutrient uptake, which would allow them to perform photosynthesis at higher levels.
+
+
+```{r maps, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=6}
+
+leaves <- read.csv("leafarea_global.csv")
+
+library(maps)
+
+library(RColorBrewer)
+colors <- brewer.pal(8, "Greens")
+
+library(classInt)
+brks<-classIntervals(leaves$MAP, n=8, style="pretty") 
+bins<- brks$brks
+
+leaves$MAP.bin <- cut(leaves$MAP, breaks = bins)
+
+par(mar = c(1, 7, 1, 7.3), xpd = TRUE)
+map('world', ylim=range(leaves$Latitude), xlim=range(leaves$Longitude))
+points(leaves$Longitude, leaves$Latitude, pch=21, 
+       cex=sqrt(leaves$Leaf.size_cm2/1000), bg = colors[leaves$MAP.bin] ) 
+legend("topleft", pch=21, pt.bg=colors, legend=bins, title="MAP", 
+       xpd=TRUE, inset=c(0, .7))
+
+```
+
+**Figure 1.** Map showing locations where the data in this data set come from. Size of the points show the relative leaf size (in cm^2^) at these locations and the colors represent the mean annual precipitation ranging between 0 and 7000 mm.
+     
+     
+     
+## Latitude and Leaf Size
+One of the things that we were able to observe in Figure 1 was how leaf size varies based on location. This relationship between leaf size and location can be examined further by looking at the relationship between latitude and leaf size that is depicted in Figure 2. We can see that some of the largest leaves are located from about 0 to 20 degrees, which are latitudes that would depict tropical regions, but we can also see that there is a lot of variation in this tropical region as well (Figure 2). The fact that some of the larger leaves are located in the tropics makes sense based on what we saw in Figure 1 as well as when considering the ideas about leaf size that are discussed above. Something that surprised me a little when looking at this data was the spike in leaf size that occurred around 60 degrees (Figure 2). With the colder temperatures and less direct sunlight that would most likely be experienced at this higher latitude, I would have expected leaves here to be smaller than in locations closer to the equator because of the seasonal variations that most likely happen at this higher latitude. Having larger leaves where temperatures are colder and there are more seasonal variations, does not seem like the best use of resources due to the fact that there is likely a shorter turnover time that is likely in these regions that have more seasonal variation. Based on this data we can also see that most of the evergreen plants that were used in this data were found below about 30 degrees and more of the deciduous plants were found above this point (Figure 2).
+
+
+```{r latitude, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=6}
+
+library(scales)
+
+leaflab <- expression("Leaf Size" (cm^2))
+latlab <- expression('Latitude('*degree*')')
+mycols <- c("pink", "cornflowerblue", "seagreen1")
+
+par(mfrow=c(1,1), mar=c(5,5,1,1))
+with(leaves, plot(Latitude, Leaf.size_cm2, ylab = leaflab, xlab = latlab,
+                  pch = 1, cex = .7, col = mycols[Decid_or_Ever]))
+legend("topleft", pch = 1, col = mycols, legend = c("Other", "Deciduous", "Evergreen"),
+       bty='n')
+
+```
+
+**Figure 2.** Relationship between latitude and leaf size. Latitude equal to zero represents the equator, negative numbers represent locations south of the equator and positive numbers represent locations north of the equator. The colors represent whether the plants are deciduous, evergreen, or something else.
+
+
+
+## Daily Irradiance During Growing Season and Leaf Size
+
+Thinking about the daily irradiance during the growing season compared to leaf size, we can see that often higher daily irradiance during the growing season will lead to larger leaves (Figure 3). This idea that greater daily irradiance leads to larger leaves can connect with the ways that we see that leaf size is affected by latitude, with leaves that are in the tropics most likely experiencing higher irradiance because of the sunlight they receive, and then this increased sunlight leading to them growing larger leaves (Figures 2 and 3). It makes sense that leaves that have higher irradiance during the growing season might have larger leaves due to the fact that they want to maximize their photosynthetic capacity, which they may be able to do by increasing the size of their leaves and thus their surface area. We can see that leaf size in areas with greater irradiance during the growing season also varies widely though, with some of the leaves that have higher daily irradiance during the growing season still having smaller leaves (Figure 3). We can also see that the evergreen plants in this data set tend to have higher irradiance during the growing season than deciduous plants which may be due to the locations that samples in this data set were gathered from (Figure 3).
+
+```{r Irradiance, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=6}
+
+irr.lab <- expression("Daily Irradiance During Growing Season" (W/m^2))
+
+par(mfrow=c(1,1), mar=c(5,5,1,1))
+with(leaves, plot(RADgs, Leaf.size_cm2, col = mycols[Decid_or_Ever], ylab = leaflab,
+                  xlab = irr.lab))
+legend("topleft", pch = 1, col = mycols, legend = c("Other", "Deciduous", "Evergreen"),
+       bty='n')
+
+```
+
+**Figure 3.** The relationship between daily irradiance during the growing season and leaf size. The colors represent whether the plants are deciduous, evergreen, or something else.
+
+
+
+## Mean Temperature of Coldest Month and Leaf Size
+
+Another variable that appears to have an effect on leaf size is that of the mean temperature of the coldest month (MTCM) (Figure 4). We can see that when the MTCM is higher, this tends to correspond to larger leaves, although there is also a lot of variation here (Figure 4). Higher MTCM corresponding to larger leaves would make sense because places that get colder are more likely to invest there energy into other aspects of the plant rather than leaf size, such as storage of energy in their roots for example. We can see a spike in this data at above negative 10 degrees Celsius, which I think might correlate to the spike we saw in Figure 2 around the 60 degree latitude mark (Figure 4). This spike in MTCM at about negative 10 degrees Celsius relating to the spike in leaf size that we saw in Figure 2 around 60 degrees would make sense because we would expect colder temperatures at this higher latitude but apparently there are still some leaves that are larger in size than we would generally expect. We can also see that the woody plants present in this data are often found in areas with higher mean temperatures of their coldest month, but this prevalence of woody versus non-woody trees also varies quite a bit (Figure 4).
+
+```{r Cold Temp, echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=6}
+
+mycols3 <- c("royalblue", "palevioletred")
+mycols4 <- alpha(mycols3, alpha = .6)
+
+tcm.lab <- expression('Mean Temperature of Coldest Month ('*~degree*C*')')
+
+par(mfrow=c(1,1), mar=c(5,5,1,1))
+with(leaves, plot(TCM, Leaf.size_cm2, col = mycols3[woody_non.woody], ylab = leaflab,
+                  xlab = tcm.lab, cex = .7))
+legend("topleft", pch = 1, col = mycols3, legend = c("Non-Woody", "Woody"),
+       bty='n')
+```
+
+**Figure 4.** The relationship between the mean temperature of the coldest month and leaf size. The colors indicate whether the plant is woody or non-woody.

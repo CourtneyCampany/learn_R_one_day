@@ -1,0 +1,88 @@
+---
+title: "Influence of light and temperature on leaf area"
+author: "Ashlea Raemer"
+date: "March 5, 2018"
+output: word_document
+template: ~/leaf_area/manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Analysis
+
+Figure 1 maps the data for average mean annual precipitation (MAP) and average mean annual temperature (MAT) by country, and only includes data from countries where plant samples for this dataset were collected. There are no samples from many countries in Africa and Asia, indicating a hole in the dataset that could potentially skew the results. In general MAT was greater at latitudes near the equator and MAP showed more variability within latitudes. 
+
+Figure 2 compares leaf area to the mean temperature of the warmest month. Linear regression of the log relationship between these two variables indicated that leaf area increased with increasing mean temperature of the warmest month, but the r^2^ value was low (0.08) (Figure 2). There is a relationship between leaf area and the mean temperature of the warmest month, but that this is not the most determining variable of leaf area (Figure 2). Angiosperms were the only taxon group present at low temperatures, indicating that they were either preferentially sampled in areas with the lowest mean temperature of the warmest month or able to occupy a wider range of temperatures than ferns and gymnosperms (Figure 2).
+
+Figure 3 compares leaf area to the daily irradiance during the growing season. Linear regression of the log relationship between these two variables indicated that leaf area increased with increasing daily irradiance during the growing season, but the r^2^ value was low (0.02) (Figure 3). This r^2^ value is lower than that of Figure 2, indicating that leaf area is more related to mean temperature during the warmest month than it is to daily irradiance during the growing season. Again, the angiosperms seem to be able to occupy a wider range of daily irradiance (Figure 3). 
+
+Figure 4 compares leaf area by taxon group. Figure 4 compares the taxon groups side by side in a boxplot to simplify any potential patterns shown in Figures 2 and 3. Angiosperms had the highest median leaf area as well as the largest range of values, followed by ferns and then gymnosperms. 
+
+Overall, leaf area increased with both increasing mean temperature of the warmest month and daily irradiance during the growing season, but the r^2 values for each of these relationships were so low that neither of these factors could be considered the driver of leaf area or even a main driver of leaf area (Figure 2, Figure 3). It is evident that the climate variables included in this dataset do not tell the complete story of variation in leaf area, and that more variables will need to be analyzed in the future to determine the factors driving leaf area. In future analysis I would be interested to see how leaf area is related to the availability of different nutrients in the soil, a leaf's position within or underneath the canopy, C~3~, C~4~, or CAM metabolism, and water use efficiency. I would also like to see how the ratio of leaf mass to leaf area varies with the climate variables included in this dataset and the other variables I listed earlier. 
+
+
+```{r cars, echo=FALSE, message=FALSE, warning=FALSE}
+leaves <- read.csv("../leaf_area/leafarea_global.csv")
+leaves2 <- leaves[complete.cases(leaves$TaxonGroup),]
+leaves3 <- leaves[complete.cases(leaves$RADgs),]
+library(scales)
+library(plotrix)
+library(magicaxis)
+library(maps) 
+library(rworldmap)
+sPDF <- joinCountryData2Map( leaves, joinCode = "NAME", nameJoinColumn = "Country")
+mycols <- c("chartreuse2", "blue2", "darkorchid3", "green4", "forestgreen", "blueviolet", "darkblue", "deepskyblue", "darkslategray")
+mycols3 <- alpha (mycols, 0.75)
+mycols2 <- alpha(mycols, 0.50)
+la_lab <- expression(Leaf~Area~~(cm^2)) 
+di_lab <- expression(Daily~Irradiance~During~the~Growing~Season~~(W/m^2))
+model1 <- lm(log10(Leaf.size_cm2)~ log10(TWM), data=leaves)
+model2 <- lm(log10(Leaf.size_cm2)~ log10(RADgs), data=leaves3)
+r2mod1 <- round(summary(model1)$r.squared, 2)
+r2lab1 <- paste(expression(R^2), r2mod1, sep = " = ")
+r2mod2 <- round(summary(model2)$r.squared, 2)
+r2lab2 <- paste(expression(R^2), r2mod2, sep = " = ")
+```
+
+
+```{r pressure, echo=FALSE, message=FALSE, warning=FALSE}
+par(mar=c(5,5,1,1),mai=c(0,0,0.2,0),xaxs="i",yaxs="i", mfrow=c(2,1))                                             
+mapParams <- mapCountryData( sPDF, nameColumnToPlot="MAP", addLegend=FALSE )
+do.call( addMapLegend, c(mapParams, legendWidth=0.5, legendMar = 2))
+mapParams <- mapCountryData( sPDF, nameColumnToPlot="MAT", addLegend=FALSE )
+do.call( addMapLegend, c(mapParams, legendWidth=0.5, legendMar = 2))
+```
+
+Figure 1. Maps of average mean annual precipitation (MAP) and mean annual temperature (MAT) by country where plant samples were collected. On the scale from yellow to red, redder tones indicate increasing average precipitation or temperature. Countries that are white represent areas where no samples were collected. 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+par(mar=c(5,5,1,1))
+plot(log10(Leaf.size_cm2) ~ log10(TWM), data=leaves, pch=1, col=mycols2[TaxonGroup], xlab="Mean temperature of the warmest month (Celsius)", ylab= la_lab, axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model1, x1=log10(min(leaves$TWM)), x2=log10(max(leaves$TWM)),lty=2, lwd=2)
+text(1, 3, r2lab1)
+legend("topleft", legend=levels(leaves$TaxonGroup), pch=16, col=mycols, bty='n',inset=0.01, ncol=1)
+
+```
+
+Figure 2. Leaf area (cm^2^) versus the mean temperature of the warmest month (Celsius). Leaf area increased with increasing mean temperature of the warmest month, with an r^2^ value of 0.08. Colors indicate taxon group.  
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+par(mar=c(5,5,1,1))
+plot(log10(Whole_leaf_size_cm2) ~ log10(RADgs), data=leaves3, col=mycols3[TaxonGroup], xlab=di_lab, ylab=la_lab, axes=FALSE)
+magaxis(side=c(1,2), unlog=c(1,2), frame.plot=TRUE)
+ablineclip(model2, x1=log10(min(leaves3$RADgs)), x2=log10(max(leaves3$RADgs)),lty=2, lwd=2)
+text(1.8, 3.5, r2lab2)
+legend("topleft", legend=levels(leaves3$TaxonGroup), pch=16, col=mycols, bty='n',inset=0.01, ncol=1)
+```
+
+Figure 3. Leaf area (cm^2^) versus daily irradiance during the growing season (W/m^2^). Leaf area increased with increasing daily irradiance during the growing season, with an r^2^ value of 0.02. Colors indicate taxon group. 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+par(mar=c(5,5,1,1))
+boxplot(log10(Whole_leaf_size_cm2)~TaxonGroup, data=leaves2, font.main=3, cex.main=1.2, col=mycols, xlab="Taxon Group", ylab=la_lab, font.lab=3, notch=FALSE, range = 0)
+```
+
+Figure 4. Leaf area (cm^2^) by Taxon Group. Angiosperms had the highest median leaf area, followed by ferns, and gymnosperms had the lowest median leaf area. 

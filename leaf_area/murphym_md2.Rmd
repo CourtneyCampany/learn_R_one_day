@@ -1,0 +1,94 @@
+---
+title: "Leaf Area"
+author: "Matthew Murphy"
+date: "3/6/2018"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Examination of Leaf Area Size Data
+Below are four figures examining trends in various species of leaves from different areas around the world. 
+
+## Figures
+
+The map depicted in Figure 1 examines trends in leaf size (cm^2) at various locations across the world. Average leaf size in a particular area is proportional to the size of the point representing it. The map shows several trends concerning global leaf areas. Most areas examined around the equator have relatively high average leaf areas. This is likely due to the fact that these areas receive direct sunlight for longer periods of time in comparison to the other latitudes examined farther from the equator. Areas close to the equator in Africa however are likely water or nutrient limited and therefore do not need high leaf areas to increase photosynthesis for energy production to utilize in growth. In the temperate regions, like the Eastern U.S. the seasons likely influence leaf area. 
+  
+```{r plot 1, echo=FALSE}
+leaves <- read.csv("leafarea_global.csv")
+library(maps)
+map('world')
+
+points(leaves$Longitude, leaves$Latitude, pch=21, bg="seagreen1", cex=sqrt(leaves$Leaf.size_cm2/450))
+
+```
+
+**Figure 1:** Global Average Leaf Size  (cm^2). 
+
+
+Relative humidity increases as temperature increases. As temperature increases, the rate of evaporation in a wet area increases as well. This increases the ration of water to air, increasing humidity. These factors were examined by growth type, consisting of epiphyte, fern, grass, herb, hemi-epiphyte, liana, palm, shrub, succulent, tree, and vine. Liana, trees, and shrubs make up much of the top right corner of the graph. This likely because these species require high amounts of energy, sunlight, and water for growth. While each of these growth types shows some diverse growing capabilities in various temperatures, it is clear that they all require high amounts of water availability in their environments as all grow at higher relative humidity levels.   
+  
+```{r plot 2, echo=FALSE}
+leaves1<-droplevels(leaves[complete.cases(leaves$RHann),])
+leaves2<-droplevels(leaves1[complete.cases(leaves1$MAT),])
+
+
+growth<-c("Epiphyte", "Fern", "Grass", "Herb", "Hemi-epiphyte", "Liana", "Palm", "Shrub", "Succulent","Tree", "Vine")
+cols<-c("cornflowerblue", "red", "springgreen3", "tomato", "slategray", "violetred", "darkorange2", "darkmagenta", "gold", "black","purple4")
+
+plot(leaves2$RHann~leaves2$MAT, xlab="Mean Annual Temperature  (•C)",ylab="Relative Humidy  (annual mean %)",pch=2,
+     col=c(cols)[leaves2$Growth_form])
+
+legend("bottomleft", legend=growth , pch=2, col=c(cols), cex=0.4)
+```
+
+**Figure 2:** Mean Annual Temperature  (•C) vs. Relative Humidity  (annual mean %)
+
+
+The plot in figure 3 examines equilibrium values of evapotranspiration (mm) in different types of vegetative growth at varying elevations (m). The natural log of elevations were taken and plotted. There are no clear or certain trends among or within growth types. There appears to be a slight increase in evapotranspiration equilibrium levels at the highest elevations in most shrubs and liana, but at lower elevations there is more variation. Trees show no clear pattern and appear at all elevations and evapotranspiration equilibriums. This is likely due to the fact that the evapotranspiration equilibrium value is dependent on multiple factors, and shows no trend based solely on the elevation of the vegetation examined. 
+
+```{r plot 3, echo=FALSE}
+leaves3<-droplevels(leaves[complete.cases(leaves$Elevation..m.),])
+leaves4<-droplevels(leaves3[complete.cases(leaves3$ETq),])
+
+
+growth<-c("Epiphyte", "Fern", "Grass", "Herb", "Hemi-epiphyte", "Liana", "Palm", "Shrub", "Succulent","Tree", "Vine")
+cols<-c("cornflowerblue", "red", "springgreen3", "tomato", "slategray", "violetred", "darkorange2", "darkmagenta", "gold", "black","purple4")
+
+log_elevation<-log10(leaves4$Elevation..m.)
+
+plot(leaves4$ETq~log_elevation, xlab="Elevation  (m)",ylab="Equilibrium Evapotranspiration  (mm)",pch=20,
+     col=c(cols)[leaves4$Growth_form])
+
+legend("bottomleft", legend=growth , pch=20, col=c(cols), cex=0.4)
+```
+
+**Figure 3:** Equilibrium Evapotranspiration at Various Elevations.
+
+Daily irradiance (W/m^2) of angiosperms, gymnosperms, and ferns was examined at varying latitudes. At elevations closer to the poles, species receive less sunlight and therefore less energy. This does not seem to have any effect on the growth of angiosperms, which express a high tolerance to a wide range of energy received per day. This is surprising considering flowering plants tend to require higher amounts of energy for growth, development, reproduction, and survival. Both ferns and gymnosperms examined appear to have a thermal tolerance that does not allow them to persist with less than 140 W/m^2 of daily irradiance. Additionally, ferns and gymnosperms do not appear around the equator. This is likely due to the fact that they are out competed by the flowering plants in areas without seasons, as angiosperms invest a lot of energy into increasing leaf surface area and obtain more energy from photosynthesis in comparison to ferns and gymnosperms. 
+ 
+
+```{r plot 4, echo=FALSE}
+leaves5<-droplevels(leaves[complete.cases(leaves$Latitude),])
+leaves6<-droplevels(leaves5[complete.cases(leaves5$RADann),])
+
+
+taxon<-c("Angiosperm", "Fern", "Gymnosperm")
+cols2<-c("mediumspringgreen","firebrick1", "dodgerblue")
+
+
+plot(leaves6$Latitude~leaves6$RADann, xlab="Daily Irradiance  (W/m2)",ylab="Latitude  (Decimal Degrees)",pch=18,
+     col=c(cols2)[leaves6$TaxonGroup])
+
+legend("bottomleft", legend=taxon , pch=18, col=c(cols2), cex=0.6)
+```
+
+**Figure 4:** Daily Irradiance (W/m^2) of Angiosperms, Gymnosperms, and Ferns at varying latitudes. 
+
+
+
+
+ 
+
