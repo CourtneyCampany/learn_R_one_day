@@ -19,7 +19,7 @@ Boulder County was worst hit, with 9.08 inches (231 mm) recorded September 12 an
 ![](data/flood_co2.png)
 
 ## Assignment
-You are tasked with investigating the factors that led to this 1 in 1000 year flood. There are several data sets to explore, including; precipitation, stream gauge outflow and climate data for the watershed where the flood occurred. You will need to format and manipulate the data to find your answers.  
+You are tasked with investigating the factors that led to this 1 in 1000 year flood. There are several data sets to explore, including; precipitation, stream gauge outflow and drought data for the watershed where the flood occurred. You will need to format and manipulate the data to find your answers.  
 
 \
 
@@ -27,12 +27,11 @@ This assignment is different from previous mystery data exercises because you wi
 
 \
 
-**Here are the specifics for the assignment but feel free to take it as far you see fit:**
+**Here are the specifics for the assignment but feel free to take it farther if you see fit:**
 
 \
 
-1) Visualize the complete precipitation data from NOAA for the Colorado Basin by month.
-Are there any strong annual or seasonal patterns? Do any other events over the last 65 years resemble the September 2013 event?
+1) Visualize the complete precipitation data from NOAA for the Colorado Basin by month. Are there any strong annual or seasonal patterns? Do any other events over the last 65 years resemble the September 2013 event?
 
 \
 
@@ -52,22 +51,25 @@ Are there any strong annual or seasonal patterns? Do any other events over the l
 
 \
 
-5) The climate_co data set includes several other measures of precipitation, drought 
-and temperature. Investigate these variables and visualize  any interesting patterns regarding the  Boulder, CO floods. Add 1 additional figure and discuss it's relevance to the floods and other variables you discuss.
+5) The climate_co data set includes several other measures of precipitation, drought and temperature. Investigate these variables and visualize  any interesting patterns regarding the  Boulder, CO floods. Add 1 additional figure and discuss it's relevance to the floods and other variables you discuss.
 
 \
 
-6) The heavy precipitation (rain) that occurred in September 2013 caused much damage
-during the 2013 flood by, among other things, increasing stream discharge (flow). Visualize and discuss the temporal patterns patterns of stream discharge around the flooding event.
+6) The heavy precipitation (rain) that occurred in September 2013 caused much damage during the 2013 flood by, among other things, increasing stream discharge (flow). Visualize and discuss the temporal patterns of stream discharge around the flooding event.
 
 **Data Formatting:**
 
 \
 
 1) Make sure you dates and times are in the proper format
-2) Check all data sets for Nodata values (i.e. -999.99) to set to 'NA'
+\
+2) Check all data sets for Nodata values (i.e. -999.99) and set to 'NA'
+\
 3) Confirm you are using data from the correct watershed for Boulder area? (CO-04 Platte River Drainage)
+\
 4) Inspect variable names with metadata (rename if you have too).
+
+\
 
 Below, I have included background material for some of the data sets to help you write your report
 
@@ -98,5 +100,9 @@ Most USGS stream gauges operate by measuring the elevation of the water in the r
 
 **Here, we want data collected by USGS stream gauge 06730200 located on Boulder Creek at North 75th St. This gauge is one of the few the was able to continuously collect data throughout the 2013 Boulder floods.**
 
+##Human health & impacts
 
+If interested, you can look at the Boulder city resources on human impacts and link it into the data story they are telling. Just click on the link below:
+
+https://bouldercolorado.gov/flood/flood-maps
 

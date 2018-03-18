@@ -1,40 +1,7 @@
-[NOTE by NEON staff: This document is created by copying text at ftp://ftp.ncdc.noaa.gov/pub/data/cirs/climdiv/divisional-readme.txt . The data
-in this teaching data subset were downloaded on 5 October 2016.]
-
-This documentation describes the record format for the divisional files on 
-/pub/data/cirs/climdiv that have the filenames:
-
-climdiv-cddcdv-vx.y.z-YYYYMMDD
-climdiv-hddcdv-vx.y.z-YYYYMMDD
-climdiv-pcpndv-vx.y.z-YYYYMMDD
-climdiv-pdsidv-vx.y.z-YYYYMMDD
-climdiv-phdidv-vx.y.z-YYYYMMDD
-climdiv-pmdidv-vx.y.z-YYYYMMDD
-climdiv-sp01dv-vx.y.z-YYYYMMDD
-climdiv-sp02dv-vx.y.z-YYYYMMDD
-climdiv-sp03dv-vx.y.z-YYYYMMDD
-climdiv-sp06dv-vx.y.z-YYYYMMDD
-climdiv-sp09dv-vx.y.z-YYYYMMDD
-climdiv-sp12dv-vx.y.z-YYYYMMDD
-climdiv-sp24dv-vx.y.z-YYYYMMDD
-climdiv-tmaxdv-vx.y.z-YYYYMMDD
-climdiv-tmindv-vx.y.z-YYYYMMDD
-climdiv-tmpcdv-vx.y.z-YYYYMMDD
-climdiv-zndxdv-vx.y.z-YYYYMMDD
-
-For a map of all CONUS divisions, please see the following link:
-http://www.ncdc.noaa.gov/monitoring-references/maps/images/us-climate-divisions-names.jpg
-
-For maps of divisions in Alaska, see the following links:
-http://www1.ncdc.noaa.gov/pub/data/cmb/images/us/2015/feb/alaska-clim-divs.png
-http://www1.ncdc.noaa.gov/pub/data/cmb/images/us/2015/feb/alaska-clim-divs-with-cities.png
-
 
                                     nClimDiv
                                    DIVISIONAL
                         TEMPERATURE-PRECIPITATION-DROUGHT
-
-                                   JUNE 2014
 
 The major parameters in this file are sequential climatic division monthly 
 maximum, minimum and average temperature (deg. F. to 10ths, national 
@@ -66,8 +33,8 @@ as the Federal Aviation Administration.  To improve coverage in western states
 and along international borders, nClimDiv also includes the National 
 Interagency Fire Center (NIFC) Remote Automatic Weather Station (RAWS) network, 
 the USDA Snow Telemetry (SNOTEL) network, the Environment Canada (EC) 
-network (south of 52°N), and part of Mexicos Servicio Meteorologico Nacional 
-(SMN) network (north of 24°N).  Note that nClimDiv does not incorporate 
+network (south of 52?N), and part of Mexicos Servicio Meteorologico Nacional 
+(SMN) network (north of 24?N).  Note that nClimDiv does not incorporate 
 precipitation data from RAWS because that networks tipping-bucket gauges are 
 unheated, leading to suspect cold-weather data.
 
