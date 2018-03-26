@@ -1,7 +1,7 @@
 
 ####precipitation data:-----------------------
 rain <- read.csv("flood/data/805333-precip_daily_1948-2013.csv")
-# rain_bc <- read.csv("flood/data/805325-precip_daily_2003-2013.csv")
+
 
 # convert to date/time and retain as a new field
 rain$DateTime <- as.POSIXct(rain$DATE,format="%Y%m%d %H:%M") 
@@ -24,7 +24,10 @@ rain$HPCP[rain$HPCP==999.99] <- NA
 
 # check that NA values were added; 
 # we can do this by finding the sum of how many NA values there are
-sum(is.na(rain))
+sum(is.na(rain$HPCP))
+
+write.csv(rain, "flood/data/rain_co.csv", row.names = FALSE)
+
 
 ##Discharge data:-------------------------------------------------------------
 #import data
@@ -76,6 +79,8 @@ range(clim_bc$Date)
 #view summary stats of the Palmer Drought Severity Index, check for NOData
 summary(clim_bc$PDSI)
 hist(clim_bc$PDSI)
+
+write.csv(clim_bc, "", row)
 
 
 ###Now: Investigate the rest of the variables by reading the divisional-readme.txt
