@@ -1,0 +1,42 @@
+---
+title: "Mystery Future FACE experiment"
+author: "Court Campany"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment
+
+This assignment investigate the response of a forest to predicted future climate change.  You are tasked with evaluating the sink capacity/potential of vegetation under current and future atmopheric CO^2^ conditions.
+
+1) **Photosynthesis** Visualize and evaluate the response of foliage photosynthesis to eCO2 compared to aCO2.  In lecture, we learned that 'time' was a critical component with evaluating FACE experiments. Is  photosyntheis stimulated in this experiment. If so, is the response sustained over the 3 year interval?  Visualize both the raw data and the 'response ratio' of photosynthesis through time.
+
+
+2) **ANPP*.** For the leaf component, compute productivity as the sum of annual litterfall. For the twig compoent, strictly annual turnover across the three years. Assume that all biomass components are comprised of 47% C for the purpose of calculating annual C storage and turnover. All the compnents together (wood + leaves + twig) comprising aboveground net primary productivity. Visualize and evaluate mean ANPP for aCO^2^ and eCO^2^ treatments for 2013, 2014 & 2015.
+
+**ANPP should be reported in g C ^m~2^ yr ^-1^.  You will need to sum biomass components for trees and/or rings, convert to C and then standarize based on the size of each ring. Then take the mean of all rings for each treatment**
+
+3) **Bonus**: There was a insect outbreak that caused defoliation of many trees. Can you identify where it occured and speculate if there was a CO^2^ efffect?
+
+
+## Metadata
+
+These are the datasets to compute the CO^2^ fertilization effect on photosynthesis and aboveground NPP. I have changed the dates of the experiment, but they cover 3 years of growth under eCO^2^ and aCO^2^. Rings are 25m diameter circular plots.   
+
+/
+
+### Leaf photosynthesis
+Photosynthesis was measured in discrete campaigns and the principal age class of leaves  were present at each timepoint. Measurements were made using a set of Li-Cor model 6400 portable photosynthesis systems using  infra-red gas analysis. Only the first photosynthesis measurement, made at the COO^2^ concentration the trees were growing in, is included here. These CO2 concentrations are nominally 396 ppm for aCOO^2^ and 546 ppm for eCO^2^. Units for leaf net photosythesis are $$\mu$$mols m^-2^ s^-1^.
+
+/
+
+### Litterfall
+Dry mass of litterfall was collected on a monthly basis. This includes both foliage, twig, bark and seed litterfall. Samples were collected and sorted into components and weighed. Insect frass is not included here and is published elsewhere, but represents a small fraction (<2%) of the total annual litter production. All littercollections are reported in dry biomass (g).
+
+/
+
+### Tree diameter and biomass
+The diameter of each tree was measured at 1.3 m height at approximately monthly intervals starting February 2011, two years prior to commencement of the full CO2 treatment. Manual band dendrometers were used to monitor stem diameter changes. The permanently placed bands consisted of plastic straps graduated with a vernier scale placed around a treeThese trees were surveyed annually (or more frequently) and annual values were used to compute tree biomass according to published allometric regressions. Tree biomass is for each year and pre- and post-treatment. Trees judged to be suppressed according to visual observations are not included in this dataset. Annual wood biomass production for each tree is in grams.
