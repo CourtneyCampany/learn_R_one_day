@@ -3,7 +3,8 @@
 photo <- read.csv("FACE/data/face_photosynthesis.csv")
   photo$Date2 <- paste(photo$Date, "01", sep="_")
   photo$Date2 <- as.Date(photo$Date2, format = "%b_%Y_%d", tz='UTC')
-  
+
+
 library(doBy)
 #function for se
 se <- function(x) sd(x)/sqrt(length(x))
@@ -23,3 +24,19 @@ with(photo_co2, arrows(Date2, Anet.mean, Date2, Anet.mean+Anet.se,
                        angle=90, length=.03, col=cols[treatment]))
 with(photo_co2, arrows(Date2, Anet.mean, Date2, Anet.mean-Anet.se,
                        angle=90, length=.03, col=cols[treatment]))
+
+
+
+aco2 <- photo[photo$treatment=="aCO2",]
+names(aco2)[7] <- "anet_aco2"
+
+eco2 <- photo[photo$treatment=="eCO2",]
+names(eco2)[7] <- "anet_eco2"
+
+rr_data <- cbind(aco2, eco2[7]) 
+rr_data$responseratio <- with(rr_data, anet_eco2/anet_aco2)
+
+rr_co2 <- summaryBy(responseratio ~ Date2 + treatment, data=rr_data, FUN=c(mean, se))
+plot(responseratio.mean ~ Date2, data=rr_co2, pch=19, "blue", xlab="", ylab="responseratio",
+     ylim=c(0,2))
+abline(h=1, lty=2)

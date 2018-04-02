@@ -17,11 +17,14 @@ library(lubridate)
 rain$month <- month(rain$DateTime)
 
 #function for se
-se <- function(x) sd(x)/sqrt(length(x))
+# se <- function(x) sd(x)/sqrt(length(x))
+# stderr <- function(x) sqrt(var(x,...)/length(na.omit(x)))
+
 
 #means dataframe with doBy package
-library(doBy)
-rain_agg <- summaryBy(HPCP ~ month, data=rain, FUN=mean)
+library(sciplot)
+library(summaryBy)
+rain_agg <- summaryBy(HPCP ~ month, , data=rain, FUN=c(mean, se), na.rm=TRUE)
 
 meanrain <- with(rain, tapply(HPCP, month, FUN = mean)) 
 

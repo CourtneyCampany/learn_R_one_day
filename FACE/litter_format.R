@@ -1,5 +1,13 @@
-#litter data
+##packages
+library(doBy)
 
+#constants
+basket <- .2 #basket size in m2
+c_frac <- .47 #conversion to biomass carbon
+unit_conv <- c_frac/basket #units from .2m2 biomass to m2 C
+
+
+#litter data
 litter <- read.csv("FACE/data/face_litter.csv")
   litter$Date <- as.Date(litter$Date, format= "%d/%m/%Y")
   litter$year <- as.factor(lubridate::year(litter$Date))
@@ -8,28 +16,29 @@ litter <- read.csv("FACE/data/face_litter.csv")
                              litter$ring == 3 |
                              litter$ring == 6,
                              "aCO2", "eCO2"))
+
+# remove two data points where big branches fell into litter bascket (repeat in sequence)
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
   
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
   
-##EAC litter trap is .2m^2. 
-##How should we scale up to 1m^2? We can do this at the end
-##To get annual average total lets take the mean of litter traps
-##at each time point.  Then add up the time points?
-  
-library(doBy)
+#first lets take care of our units, .2m2 biomass month-1 to g C m2 month-1-------
+litter_carbon  <- data.frame(litter[,c(1:3, 8:9)], (litter[,4:7] * c_frac)/basket)
+
+##To get annual litter flux lets take the mean of litter traps at each time point. -------
+###Then sum up for the year
+
 litter_mean_trap <- summaryBy(twig + bark+ seed + leaf ~ year + Date + ring +treatment, 
-                    data=litter, FUN=mean, na.rm=TRUE, keep.names = TRUE) 
+                    data=litter_carbon, FUN=mean, na.rm=TRUE, keep.names = TRUE) 
 
-#now we have mean trap collection for each time point
-#lets calculate the annual litter production
 
+#no lets calculate the annual litter production
 litter_annual <- summaryBy(twig + bark+ seed + leaf ~ year + ring + treatment, 
-                 data=litter, FUN=sum, na.rm=TRUE, keep.names = TRUE)
+                 data=litter_mean_trap, FUN=sum, keep.names = TRUE)
 
-litter_carbon<- data.frame(litter_annual[1:3], litter_annual[,4:7]*.47)
-
-# litter_gCm2<- data.frame(litter_annual[1], litter_carbon[,2:5]*25)
-
-
+#CO2 effect
 litter_co2 <- summaryBy(twig + bark + seed + leaf ~ year +treatment, 
                         data=litter_carbon, FUN=mean, keep.names = TRUE)
 
