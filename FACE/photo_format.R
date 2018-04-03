@@ -1,10 +1,14 @@
 ###biomass data
 
 photo <- read.csv("FACE/data/face_photosynthesis.csv")
-  photo$Date2 <- paste(photo$Date, "01", sep="_")
+  
+
+#format--------
+photo$Date2 <- paste(photo$Date, "01", sep="_")
   photo$Date2 <- as.Date(photo$Date2, format = "%b_%Y_%d", tz='UTC')
 
 
+  
 library(doBy)
 #function for se
 se <- function(x) sd(x)/sqrt(length(x))
@@ -24,8 +28,6 @@ with(photo_co2, arrows(Date2, Anet.mean, Date2, Anet.mean+Anet.se,
                        angle=90, length=.03, col=cols[treatment]))
 with(photo_co2, arrows(Date2, Anet.mean, Date2, Anet.mean-Anet.se,
                        angle=90, length=.03, col=cols[treatment]))
-
-
 
 aco2 <- photo[photo$treatment=="aCO2",]
 names(aco2)[7] <- "anet_aco2"

@@ -1,3 +1,6 @@
+#read in wood biomass (from allometry with dbh)
+wood_biomass <- read.csv("FACE/data/face_woodbiomass.csv")
+
 #packages
 library(doBy)
 library(sciplot)
@@ -10,9 +13,6 @@ kg_to_g <- 1000
 
 se <- function(x) sd(x)/sqrt(length(x))
 
-#read in wood biomass (from allometry with dbh)
-wood_biomass <- read.csv("FACE/data/face_woodbiomass.csv")
-
 #sum wood biomass for each ring during each year
 total_wood_ring <- summaryBy(biomass_kg ~ year + Ring + treatment, 
                              data=wood_biomass, FUN=sum, na.rm=TRUE, keep.names = T)
@@ -21,7 +21,7 @@ total_wood_ring <- summaryBy(biomass_kg ~ year + Ring + treatment,
 ###total wood biomass is not npp, we need to know how much they grew each year-----------
 
 
-#we only have year, so lets make a date to represent the end or each year
+#we only have year, so lets make a date to represent the end or each year-------
 total_wood_ring$Date <- paste(total_wood_ring$year, "/12/31", sep="")
 total_wood_ring$Date <- as.Date(total_wood_ring$Date, format = "%Y/%m/%d")
 
@@ -33,10 +33,12 @@ dates <- dates[order(dates)]
 wood_npp <- total_wood_ring[total_wood_ring$Date != dates[1],]
   wood_npp$Start_date <- wood_npp$Date  # we will populate it later, but it needs to be a date
 
-#our first and only for loop:
+#our first and only FOR LOOP:-----------
 for (i in 1:length(wood_npp$Date)) {
-  #set start data as the element before 'it' in the date vector. "it" is the date in wood_npp
+ 
+   #set start data as the element before 'it' in the date vector. "it" is the date in wood_npp
   wood_npp$Start_date[i] <- dates[which(dates == wood_npp$Date[i]) - 1]  #uses our date vector
+  
   # finds the previous years biomass for each ring @ right time
   wood_npp$prev_biom_kg[i] <- total_wood_ring$biomass_kg[total_wood_ring$Ring == wood_npp$Ring[i] &
                                              as.numeric(total_wood_ring$Date-wood_npp$Start_date[i])==0]

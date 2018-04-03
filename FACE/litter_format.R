@@ -8,9 +8,11 @@ c_frac <- .47 #conversion to biomass carbon
 
 #litter data
 litter <- read.csv("FACE/data/face_litter.csv")
+
+#format litter data-------
   litter$Date <- as.Date(litter$Date, format= "%d/%m/%Y")
   litter$year <- as.factor(year(litter$Date))
-  litter$ring <- as.factor(litter$ring)
+  # litter$ring <- as.factor(litter$ring)
   litter$treatment <- as.factor(ifelse(litter$ring == 2 |
                              litter$ring == 3 |
                              litter$ring == 6,
@@ -23,7 +25,9 @@ litter <- litter[-line.num,]
 line.num <- which.max(litter$twig)
 litter <- litter[-line.num,]
   
-#first lets take care of our units, .2m2 biomass month-1 to g C m2 month-1 -------
+# UNIT CONVERSION: .2m2 biomass month-1 to g C m2 month-1 -------
+
+#new dataframe, keep the categories and convert the data variables
 litter_carbon  <- data.frame(litter[,c(1:3, 8:9)], (litter[,4:7] * c_frac)/basket)
 
 ##To get annual litter flux lets take the mean of litter traps at each time point-------
@@ -40,20 +44,29 @@ litter_annual <- summaryBy(twig + bark+ seed + leaf ~ year + ring + treatment,
 ###lets save these so we can add them to the wood increment
 write.csv(litter_annual, "FACE/data/litter_annual.csv", row.names = FALSE)
 
+
+###sample stacked bar plot--------------------------------------
+
 #CO2 effect for plottig
 litter_co2 <- summaryBy(twig + bark + seed + leaf ~ year +treatment, 
                         data=litter_annual, FUN=mean, keep.names = TRUE)
 
+#for 2021, 2022 & 2023
 litter_fum <- droplevels(litter_co2[litter_co2$year != 2020,])
+  litter_fum$totalflux <- with(litter_fum, twig+bark+seed+leaf)
 
+#stacked bar plots reguire a matrix of only the data:
 litter_bar <-litter_fum[,3:6]
+
+#ugly colors
 cols <- c("brown", "forestgreen", "dodgerblue", "gold")
 
 par(mar = c(5, 5, 1, 7.5), xpd = TRUE)
+#plot saved as an object:
 b <- barplot(t(as.matrix(litter_bar)), xlab= "", xaxt='n',
         ylab="Annual Litter Flux (g)", col=cols, ylim=c(0, 350))
 box()
-legend("topright", inset = c(-0.3, 0), fill = cols, 
+legend("topright", inset = c(-0.22, 0), fill = cols, 
        legend=colnames(litter_bar), cex=1)
 text(round(litter_fum[,7],0), y=320, x=b)
 axis(1, at=b, litter_fum[,2], las=3)

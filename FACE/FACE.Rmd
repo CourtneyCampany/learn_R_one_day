@@ -21,7 +21,7 @@ There are datasets to compute the CO^2^ fertilization effect on photosynthesis a
 
 \
 
-1) **Photosynthesis** Visualize and evaluate the response of foliage photosynthesis to eCO^2^ compared to aCO^2^.  In lecture, we learned that 'time' was a critical component with evaluating FACE experiments. Is photosyntheis stimulated by eCO^2 in this experiment. If so, is the response sustained over the 3 year interval? Visualize mean photosynthesis data (with standard errors) and the eCO^2^ response ratio of photosynthesis through time.
+1) **Photosynthesis**. Visualize and evaluate the response of foliage photosynthesis to eCO^2^ compared to aCO^2^.  In lecture, we learned that 'time' was a critical component with evaluating FACE experiments. Is photosyntheis stimulated by eCO^2 in this experiment. If so, is the response sustained over the 3 year interval? Visualize mean photosynthesis data (with standard errors) and the eCO^2^ response ratio of photosynthesis through time.
 
 \
 
@@ -29,11 +29,11 @@ The response ratio is easy to calculate (eco2/aco2) but you will have to make se
 
 \
 
-2) **Litterfall** Compute annual productivity as the sum of all litterfall components for each year. For the twig component, strictly annual turnover across the three years. Assume that all biomass components are comprised of 47% C for the purpose of calculating annual C storage and turnover. Visualize annual litterfall with a stacked barplot of all the components. Are any patterns noticeable between years or with CO^2^ treatments?
+2) **Litterfall**. Compute annual productivity as the sum of all litterfall components for for 2021, 2022 & 2023.  Assume all biomass components are comprised of 47% C. Visualize annual productivity with all of the components. Are any patterns noticeable between years or with CO^2^ treatments? *I will give an example of a stacked bar plot in class*
 
 \
 
-3) **ANPP**. Here, we will define aboveground net primary productivity (ANPP) as the productivy of stemwood biomass production + fine twig and bark production +  seed production + leaf production. Visualize and evaluate mean ANPP for aCO^2^ and eCO^2^ treatments for 2021, 2022 & 2023. **ANPP must be reported in g C m^-2^ yr ^-1^**. Is there a CO^2^ effect? Why does this match/not match what you find in photosynthesis?
+3) **ANPP**. Here, we will define aboveground net primary productivity (ANPP) as the productivy of stemwood biomass production + fine twig production + seed production + leaf production. Visualize and evaluate mean ANPP for aCO^2^ and eCO^2^ treatments for 2021, 2022 & 2023. **ANPP must be reported in g C m^-2^ yr ^-1^**. Is there a CO^2^ effect? Why does this match/not match what you find in photosynthesis?
 
 \
 

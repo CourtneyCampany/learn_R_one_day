@@ -1,0 +1,81 @@
+---
+title: "Mystery Data 3"
+author: "Matthew Murphy"
+date: "4/3/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Examination of the 2013 Big Flood in Colorado
+The Big flood in Colorado in 2013 was the result of severe rainfall immediately after a period of drought. 
+
+##Figures 
+
+Precipitation in Colorado during the 2013 event was not the heaviest rainfall event in the last six decades (Fig. 1). Four precipitation amounts prior to 2000 were greater than the event in 2013. One of these events occurred in 1960, two in the early 1970s, and one in the mid 1980s. There are no clear patterns in the precipitation data over time, but there appears to be a long break from high rainfall events in the two decades leading up to the 2013 event. From this information, we can deduce that a combination of factors resulted in the 2013 event, not just unusually high precipitation.  
+
+```{r plot 1, echo=FALSE}
+precip<-read.csv("data/rain_co.csv")
+precip$DateTime<- as.POSIXct(precip$DATE, format="%Y%m%d %H:%M")
+precip$HPCP[precip$HPCP==999.99]<-NA
+plot(HPCP~DateTime, data=precip, type="l", xlab="Year", ylab="Precipitation (mm)")
+```
+
+**Figure 1:** Average Monthly Precipitation levels (mm) per year. Each peak represents a month within a given year.  
+
+In the two decades leading up to the 2013 precipitation event, rainfall levels remained relatively low and consistent (Fig. 2). Prior to the 2013 rainfall event, precipitation events followed a relatively similar 5-year pattern, with two or three high precipitation events interrupted by consistently low precipitation events occurring in the months between high rainfall events. No precipitation event in the two decade period prior to the 2013 incident recorded rainfall to the extent of the 2013 event, which may have influenced Colorado's preparedness for such a disaster. 
+
+```{r plot 2, echo=FALSE}
+startdate <- as.POSIXct("1993-08-01 01:00:00", "%Y-%m-%d %H:%M:%S", tz="UTC")
+newrain <- precip[precip$DateTime > startdate,]
+plot(HPCP ~ DateTime, data=newrain, type="l", xlab="Year", ylab="Precipitation (mm)")
+```
+
+**Figure 2:** Average Monthly Precipitation (mm) per year leading up to the 2013 event. Each peak represents a month within a given year. 
+
+Colorado experienced severe drought prior to the 2013 event (Fig. 3). Right before the precipitation event of 2013, Colorado experienced severe drought as indicated by the -6 PDSI value right around 2013. If the state was dry before a major rainfall event, the soil may have dried to the point where it could not absorb water efficiently. As a result, most of the rainfall would have washed away as runoff resulting in heavy flooding. 
+
+```{r plot 3, echo=FALSE}
+clim_bc <- read.table("data/climate_co.txt", header=TRUE)
+clim_bc$Date <- paste(clim_bc$YearMonth, "01", sep="")
+clim_bc$Date <- as.Date(clim_bc$Date, format="%Y%m%d")
+plot(PDSI ~ Date, data=clim_bc, type="l", ylab="PDSI")
+```
+
+**Figure 3:** Palmer Drought Severity Index values for Colorado by year. Positive PDSI values indicate wet years, negative values denote periods of drought.
+
+Upon examination of long term impacts of drought, it is clear that short term changes likely exacerbated the effects of the 2013 event (Fig. 2,3). By comparing figures 2 and 3, it is possible to notice very little change between precipitation and drought years. Most importantly, there is no change in the long term examination of the drought occurring right before the 2013 event, this further confirms the impact of the drought on the severity of the rainfall event. 
+
+```{r plot 4, echo=FALSE}
+clim_bc <- read.table("data/climate_co.txt", header=TRUE)
+clim_bc$Date <- paste(clim_bc$YearMonth, "01", sep="")
+clim_bc$Date <- as.Date(clim_bc$Date, format="%Y%m%d")
+plot(PHDI ~ Date, data=clim_bc, type="l", ylab="PHDI")
+```
+
+**Figure 4:** Palmer Hydrological Drought Index values for Colorado by year. PHDI measures longer developing hydrological impacts of droughts, and as a result responds more slowly to change than PDSI. Positive PHDI values indicate wet years, negative values denote periods of drought.
+
+Stream discharge from the watershed in the two decades leading up to the 2013 event was relatively consistent (Fig. 5). Prior to 2013, stream discharge did not exceed 60 m^3^/s and followed a cyclical pattern of rainfall. In the years immediately before 2013, discharge levels remained low, which is consistent with the drought indicated in figure 3. If the soil was dry and unable to absorb sudden heavy rainfall, we can conclude that stream discharge would be abnormally high, which is consistent with the data.
+
+```{r plot 5, echo=FALSE}
+discharge <- read.csv("data/discharge_co.csv")
+
+discharge$disCorrect <- discharge$disValue*0.0283168
+discharge$Date <- as.Date(discharge$datetime, format= "%m/%d/%y")
+dislab=expression(Stream~Discharge~~(m^3~s^-1))
+
+seqdisdates <- seq(min(discharge$Date), max(discharge$Date), length.out=10)
+
+
+par(mar=c(5,5,1,1))
+plot(disCorrect~Date, data=discharge, type="l", axes=FALSE, xlab="Year", ylab=dislab)
+axis.Date(1, at=seqdisdates, cex.axis=0.9)
+axis(2, las=2, cex.axis=0.9)
+box()
+```
+
+**Figure 5:** Stream Discharge (m^3^/s) per year from the Colorado watershed. 
