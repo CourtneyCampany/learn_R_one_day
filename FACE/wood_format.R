@@ -15,7 +15,7 @@ se <- function(x) sd(x)/sqrt(length(x))
 
 #sum wood biomass for each ring during each year
 total_wood_ring <- summaryBy(biomass_kg ~ year + Ring + treatment, 
-                             data=wood_biomass, FUN=sum, na.rm=TRUE, keep.names = T)
+                  data=wood_biomass, FUN=sum, na.rm=TRUE, keep.names = T)
 
 
 ###total wood biomass is not npp, we need to know how much they grew each year-----------
@@ -37,7 +37,8 @@ wood_npp <- total_wood_ring[total_wood_ring$Date != dates[1],]
 for (i in 1:length(wood_npp$Date)) {
  
    #set start data as the element before 'it' in the date vector. "it" is the date in wood_npp
-  wood_npp$Start_date[i] <- dates[which(dates == wood_npp$Date[i]) - 1]  #uses our date vector
+  wood_npp$Start_date[i] <- dates[which(dates == wood_npp$Date[i]) - 1]  
+  #uses our date vector
   
   # finds the previous years biomass for each ring @ right time
   wood_npp$prev_biom_kg[i] <- total_wood_ring$biomass_kg[total_wood_ring$Ring == wood_npp$Ring[i] &
@@ -47,14 +48,13 @@ for (i in 1:length(wood_npp$Date)) {
   
 ###almost there, need to convert units and deal with the first treament year........  
   
-# Unit covernsion from ring total in kg biomass to g C m-2 yr-1
+# Unit coversion from ring total in kg biomass to g C m-2 yr-1
 wood_npp$wood_growth <- ((wood_npp$biomass_kg - wood_npp$prev_biom_kg)* c_frac * kg_to_g)/ring_area
   
 #length of period for wood growth (2019 - 2021 is a problem)
 wood_npp$timelength <- as.numeric(wood_npp$Date - wood_npp$Start_date)
 
 wood_npp$wood_yr <- ifelse(wood_npp$timelength == 365, wood_npp$wood_growth/1, wood_npp$wood_growth/2)
-
 
 ##we now have annual production of wood biomass. Lets save it (but only the variables i need)
 savedata <- wood_npp[, c(1:3, 5, 10)]
