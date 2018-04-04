@@ -1,3 +1,6 @@
+#litter data
+litter <- read.csv("FACE/data/face_litter.csv")
+
 ##packages
 library(doBy)
 library(lubridate)
@@ -6,12 +9,10 @@ library(lubridate)
 basket <- .2 #basket size in m2
 c_frac <- .47 #conversion to biomass carbon
 
-#litter data
-litter <- read.csv("FACE/data/face_litter.csv")
-
 #format litter data-------
   litter$Date <- as.Date(litter$Date, format= "%d/%m/%Y")
   litter$year <- as.factor(year(litter$Date))
+  
   # litter$ring <- as.factor(litter$ring)
   litter$treatment <- as.factor(ifelse(litter$ring == 2 |
                              litter$ring == 3 |
@@ -37,7 +38,7 @@ litter_mean_trap <- summaryBy(twig + bark+ seed + leaf ~ year + Date + ring +tre
                     data=litter_carbon, FUN=mean, na.rm=TRUE, keep.names = TRUE) 
 
 
-#no lets calculate the annual litter production
+#no lets calculate the annual litter production------
 litter_annual <- summaryBy(twig + bark+ seed + leaf ~ year + ring + treatment, 
                  data=litter_mean_trap, FUN=sum, keep.names = TRUE)
 
@@ -63,10 +64,10 @@ cols <- c("brown", "forestgreen", "dodgerblue", "gold")
 
 par(mar = c(5, 5, 1, 7.5), xpd = TRUE)
 #plot saved as an object:
-b <- barplot(t(as.matrix(litter_bar)), xlab= "", xaxt='n',
+b <-barplot(t(as.matrix(litter_bar)), xlab= "", xaxt='n',
         ylab="Annual Litter Flux (g)", col=cols, ylim=c(0, 350))
 box()
-legend("topright", inset = c(-0.22, 0), fill = cols, 
+legend("topright", inset = c(-0.3, 0), fill = cols, 
        legend=colnames(litter_bar), cex=1)
 text(round(litter_fum[,7],0), y=320, x=b)
 axis(1, at=b, litter_fum[,2], las=3)
