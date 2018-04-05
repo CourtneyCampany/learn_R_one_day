@@ -1,0 +1,94 @@
+---
+title: "Flooding In Boulder"
+author: "Josh Winward"
+date: "April 2, 2018"
+output: 
+  word_document:
+    reference_docx: manuscriptstyle.docx
+
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+rain<-read.csv("data/rain_co.csv")
+climate<-read.csv("data/climate_co.csv")
+discharge<-read.csv("data/discharge_co.csv")
+library(lubridate)
+rain$DateTime<- as.POSIXct(rain$DATE, format = "%Y%m%d %H:%M" )
+rain$month <- month(rain$DateTime)
+se <- function(x) sd(x)/sqrt(length(x))
+newrain <- rain[complete.cases(rain$HPCP),]
+rain_agg <- doBy::summaryBy(HPCP ~ month, data=newrain,FUN=c(mean,se))
+```
+## Average Precipitation by Month
+
+The first visualization of these data sets in order to explain why the flooding in Boulder was so severe aims to look at seasonal variation in precipitation over the time-frame of the entire data set. By looking at the average monthly precipitation between 1945 and 2015 I wanted to see if there were some months which were more susceptible to flooding than others. After examining the average flooding data, I found that the months with peak precipitation were July, August, and September. This relationship makes sense given the study site is in the intramountain west, an area which is particularly susceptible spring flooding due to snow melt. The spring melt combined with the fact that these data show the rainiest months are July and August, start to give us an idea as to why the most severe flooding would occur in late August and September. 
+
+
+```{r, echo=FALSE}
+plot(rain_agg$HPCP.mean~rain_agg$month, type = 'l', xlab = "Month", ylab = "Mean Monthly Precipitation from 1945-2015")
+```
+
+
+Figure 1: Mean annual precipitation is plotted as a function of Months. Precipitation is measured between (0-0.15) and Month is specified by number where 1 = January and 12 = December.  
+  
+## Precipitation by Year
+
+The second way that I chose to examine the flooding in boulder was by looking at precipitation over the course of the entire data set. By examining the data in this way I am able to see if there were any points in time where the amount of precipitation which might be similar to the precipitation experienced by Boulder in September 2013. As it turns out this instance of extreme rain was not the only instance of high precipitation in the past 65 years, in fact there were several instances of higher precipitation between 1950 and 1970. However, this instance was in the top 10 instances of extreme precipitation over the past 65 years, and there were no comparable amounts of precipitation for roughly 30 years leading up to the flooding event in 2013. This indicates to me that the landscape was likely not used to large amounts of precipitation leading to the more devastating destruction seen in 2013, as compared to the events in the 60's. Additionally it is important to note that the population of Boulder has grown significantly since 1960 both in number of people and number of human developments that have been built in the surround area. Thus the increased development likely increased to amount of impervious surfaces leading to more runoff and flooding as a result. 
+
+```{r, echo=FALSE}
+seqraindates <- seq(min(rain$DateTime), max(rain$DateTime), length.out=10)
+seqraindates2 <- seq(min(rain$DateTime), max(rain$DateTime), by = "10 years")
+plot(HPCP ~ DateTime, data=rain, type="l", xaxt="n", ylab = "Precipitaion", xlab = "Year")
+axis.POSIXct(1, at=seqraindates2)
+```
+
+
+Figure 2: Precipitation is Graphed as a function of month and year. Due to the large volume of samples each line represents a month allowing us to easily visualize unusually high peaks of precipitation. 
+
+
+## Drought Index Leading up to 2013
+
+The third aspect that I chose to examine as a potential factor leading up to the flooding in 2013 was to look at the drought index for the years between 2012-2014. Leading up to 2013 we can see that Colorado was already experiencing a pretty severe drought as shown by the PDSI of -3 at the start of 2012. However leading up to 2013 we can see that the intensity of the drought increased dramatically to almost -7, the maximum rating for the drought index. The effect of this intensifying drought is that soils, especially clay soils which are prevalent in CO, become much harder. When these soils become harder they tend not to absorb as much water, instead any precipitation rolls off the surface of the topsoil leading to increased water run off and less water being stored in the ground and being slowly released. Given that the most intense drought occurred right before one of the most intense rain events, the soils were likely not prepared to absorb that volume of water, leading to increased runoff and flooding in the watershed area. 
+```{r, echo=FALSE}
+climate$Date<-as.Date(climate$Date)
+drought<-climate[(climate$Date>= "2012-01-01" & climate$Date <= "2014-01-01"),]
+plot(drought$PDSI~drought$Date, ylab = "PDSI", xlab = "Year", type = 'l')
+```
+
+
+Figure 3: PDSI (Drought Index) is plotted against time for the range 2012-2014. Values for PDSI only go up to -3 as Colorado was already in a drought in 2012. PDSI ranges from -7 - +7 with negative numbers indicating drought conditions with increasing severity and positive numbers indicating Unusually wet conditions. 
+
+## Drought Conditions since 1990
+
+While I have already examined the drought characteristics in the year leading up to the flooding event in 2013, I wanted to see if there were any larger scale changes in drought characteristics over the course of the entire data-set. I found that there seems to be a 5 year cycle between excess drought and wet conditions. It seems that every 2.5 years the climate cycles between being too dry and too wet. However there was an extreme drought around 2002 where the cycle should have gone back up to an overly wet system. Since then there seems to be a downwards trajectory in which the cycle is still somewhat present, however the overall trend for the areas is that it is getting drier and drier. Additionally by looking at this data-set we can see that the drought in 2013 was lower than any drought cycle experienced up to that point. 
+```{r, echo=FALSE}
+plot(climate$PDSI~climate$Date, ylab = "PDSI", xlab = "Year")
+```
+
+
+Figure 4: PDSI is plotted by year for the range 1990-2016. PDSI values range from -7 - +7 with negative numbers indicating drought conditions with increasing severity and positive numbers indicating Unusually wet conditions.
+
+## Precipitation vs. Average temperature
+
+Precipitation is graphed against average temperature. I was interested in whether or not the increasing trends in drought were related to precipitation. My hypothesis was that if climate change is driving increasing temperatures and increasing intensity and frequency of drought events, there would likely be a corresponding decrease of precipitation with increasing temperature. However looking at the data provided in the climate data-set I found that the opposite was true. As temperatures increase we see an increase in precipitation. This is likely a result of the fact that the majority of the precipitation occurs during the months of July-September which also happen to be the hottest months of the year in Colorado. Secondly this is likely a result of the increased evaporation and evapotranspiration from bodies of water and the forests respectively. Thus, the drought characteristics cannot be directly correlated to average temperature.  
+```{r, echo=FALSE}
+plot(climate$PCP~climate$TAVG, xlab = "Average Temperature (F)", ylab = "Precipitation")
+```
+
+
+Figure 5: Precipitation is plotted as a function of temperature. Precipitation is measured on a scale from 0-6 while average temperature for the study sites is presented in degrees Fahrenheit. 
+
+
+## Flooding Discharge Vs. Year
+
+Lastly I wanted to look at the amount of discharge in the year leading up to and after 2013. Given that this was the year we are studying expressly because of the dramatic flooding that occurred in Boulder during 2013 I expected that the amount of discharge was likely to be higher around 2013. However, I was not expecting that the increase would be so dramatic. We can see that between 2012 and 2013 there is very little flooding or discharge at all. This makes sense given Figure 3 which demonstrates that the peak drought conditions occurred in late 2012. However during September and August of 2013 the values for discharge were over 4000x higher than anything experienced leading up to the great flood. While this graph may be simple, it demonstrates quite clearly the severity of flooding in this area and the short amount of time it took to go from values ranging around 300 to over 4,500. Such an increase in discharge in such a short amount of time, as a result of the factors listed above, is what ultimately led to the severe destruction that occurred in Boulder in 2013. 
+
+```{r, echo=FALSE}
+discharge$Date<-as.Date(discharge$Date)
+flooding<-discharge[discharge$Date>= "2012-01-01" & discharge$Date <= "2014-01-01",]
+plot(flooding$disValue~flooding$Date, xlab = "Year", ylab = "Discharge Value")
+
+```
+
+
+Figure 3: Discharge Value is plotted against time. Discharge values are used as a proxy for how severe flooding is in any given area. Little variation is shown except for in late 2013 due to the magnitude of the increase seen during this time. 

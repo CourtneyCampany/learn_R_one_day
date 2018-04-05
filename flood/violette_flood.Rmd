@@ -1,0 +1,152 @@
+---
+title: "Flood"
+author: "Alicia Violette"
+date: "3/27/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Average Rainfall Since 1948
+I found that the average rainfall since 1948 was fairly variable as one might expect with the seasonal variations that can be observed in Colorado (Figure 1). Over the course of the past 70 years there have been a few other instances where the precipitation matched what we saw during the 2013 flood, but there are only about five of these instanced leading me to conclude that this level of rainfall is not a frequent occurrence (Figure 1). 
+```{r rain total, echo=FALSE, message=FALSE, warning=FALSE}
+
+rain <- read.csv("data/rain_co.csv")
+
+rain$DateTime <- as.POSIXct(rain$DATE, format = "%Y%m%d %H:%M")
+
+seqraindates <- seq(min(rain$DateTime), max(rain$DateTime), by = "10 years")
+
+par(mar = c(5, 5, 1, 1))
+plot(HPCP ~ DateTime, data=rain, type="l", xaxt = 'n', xlab = "Year", ylab = "HPCP (mm)")
+axis.POSIXct(1, at=seqraindates)
+
+
+```
+**Figure 1.** Average rainfall in Colorado since 1948.
+
+##Average Rainfall in 2013
+When considering the rainfall leading up to the 2013 flood the levels of rainfall seem to be low compared to other times in the past, but the rainfall spikes in September, which most likely correlates to the time of the 2013 flooding (Figure 2). The rainfall that Colorado experienced in 2013 was somewhat variable from January to August with some months having less rainfall and some having more, but none of these months come close to the peak that is seen in September (Figure 2). The rainfall that was observed in September came directly after a time where there was a dip in the amount of rain that Colorado was seeing and then in September there was a jump that was over five times as much as the other amounts of rainfall that had been recorded in this year (Figure 2). This higher amount of rainfall most likely contributed to the flooding because of the massive amount of rain that this area received at one time that the environment was not used to or prepared for.
+```{r rain 2013, echo=FALSE, message=FALSE, warning=FALSE}
+
+rain$Date <- as.Date(rain$DateTime)
+
+seqraindates2 <- seq(min(rain$Date), max(rain$Date), by = "month")
+
+par(mar = c(5, 5, 1, 1))
+with(rain, plot(Date, HPCP, type ="l", xaxt ='n', ylab = "HPCP (mm)", xlab = "Month",
+                xlim = as.Date(c("2013-01-01", "2013-12-31"))))
+axis.Date(1, at=seqraindates2, las =3)
+
+```
+**Figure 2.** Average rainfall in Colorado over the course of the year 2013.
+
+##Average Rainfall Per Month
+When thinking about what the average rainfall each month generally looked like, I found that the months that generally saw the most rain were July and August (Figure 3). With July and August generally being the months with the highest rainfall, this most likely means that people would not have been expecting this level of rainfall in September, but rather that they would have expected it more in the months leading up to September. This trend of July and August seeing the highest amounts of rainfall generally could have contributed to the flooding as this rainfall came in a later period than most other rains would in this area. As mentioned previously, the rain that was seen in July and August of 2013 was more than what was seen in many other months of this year, but it was still much less than what was seen in September (Figure 2).
+```{r mean month, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(lubridate)
+rain$month <- month(rain$DateTime)
+
+se <- function(x) sd(x)/sqrt(length(x))
+
+newrain <- rain[complete.cases(rain$HPCP),]
+rain_agg <- doBy::summaryBy(HPCP ~ month, data=newrain ,FUN=c(mean,se))
+
+meanrain <- with(newrain, tapply(HPCP, month, FUN = mean))
+
+monthslab <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
+               "Oct", "Nov", "Dec")
+
+par(mar = c(5, 5, 1, 1))
+library(plotrix)
+b <- barplot(meanrain, col="white", width = 0.5, space = 0.5, ylim = c(0, 0.12),
+             xaxt = "n", ylab = "Average Precipitation (mm)", xlab = "Month")
+plotCI(b, meanrain, uiw = rain_agg$HPCP.se, add = TRUE, pch = NA)
+abline(h=0)
+axis(1, at = b[,1], label = monthslab, las = 3)
+
+```
+**Figure 3.** Average monthly rainfall in Colorado from 1948 through 2013. The errors bars on each bar indicate the standard error of the averages for each month.
+
+##Palmer Drought Severity Index Since 1990
+I found that since the 1990s there have not been few periods where Colorado was in severe droughts based on the Palmer Drought Severity Index (Figure 4). The Palmer Drought Severity Index (PDSI) gives us information about long-term moisture supply and indicates the severity of wet or dry spells that we see (Figure 4). I found that there were two droughts since 1990 with one occurring from about 2001 to 2005 and the other from about 2010 until 2014 (Figure 4).
+``` {r drought all data, echo=FALSE, message=FALSE, warning=FALSE}
+
+drought <- read.csv("data/climate.co.csv")
+
+drought$Date <- as.Date(drought$Date)
+
+par(mar = c(5, 5, 1, 1))
+with(drought, plot(Date, PDSI, type = "l", xlab = "Year"))
+abline(h=0, lty = "dashed")
+
+```
+**Figure 4.** PDSI in Colorado since 1990. Negative numbers correspond to dry spells and positive numbers correspond to wet spells. The dotted line at 0 on the graph indicates the boundary between dry and wet spells.
+
+##Palmer Drought Severity Index in 2013
+If we look at the period to the flood more closely we can see that leading up to the 2013 flooding we see that there was a dry period that began right around 2010 and continued though 2014 (Figure 5). The 2010-2014 dry spell reached its peak toward the end of 2012, but Colorado was still in a drought leading up to the flooding in September of 2013 (Figure 5). The droughts that Colorado was experiencing were likely one of the factors that contributed to the flooding in 2013 due to the fact that the land would have been dry and possibly was not prepared to handle the amount of rain that it received in September of 2013. This large amount of rain during a period of drought would have caused more water to runoff into the rivers, which in turn would have caused the rivers to have more water than they could handle causing them to overflow.
+``` {r drought 2013, echo=FALSE, message=FALSE, warning=FALSE}
+
+seqdroughtdates2 <- seq(min(drought$Date), max(drought$Date), by = "year")
+
+par(mar = c(5, 5, 1, 1))
+with(drought, plot(Date, PDSI, type ="l", xlim = as.Date(c("2009-11-01", "2013-12-31")),
+                   xlab = "Year"))
+axis.Date(1, at=seqdroughtdates2)
+abline(h=0, lty = "dashed")
+
+```
+**Figure 5.** PDSI in Colorado from 2009 to 2014. Negative numbers correspond to dry spells and positive numbers correspond to wet spells. The dotted line at 0 on the graph indicates the boundary between dry and wet spells.
+
+##Palmer "Z" Index in 2013
+The Palmer "Z" Index (ZNDX) shows how months differed from the normal moisture climate that would have been expected for that month, and allow us to see periods that had more precipitation that we would have expected, even in when the area is facing a drought, which seems to be what was happening here. I found that leading up to the September 2013 flood the ZNDX remained below 0 and dropped to almost -3 in June which indicates extreme drought (Figure 6). After this dip we see that there is a peak at about 4 in the beginning of September that indicates extreme wetness (Figure 6). This indication of extreme drought followed by extreme wetness supports what we have discussed previously with Colorado being in a drought leading up to the flood and then experiencing rainfall that was above average for this time of year as well as above average for what is generally seen during the whole year.
+``` {r ZNDX 2013, echo = FALSE, message = FALSE, warning = FALSE}
+
+par(mar = c(5, 5, 1, 1))
+with(drought, plot(Date, ZNDX, type = "l", xlim = as.Date(c("2013-01-01", "2013-12-31")), xlab = "Month", ylim = c(-4,4)))
+abline(h=0, lty = "dashed")
+
+```
+**Figure 6.** ZNDX in Colorado in 2013. Negative numbers here generally indicate droughts and numbers above 0 generally indicate wet periods. The line at 0 indicates the boundary between wet and dry.
+
+##Stream Discharge Since 1986
+I found that there were no other discharge instances like that seen in September 2013 looking all the way back to 1986 (Figure 7). Discharge to some extent appears to be a regular occurrence, but most of these remain below 50 m/s (Figure 7). The September 2013 event caused discharge of up to almost 150 m/s which can explain why this event was so detrimental because of the amount of water that was being discharged from the streams at a very high rate (Figure 7).
+``` {r discharge all data, echo=FALSE, message=FALSE, warning=FALSE}
+
+discharge <- read.csv("data/discharge_co.csv")
+
+discharge$Date <- as.Date(discharge$Date)
+
+seqdisdates <- seq(min(discharge$Date), max(discharge$Date), by = "5 years")
+
+dislab <- expression(Stream~Discharge~~(m^3~s^-1))
+
+par(mar = c(5, 5, 1, 1))
+with(discharge, plot(Date, disval_m, type = "l", xlab = "Year", ylab = dislab, 
+                     ylim = c(0,150), xaxt = 'n'))
+axis.Date(1, at=seqdisdates)
+
+```
+**Figure 7.** River Discharge in the Colorado basin since 1986.
+
+##Stream Discharge in 2013
+I found that when looking at discharge data in 2013 specifically we can see that there was some discharge from the stream from May to late June, but this was the only time in 2013 that the stream had experienced discharge (Figure 8). The fact that there was little discharge from the stream in 2013 before the drought would make sense if the area was experiencing a drought because there would be less water to be discharged from the stream due to the lack of water in the area. This period with low stream discharge might have also contributed to the severity of the flooding in September due to the fact that the stream had not discharged in a while and might not have been prepared to intake the amount of water that it did in September 2013.
+```{r discharge 2013, echo=FALSE, message=FALSE, warning=FALSE}
+
+seqdisdates2 <- seq(min(discharge$Date), max(discharge$Date), by = "month")
+
+par(mar = c(5, 5, 1, 1))
+with(discharge, plot(Date, disval_m, type = "l",
+                     xlim = as.Date(c("2013-01-01", "2013-12-31")), xaxt = 'n',
+                     xlab = "Month", ylim = c(0, 150), ylab = dislab))
+axis.Date(1, at=seqdisdates2, las = 3)
+
+
+```
+**Figure 8.** River Discharge in the Colorado basin in 2013.
+

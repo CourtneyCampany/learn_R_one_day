@@ -1,0 +1,140 @@
+---
+title: "Colorado Flood Assignment"
+author: "Alexis Laskowski"
+date: "4/2/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+#Decreases in HPCP and Stream Discharge Rates With Increased Drought Occurrences Helped to Instigate the Colorado Flood of 2013
+
+##Precipitation Patterns in the Colorado Basin
+
+There appear to be strong seasonal patterns in hourly precipitation (HPCP) in the Colorado Basin Based on the average HPCP per month (Figure 2) HPCP tends to reach a peak in August, after which HPCP tends to decline. From January to August HPCP tends to increase (Figure 2). The flood of 2013 occurred in September, a month that would normally experience a decline in HPCP. The average HPCP for the year of 2013 is extremely high and is a dramatic increase from the previous year’s average HPCP (Figure 3). The highest recorded average annual HPCP occurred in the 1980s following a similar dramatic increase in average HPCP around 1968 (Figure 2). Prior to the 1970s the average annual HPCP was consistently much lower compared to the average HPCP values recorded afterwards (Figure 3). The average HPCP appears to have balanced after the sudden increase in the 1970s up until the flood of 2013 (Figure 3). The HPCP increase in 2013 resembles the HPCP increase in the 1970s and may be explained by the same patterns surrounding it. Thus, the dramatic increase in average HPCP in 2013 may mark another shift that might be followed by a consistent average HPCP at a higher value compared to prior years. 
+
+Although the average annual HPCP tended to be lower in earlier years compared to more recent ones (Figure 3), earlier years appear to have experienced higher rates of HPCP generally monthly (Figure 1). Recent years tend to have lower HPCP values than earlier years for every month except, with the exception of the flood in September of 2013 (Figure 1). The lower rates of HPCP in recent years throughout the year reveals a decreased amount of water inputs into the Colorado Basin system and may suggest a source of stress on the ecosystem. The stress on the Colorado Basin region due to less water inputs from precipitation each month compared to earlier years may explain the need for a flooding event in 2013.
+
+##The Palmer Drought Severity Index from 1990-2016
+
+The Palmer Drought Severity Index (PDSI) for the Colorado Basin region supports an overall decrease in moisture in the region in recent years (Figure 4). There appear to be annual patterns in PDSI as well. There appear to be periods of dry periods followed by periods of more wet spells (Figure 4). From 2000-2004 there is a particularly dry spell followed by a wet spell in the following years (Figure 4). The years leading up to the 2013 flood (2011-2012) similarly experienced a drought and, following the 2013 flooding event, the Colorado Basin experienced a particularly wet spell compared to recent years (Figure 4). The shift between droughts and floods in recent years suggests that the 2013 flood was signalling the start of another wet period. 
+
+The same cycle between droughts and floods appears to occur consistently from 1990-2016 although the overall severity of the shift between each state has increased over time (Figure 5). Similarly, over time the PDSI has trended towards the negative, shifting from positive values in earlier years to negative ones in recent ones (Figure 5). The overall increase in dry spells has likely exacerbated the cycling of floods and droughts causing the dramatic shift to a severe wet spell following the 2013 flood. Despite shifts between wet and dry periods temperature remains constant during the time period between 1990 and 2016 (Figure 6), revealing that the patterns for floods and droughts in the Colorado Basin are not due to an increase in temperature, as one might expect from global warming.
+
+##Shifts in Stream Flow
+
+Stream flow (m) has a distinct seasonal pattern (Figure 7 & 8). Stream discharge tends to experience a peak in June during the summer and is lowest during the winter months (Figure 8). This is similar to the seasonal patterns in HPCP (Figure 2). Like the overall decrease in HPCP in recent years compared to earlier ones, stream discharge appears lower in recent years than previous ones (Figure 7). From April to August stream discharge has been much larger during earlier years (1986-2009) compared to recent years (2010-2013) (Figure 7). The flood of 2013 occurred in September, a time that would normally experience a low stream discharge even in earlier years (Figure 7). The sudden increase in stream discharge in 2013 was likely heavily influenced by the consistently low stream discharge rates in recent years, especially the low rates during months that would normally experience much higher stream discharge values.
+
+##The September Flood of 2013
+
+Leading up to the massive flood in 2013 the Colorado Basin was experiencing low stream discharge rates (Figure 7), a particularly severe drought (Figure 5), and lower HPCP on a monthly basis (Figure 1) compared to earlier years. It is likely that the combination of factors aggravated the system, which had previously been used to higher stream discharge rates, more flooding events and higher precipitation levels on a monthly basis. This accumulation of trends explains the need for an event like the flood of 2013, which caused an increase in stream discharge, HPCP and PDSI.
+
+
+##Figures
+
+```{r cars, include=FALSE}
+library(lubridate)
+library(sciplot)
+library(doBy)
+
+mycols <- colorRampPalette(c("blue4", "green", "brown1"))
+mycols2 <- mycols(66)
+mycols3 <- mycols(12)
+mycols4 <- mycols(29)
+```
+
+```{r}
+rain<- read.csv("rain_co.csv")
+rain$month <- month(rain$DateTime)
+rain$year <- as.factor(year(rain$DateTime))
+
+par(xpd = T, mar = par()$mar + c(0,0,0,7))
+plot(HPCP ~ month, data=rain, pch=18, xlab = "Month", ylab="Hourly Precipitation", 
+     col=mycols2[rain$year], cex.axis=.8)
+axis(side=1, at=c(1:12), cex.axis=.8)
+legend(12.8, 3.4, levels(rain$year), pch=18, col=mycols2, ncol=3, pt.cex = .8, cex=.7)
+par(mar=c(5, 4, 4, 2) + 0.1)
+```
+
+**Figure 1.** Hourly precipitation (HPCP) in the Colorado Basin by month and year (1948-2013). Hourly precipitation is lower in recent years compared to earlier years. Hourly precipitation tends to be higher during the middle of the year. 
+
+```{r}
+rain_agg <- summaryBy(HPCP ~ month, , data=rain, FUN=c(mean, se), na.rm=TRUE)
+plot(HPCP.mean ~ month, xlab= "Month", ylab="Average Hourly Precipitation", data=rain_agg, type = "l", cex.axis=.7)
+axis(side=1, at=c(1:12), cex.axis=.7)
+```
+
+**Figure 2.** Average hourly precipitation (HPCP) in the Colorado Basin by month (1948-2013). The average HPCP tends to be highest in August. From January to August the average HPCP increases and following August the average HPCP decreases.
+
+```{r}
+rain_agg2 <- summaryBy(HPCP ~ year, , data=rain, FUN=c(mean, se), na.rm=TRUE)
+plot(HPCP.mean ~ year, xlab= "Year", ylab="Average HPCP", data=rain_agg2, type = "l", cex.axis=.8)
+```
+
+**Figure 3.** Average hourly precipitation (HPCP) in the Colorado Basin by year (1948-2013). The average HPCP is noticeably lower in earlier years than in more recent years. 
+
+```{r}
+clim_bc <- read.csv("climate_co.csv")
+
+clim_bc$year <- year(clim_bc$Date)
+clim_bc$month <- as.factor(month(clim_bc$Date))
+
+par(xpd = T, mar = par()$mar + c(0,0,0,5))
+plot(PDSI ~ year, data=clim_bc, pch=18, xlab="Year", ylab = "Palmer Drought Severity Index (PDSI)", 
+     col=mycols3[clim_bc$month], las=2, cex.axis =.6, cex=.8)
+axis(side=1, at=c(1990:2016), las=2, cex.axis=.6)
+legend(2017.8, 6.65, levels(clim_bc$month), title= "Month", pch=18, col=mycols3, cex=.7)
+par(mar=c(5, 4, 4, 2) + 0.1)
+```
+
+**Figure 4.** The Palmer Drought Severity Index (PDSI) in the Colorado Basin by year (1990-2016) and month. Positive values denote wet periods and negative values denote dry periods. Earlier years tended to have more wet periods than more recent years.
+
+```{r}
+clim_bc_agg <- summaryBy(PDSI ~ year, , data=clim_bc, FUN=c(mean, se), na.rm=TRUE)
+
+plot(PDSI.mean ~ year, xlab= "Year", ylab="Palmer Drought Severity Index (PDSI)", 
+                 data=clim_bc_agg, type = "l", las=2, cex.axis=.6) 
+axis(side=1, at=c(1990:2016), las=2, cex.axis=.6)
+```
+
+**Figure 5.** The average Palmer Drought Severity Index (PDSI) in the Colorado Basin by year (1990-2016). The average PDSI tended to be more positive in earlier years, indicating more wet spells than dry ones. Later years have more negative average PDSI values and also tend to balance around 0 for a period of time. The average PDSI reached a minimum in 2012 indicating a particularly dry spell.
+
+```{r}
+par(xpd = T, mar = par()$mar + c(0,0,0,5))
+plot(TAVG ~ year, data=clim_bc, pch=18, xlab="Year", ylab = "Temperature",
+     col=mycols3[clim_bc$month], las=2, cex.axis =.6, cex=.8)
+axis(side=1, at=c(1990:2016), las=2, cex.axis=.6)
+legend(2017.8, 78, levels(clim_bc$month), title= "Month", pch=18, col=mycols3, cex=.7)
+par(mar=c(5, 4, 4, 2) + 0.1)
+```
+
+**Figure 6.** The average temperature (°F) in the Colorado Basin by year (1990-2016) and month. The average temperatures per month are very consistent for each year. 
+
+
+```{r}
+discharge<- read.csv("discharge_co.csv")
+
+discharge$month <- month(discharge$Date)
+discharge$year <- as.factor(year(discharge$Date))
+
+par(xpd = T, mar = par()$mar + c(0,0,0,7))
+plot(disval_m ~ month, data=discharge, pch=18, xlab = "Month", ylab="Stream Discharge", col=mycols4[rain$year], cex.axis=.6)
+axis(side=1, at=c(1:12), cex.axis=.6)
+legend(12.8, 140, levels(discharge$year), pch=18, col=mycols4, ncol=3, pt.cex = .8, cex=.8)
+par(mar=c(5, 4, 4, 2) + 0.1)
+```
+
+**Figure 7.** Stream Discharge (m) in the Colorado Basin by month and year (1986-2013). Stream discharge tends to reach a peak towards the middle of the year. Stream discharge appears to be lower in more recent years compared to earlier years.
+
+```{r}
+discharge_agg <- summaryBy(disval_m ~ month, , data=discharge, FUN=c(mean, se), na.rm=TRUE)
+plot(disval_m.mean ~ month, xlab= "Month", ylab="Average Stream Discharge", data=discharge_agg, 
+     type = "l", cex.axis=.8)
+axis(side=1, at=c(1:12), cex.axis=.8)
+```
+
+**Figure 8.** The average Stream Discharge (m) in the Colorado Basin by month (1986-2013). Average stream discharge increases from the beginning of the year, reaches a peak in June and declines following this month.
