@@ -1,19 +1,17 @@
 ###biomass data
 
 photo <- read.csv("FACE/data/face_photosynthesis.csv")
-  
 
-#format--------
-photo$Date2 <- paste(photo$Date, "01", sep="_")
-  photo$Date2 <- as.Date(photo$Date2, format = "%b_%Y_%d", tz='UTC')
+photo$Date <- paste(photo$Date, "01", sep="_")
+photo$Date2<- as.Date
 
 
-  
 library(doBy)
 #function for se
-se <- function(x) sd(x)/sqrt(length(x))
+library(sciplot)
   
-photo_co2 <- summaryBy(Anet ~ Date2 + treatment, data=photo, FUN=c(mean, se))
+photo_co2 <- summaryBy(Anet ~ Date2 + treatment, data=photo, 
+             FUN=mean, na.rm=TRUE, keep.names = TRUE)
 
 #plot bits
 cols <- c("black", "red")
