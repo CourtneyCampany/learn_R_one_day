@@ -17,9 +17,9 @@ library(scales)
 library(plotrix)
 library(lubridate)
 
-rain<-read.csv("rain_co.csv")
-discharge<-read.csv("discharge_co.csv")
-clim_bc<-read.csv("clim_co.csv")
+rain<-read.csv("data/rain_co.csv")
+discharge<-read.csv("data/discharge_co.csv")
+clim_bc<-read.csv("data/clim_co.csv")
 
 clim_bc$Date <- paste(clim_bc$YearMonth,"01", sep="")
 clim_bc$Date <- as.Date(clim_bc$Date, format="%Y%m%d")
