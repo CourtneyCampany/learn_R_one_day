@@ -1,0 +1,183 @@
+---
+title: "Despite Drought and Predicted Dry Spell, 1/1000 Year Flood Hits Boulder, Colorado"
+author: "Marie Pugliese"
+date: "April 7, 2018"
+output:
+  word_document:
+   reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+```
+
+```{r, echo=FALSE}
+library(lubridate)
+library(doBy)
+se <- function(x) sd(x)/sqrt(length(x))
+HPCPlab <- expression(HPCP~~(mm^-1))
+HPCP.meanlab <- expression(Mean~HPCP~~(mm^-1))
+dislab <- expression(Stream~Discharge~~(m^3~s^-1))
+monthaxis <- c("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept",
+               "Oct", "Nov", "Dec")
+mintemplab <- expression(Mean~Monthly~Minimum~Temperature~~(degree~F))
+maxtemplab <-expression(Mean~Monthly~Maximum~Temperature~~(degree~F))
+PDSIgradient <- colorRampPalette(c("red", "plum3", "blue"))
+palette(PDSIgradient(11))
+PDSIcols <- palette(PDSIgradient(11))
+
+rain <- read.csv("data/rain_co.csv")
+rain$DateTime <- as.POSIXct(rain$DATE,format="%Y%m%d %H:%M")
+rain$HPCP[rain$HPCP==999.99] <- NA
+rain$month <- month(rain$DateTime)
+newrain <- rain[complete.cases(rain$HPCP),]
+rain_agg <- doBy::summaryBy(HPCP ~ month, data=newrain,FUN=c(mean,se))
+recentrain <- rain[rain$DateTime >="2008-09-01",
+                   c("DateTime", "HPCP")]
+
+discharge <- read.csv("data/discharge_co.csv")
+discharge$disval_m <- discharge$disValue*0.0283168
+discharge$Date <- as.Date(discharge$datetime, format="%m/%d/%y")
+recentdis <- discharge[discharge$Date >="2008-09-01",
+                       c("Date", "disval_m")]
+
+clim_bc <- read.csv("data/climate_co.csv")
+clim_bc$Date <- paste(clim_bc$YearMonth, "01", sep="")
+clim_bc$Date <- as.Date(clim_bc$Date, format="%Y%m%d")
+clim_bc$PDSIwords <- cut(clim_bc$PDSI, breaks=c(-7,-4,-3,-2,-1,-0.5,0.5,1,2,3,4,7),
+                         labels=c("Extreme Drought", "Severe Drought",
+                                  "Moderate Drought", "Mild Drought",
+                                  "Incipient Drought", "Normal", 
+                                  "Incipient Moisture", "Mild Moisture",
+                                  "Moderate Moisture", "Severe Moisture",
+                                  "Extreme Moisture"))
+recentclim <- clim_bc[clim_bc$Date >="2008-09-01",
+                      c("Date", "PDSI", "PDSIwords")]
+
+recentclim2 <- recentclim[recentclim$Date <="2014-01-01",
+                          c("Date", "PDSI", "PDSIwords")]
+```
+
+#Colorado Flood
+
+## Historical Context
+\ Boulder Colorado experienced a major storm and related flooding in September of 2013, an event the National Weather Service considered the event a 1/1000 year flood. Looking at precipitation, discharge, and climate data, it is easy to understand why such an event would not be expected.
+
+\ HPCP considers the amount of precipitation in an hour on a given date in time. At the time of the flood, Boulder Colorado experienced an HPCP of 2.20 mm^-1^. However, this is not the first time the area has experienced precipitation of such a magnitude. Since 1948, Boulder has experienced six other, separate instances of the HPCP being at least 2.0 mm^-1^, and an additional eight instances of it being at least 1.5 mm^-1^ (Figure 1). Though uncommon, precipitation events of the magnitude of the 2013 flood are not new.
+
+\ Looking at some more seasonal patterns also helps provide context to the flood event. July and August have the highest mean HPCP values, whereas the winter months have the lowest (Figure 2). Higher amounts of precipitation in warmer months makes sense, as more water vapor can exist in warmer temperatures, giving rise to an increased likelihood of thunderstorms and thus floods. It is not unsurprising that a large flood event occurred in September, a month with relatively high mean HPCP (Figure 2). What makes the 2013 flood 1/1000 is not the month in which it falls, but the year.
+
+
+##Before The Flood
+\ In the five years leading up to the 2013 flood, the HPCP of Boulder, Colorado was relatively low, even when taking into account the annual, summer spikes in HPCP (Figure 3). In fact, the last large rain event (HPCP over 1.5 mm^-1^) occurred in 1984 (Figure 1). The ecosystem likely lacks water. In the five years before the 2013 flood, the Palmer Drought Severity Index (PDSI) declines (Figure 4). This is especially true from around 2011 onward, as the index indicates that the region largely experienced severe and extreme drought conditions (Figure 4). When observing historical trends since 1991, there have been times of extremes droughts but there have also been times of extreme moisture, as indicated by PDSI (Figure 5). Though though much moisture was present in the 1990s followed by drought in the early 2000s, the little moisture observed around 2004-2011 is a comparatively weak wet period while the 2011 onward drought is comparatively strong (Figure 5). Overall, the area is not recovering from drought and likewise will be not as able to handle future droughts. This can make for some harsh ecological effects, as water is such an important nutrient.
+
+
+## Other PDSI Patterns
+\ PDSI gives way to many interesting patterns relating to weather and climate. When average monthly minimum and maximum temperature are plotted against one another, a pattern in the PDSI is observed: months with a larger average temperature range correspond to PDSI values indicating drought and months with a smaller average temperature range correspond to PDSI values indicating moisture (Figure 6). Flooding is associated with precipitation, which occurs only in the presence of clouds. However, clouds have an interesting property. They can reflect both incoming solar irradiation back towards the atmosphere and also outgoing earth irradiation back towards the ground. As a result, temperature does not fluctuate as much when clouds are present, explaining the positive correlation between a small range in temperature and PDSI-indicated flooding observed (Figure 6).
+
+\ The Palmer Hydrological Drought Index (PHDI) is a hydrological index addressing wet and dry spell severities and long-term moisture supply and is quite similar to PDSI. When plotted against each other using the Colorado climate data, the values for the two indices are often exactly the same (Figure 7). However, some discrepancies occur around when each are close to 0, or the "normal" range (Figure 7). Though one is a hydrological index and the other a meteorological index, perhaps the discrepancies result from man-made changes, as PHDI takes such into account, while PDSI does not. Events such as the 2013 Colorado flood occur on the more extremes of the indices and likely aren't that affected by differences between them. However, the decision to consider man-made changes is important for the future, as humans continue to contribute to global climate change.
+
+
+##September 2013
+\ Even though September has a higher mean HPCP than most other months (Figure 2), the observance of high moisture levels is not a guarantee. The Standard Precipitation Index for September (SP09) reflect how likely it is for a year to be more dry or moist in September. In Colorado, there was a high likelihood of a dry spell in September for the years leading up to and around the 2013 flood (Figure 8), making the fact that a flood of such magnitude occurred even more surprising.
+
+
+##The Aftermath
+\ Floods bring lots of water to the area. Likewise, observing stream discharge is a good way of determining the magnitude of water an area now must deal with. Yearly, there are increases in discharge around the summer months (Figure 9), as local snow and glacial melt flow into the water bodies. In the five years before the 2013 flood, the yearly discharge increases are observed; however, two spikes in discharge appear in 2013: one as expected and a second, much higher increase a few months later (Figure 9). This second spike is the flood, which is shown to have brought an increase in stream discharge of an order of magnitude great than the normal, summer spikes (Figure 9). So much water, and so much *more* water, was moving down the stream on the days following the flood that it caused quite a disturbance. The impact on local inhabitants, the environment, and even the economy is certainly understandable, given the shear volume of water received. In terms of environment, many terrestrial organisms have lost their habitats, and even though water is now plentiful, it is likely contaminated by other objects, both natural and man-made, impacted by the flooding. No one prepares for a 1/1000 year flood, but when it happens, recovery must occur nonetheless.
+
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+plot(HPCP ~ DateTime, data=rain, type="l", ylim=c(0,2.75),
+     xlab="", ylab=HPCPlab)
+abline(h=1.5, lty=2)
+abline(h=2.0, lty=2)
+```
+\ **Figure 1** HPCP of precipitation recorded at a station in Boulder, Colorado from 1948 to 2013. Horizontal lines (gray, dashed lines) at HPCP values of 1.5 mm^-1^ and 2.0 mm^-1^ have been added to demonstrate the frequency of other high-precipitation events since 1948.
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+plot(HPCP.mean ~ month, data=rain_agg, pch=19, ylim=c(0.05,0.12),
+       xaxt='n', xlab="", ylab=HPCP.meanlab)
+with(rain_agg, arrows(month, HPCP.mean, month, HPCP.mean+HPCP.se, angle=90, length=.03))
+with(rain_agg, arrows(month, HPCP.mean, month, HPCP.mean-HPCP.se, angle=90, length=.03))
+axis(1, at=1:12, labels=monthaxis, las=3)
+```
+\ **Figure 2** Mean HPCP by month of precipitation recorded at a station in Boulder, Colorado from 1948 to 2013. Standard error bars have also been included.
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+plot(HPCP ~ DateTime, data=recentrain, type='l', xlab="", ylab=HPCPlab)
+```
+\ **Figure 3** HPCP of precipitation recorded at a station in Boulder, Colorado from September 1, 2008 to December 31, 2013, representing data from five years before the 2013 flood to the end of the year in which the flood occurs.
+
+```{r, echo=FALSE,fig.width=8, fig.height=6}
+par(mar=c(5,5,1,10), xpd=TRUE)
+plot(PDSI ~ Date, data=recentclim2, type='o', xlab="", 
+     pch=19, col=PDSIcols[PDSIwords])
+legend("bottomleft", levels(clim_bc$PDSIwords), pch=21, inset=c(1.01, 0),
+       pt.bg=PDSIcols)
+```
+
+\ 
+**Figure 4** Palmer Drought Severity Index (PDSI) value from data in Colorado from September 1, 2008 to January 1, 2014, representing data from five years before the 2013 flood to the start of the year after the flood occurs. The colors of the points represent the classifications associated with the corresponding PDSI values. Classifications range from "Extreme Drought" (red points) to "Extreme Moisture" (blue points). A full list of classifications and corresponding PDSI values may be found below.
+
+```{r, echo=FALSE,fig.width=8, fig.height=6}
+par(mar=c(5,5,1,10), xpd=TRUE)
+plot(PDSI ~ Date, data=clim_bc, xlab="", type='h',
+     pch=19, col=PDSIcols[PDSIwords])
+legend("bottomleft", levels(clim_bc$PDSIwords), pch=21, inset=c(1.01, 0), 
+       pt.bg=PDSIcols)
+```
+
+\
+**Figure 5** Palmer Drought Severity Index (PDSI) value from data in Colorado from 1991-2016. The colors of the lines represent the classifications associated with the corresponding PDSI values. Classifications range from "Extreme Drought" (red lines) to "Extreme Moisture" (blue lines). A full list of classifications and corresponding PDSI values may be found below.
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,10), xpd=TRUE)
+plot(TMAX ~ TMIN, data=clim_bc, xlab=mintemplab, ylab=maxtemplab,
+     pch=19, col=PDSIcols[PDSIwords])
+legend("bottomleft", levels(clim_bc$PDSIwords), pch=21, inset=c(1.01, 0), 
+       pt.bg=PDSIcols)
+```
+\ **Figure 6** Monthly average maximum temperature as a function of monthly average minimum temperature. The colors of the points represent the classifications associated with the corresponding Palmer Drought Severity Index (PDSI) values. Classifications range from "Extreme Drought" (red points) to "Extreme Moisture" (blue points). A full list of classifications and corresponding PDSI values may be found below.
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,10), xpd=TRUE)
+plot(PHDI ~ PDSI, data=clim_bc, pch=19, col=PDSIcols[PDSIwords])
+legend("bottomleft", levels(clim_bc$PDSIwords), pch=21, inset=c(1.01, 0), 
+       pt.bg=PDSIcols)
+```
+\ **Figure 7** Palmer Hydrological Drought Index (PHDI) as a function of Palmer Drought Severity Index (PDSI). The colors of the points represent the classifications associated with the corresponding Palmer Drought Severity Index (PDSI) values. Classifications range from "Extreme Drought" (red points) to "Extreme Moisture" (blue points). A full list of classifications and corresponding PDSI values may be found below.
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,10), xpd=TRUE)
+plot(SP09 ~ Date, data=clim_bc, type='h', xlab="",
+     pch=19, col=PDSIcols[PDSIwords])
+legend("bottomleft", levels(clim_bc$PDSIwords), pch=21, inset=c(1.01, 0), 
+       pt.bg=PDSIcols)
+```
+\ **Figure 8** Standard Precipitation Index for September (SP09) value from data in Colorado from 1991-2016. The colors of the lines represent the classifications associated with the corresponding PDSI values. Classifications range from "Extreme Drought" (red lines) to "Extreme Moisture" (blue lines). A full list of classifications and corresponding PDSI values may be found below.
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+plot(disval_m ~ Date, data=recentdis, type='l', xlab="", ylab=dislab)
+```
+\ **Figure 9** Stream discharge of water collected by a USGS steam gauge in Boulder Creek, Colorado from September 1, 2008 to December 31, 2013, representing data from five years before the 2013 flood to the end of the year in which the flood occurs.
+
+
+
+#PDSI Classification list as from NOAA's nClimDiv Divisional Temperature-Precipitation-Drought data:
+
+\ Greater than -4: Extreme Drought;
+\ -4 to -3: Severe Drought;
+\ -3 to -2: Moderate Drought;
+\ -2 to -1: Mild Drought;
+\ -1 to -0.5: Incipient Drought;
+\ -0.5 to 0.5: Normal;
+\ 0.5 to 1: Incipient Moisture;
+\ 1 to 2: Mild Moisture;
+\ 2 to 3: Moderate Moisture;
+\ 3 to 4: Severe Moisture;
+\ Greater than 4: Extreme Moisture;
+

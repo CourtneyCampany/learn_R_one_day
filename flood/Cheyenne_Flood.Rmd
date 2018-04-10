@@ -1,0 +1,221 @@
+---
+title: "Leading Up to the Colorado Flood (2013)"
+author: "Cheyenne Brown"
+date: "April 3, 2018"
+output: 
+  word_document:
+  reference_docx: manuscriptstyle1.docx
+---
+
+```{r Figure 1a, echo=FALSE, warning=FALSE, message=FALSE}
+rain <- read.csv("data/rain_co.csv")
+par(mar=c(5,5,1,1))
+library(lubridate)
+rain$month <- month(rain$DateTime)
+se <-function(x) sd(x)/sqrt(length(x))
+rain_1 <-rain[complete.cases(rain$HPCP),]
+
+# rain_month <- lubridate::round_date(rain$DateTime)
+plot(HPCP~month,data=rain_1,FUN=c(mean,se), xlab="Time (Month)", ylab = "HPCP (in)", xaxt='n', col="lightcoral", pch=2)
+monthaxis <- c("Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept","Oct", "Nov", "Dec")
+axis(1, at=1:12, labels=monthaxis, las=3)
+axis(2)
+```
+\
+Figure 1a. Hourly Precipitation (HPCP) During Each Month from 1948 to 2013
+\
+Time is examined within each month of the year and the Hourly Precipitation, measured in millimeters, is found in Boulder, Colorado for each month of the years 1948 to 2013. 
+
+``` {r Figure 1b, echo=FALSE, warning=FALSE, message=FALSE}
+rain$month <- month(rain$DateTime)
+se <- function(x) sd(x)/sqrt(length(x))
+newrain <- rain[complete.cases(rain$HPCP),]
+library(sciplot)
+rain_agg <- doBy::summaryBy(HPCP ~ month, data=newrain,FUN=c(mean,se))
+plot(HPCP.mean~month, data=rain_agg, xlab="Time (Month)", ylab="Average Monthly Preceiptation (in)", xaxt='n', pch=16, col="lightgreen", ylim=c(0,0.13))
+axis(1,at=1:12, labels=monthaxis, las=3)
+axis(2)
+with(rain_agg, arrows(month, HPCP.mean, month, HPCP.mean+HPCP.se, angle=90,length=0.07))
+with(rain_agg, arrows(month, HPCP.mean, month, HPCP.mean-HPCP.se, angle=90,length=0.07))
+
+```
+\
+Figure 1b. The Average Monthly Precipitation (mm) From 1948-2013
+The monthly precipitation levels, measured in millimeters, was averaged over the course of years 1948-2013. Standard Error bars are included.
+ 
+```{r Figure 1c, echo=FALSE, warning=FALSE, message=FALSE}
+rain$DateTime <- as.POSIXct(rain$DATE,format="%Y%m%d %H:%M")
+max(rain$DateTime)-min(rain$DateTime)
+rain$HPCP[rain$HPCP==999.99] <- NA
+par(mar=c(5,5,1,1))
+plot(HPCP~DateTime, data=rain, type="l", col="dodgerblue3", ylab = "HPCP (in)", xlab="Time (Years)")
+```
+\
+Figure 1c. Annual Hourly Precipitation (in) Over the Span of 65 Years
+The hourly precipitation levels in Boulder, Colorado was assessed between the years of 1948 and 2013.The Hourly Precipitation was measured in inches over the course of 65 years. 
+
+```{r Figure 1d, echo=FALSE, warning=FALSE, message=FALSE}
+rain$month_season <- rain$month
+rain$season <- ifelse(rain$month_season %in% c("9", "10", "11"),"fall", "other")
+rain$season <- ifelse (rain$month_season %in% c("12", "1", "2"), "winter", rain$season)
+rain$season <- ifelse(rain$month_season %in% c("3", "4", "5"), "spring", rain$season)
+rain$season <- ifelse(rain$month_season %in% c("6", "7", "8"), "summer", rain$season)
+# which(rain$season=="other")
+rain$season <- as.factor((rain$season))
+mycol1 <- c("chocolate1", "chartreuse2", "firebrick3", "cadetblue3")
+plot(HPCP~month, data=rain, ylim=c(0.0,2.75), col=mycol1[season], pch=1, ylab="HPCP (in)", xlab="Time (month)", cex=1.5)
+legend("topleft", levels(rain$season), pch=1, inset = 0.01, col=mycol1, bty='n')
+```
+\
+Figure 1d.Montly Seasonal Variance in Hourly Precipitation
+The hourly precipitation (HPCP), which is measured in inches, was assessed each month for 65 years. The HPCP varied based upon seasons. On the x-axis, the numbers corresponds to the months of the year (1 being January and 12 being December). Fall is denoted by orange, spring is denoted by green, summer is shown in red, and winter is shown in blue.
+\
+\
+\
+From years 1948 until 2013 , there was a certain amount of precipitation each month, yet specific months typically had higher records of precipitation or more frequent precipitation (Figure 1a). It seems as though the winter months (December, January, and February) had lower amounts of precipitation–always being below 1.5 inches in terms of hourly precipitation. Hourly precipitation was higher during spring months (March, April, and May) (Figure 1a). Furthermore, during the months of June, July, and August, the hourly precipitation was almost always below 1.5 inches. It is possible for these months to be dryer and for there to be less precipitation during these months where the sun is out more often. As temperatures increase, relative humidity decreases, which can explain why there is less water vapor in the air and less precipitation. There is the saying ‘April showers bring may flowers’. This phrase is applicable to this situation because the highest hourly precipitation amount for Boulder, Colorado based on records leading up to September 31, 2013, was in April (Figure 1a). There are more years when hourly precipitation was below 1.5 inches in May, June, and July whereas during these same years, in other months, there was more variation in the amount of hourly precipitation (Figure 1a). Overall, in Boulder, Colorado, the months of July and August had the highest monthly average precipitation, both above .10 inches in HPCP (hourly precipitation) (Figure 1b). Due to the fact that this is an assessment of hourly precipitation, the amount of precipitation during these two months can be considered more constant throughout a 24-hour period than the other months of the year. In other months, the average hourly precipitation might be lesser than that of July and August because the amount of precipitation is higher, but in a shorter period of time–therefore the rate is quicker and there might not be precipitation every hour, but rather a lot of precipitation within certain hours of the day (Figure 1b). The average monthly precipitation was lowest during the winter months (December-February) (Figure 1b). Other events within the last 65 years do emulate the September 2013 event (Figure 1c). Around the early 1970’s, there were high levels of hourly precipitation (HPCP) as well as during the mid-1980’s (Figure 1c). However, since the 1980’s, there hasn’t been a major event similar to that of September 2013 (Figure 1c). The 2013 Colorado flood was said to occur due to a class between the cold and warm fronts, which yielding heavy rainfall. This can explain why there are higher levels of precipitation in the spring and fall seasons (due to the transition from cold to warm weather–winter to spring– and hot to cool weather–summer to fall) (Figure 1d). There were seasonal patterns in the sense that there was the least amount of hourly precipitation in the winter, the most amount of hourly precipitation in the spring, more hourly precipitation in the fall than in the summer (Figure 1d). 
+\
+```{r Figure 2a, echo=FALSE, warning=FALSE, message=FALSE}
+rain$DateTime2 <- as.POSIXct(rain$DATE, format="%Y")
+max(rain$DateTime)-min(rain$DateTime)
+rain$HPCP[rain$HPCP==999.99] <- NA
+datetxt <- rain$DateTime
+datetxt <-as.Date(datetxt)
+dataf <- data.frame(DateTime=datetxt, year=as.numeric(format(datetxt, format="%Y")), month=as.numeric(format(datetxt, format="%m")), day=as.numeric(format(datetxt, format="%d")))
+merge1 <- merge(dataf, rain, by=0)
+plot(HPCP~year, data=merge1, col="mediumpurple1", ylab = "HPCP (in)", xlab="Time (Years)", xlim=c(1948,2012), ylim=c(0.0, 2.75), pch=1)
+```
+\
+Figure 2a.
+Hourly Precipitation Prior to September 2013 Flood
+The hourly precipitation (in) was assessed between years 1948 and 2013. However, the HPCP only extended to September of 2013, rather than the entire year of 2013.
+\
+```{r Figure 2b, echo=FALSE, warning=FALSE, message=FALSE}
+plot(HPCP~year, data=merge1, col=mycol1[season], ylab = "HPCP (in)", xlab="Time (Years)", xlim=c(1948,2012), ylim=c(0.0, 2.75), pch=16)
+legend("topright", levels(merge1$season), pch=16, inset = 0.01, col=mycol1, bty='n')
+```
+\
+Figure 2b.
+Seasonal Variance in Hourly Precipitaiton Prior to 2013 Flood
+\
+The Hourly Precipitation (HPCP), measured in inches was assessed prior to the 2013 flood, but categorized based on season. Fall is shown by orange, spring by green, summer by red, and winter by blue. 
+\
+\
+Prior to the 2013 flood, there was not as much hourly precipitation that was recorded and the amounts of precipitation was lesser than that of 1950-1970 (Figure 2a). There appears to be more records of precipitation during the period between 1950 and 1970. However, most of the hourly precipitation was below 0.5 inches, moderate levels between 0.5 and 1.0 inches, and only a few cases of hourly precipitation above 1.5 inches (Figure 2a). However, it appears that by 2012, while the amount of hourly precipitation did not seem as frequent, the levels of hourly precipitation were on the rise or increasing (Figure 2a). Seasonal patterns do correspond with this data (Figure 2b). There was the least amount of hourly precipitation before the 2013 flood during the winter seasons, a considerable amount of precipitation in the fall, but mostly still below 0.5 inches, higher levels of hourly precipitation in the summer and spring, yet less frequent records of there being hourly precipitation (Figure 2b). Again, in the years between 1950 and 1970, there was an extensive record of hourly precipitation occurring throughout every season, whereas since 1970, there are not as many records of hourly precipitation (Figure 2b). However, the data appears variable based on the seasons because there are outliers that reached above a certain threshold within each season (Figure 2b). As mentioned earlier, the Colorado flood occured when a cold front intersected with a warm, humid front, so it is possible that this intersection wasn’t as frequent and that warm periods weren’t as high in temperature. As can be seen, temperatures are increasing and climate change is altering precipitation levels, cold and warm fronts, and overall climatic patterns, which result in disturbances and natural disasters such as this Colorado Flood in September of 2013. 
+\
+\
+```{r Figure 3a, echo=FALSE, warning=FALSE, message=FALSE}
+drought <- read.csv("data/climate_co.csv")
+climb_bc <- read.table("data/climate_co.txt", header=TRUE)
+
+# head(climb_bc$Date) 
+# climb_bc$Date <-as.POSIXct(climb_bc$Date, format="%Y%m%d")
+climb_bc$Date <-paste(climb_bc$YearMonth,"01",sep="")
+climb_bc$Date <- as.Date(climb_bc$Date, format="%Y%m%d")
+climb_bc$PDSI[climb_bc$PDSI==999.99] <- NA
+# range(climb_bc$Date)
+# summary(climb_bc$PDSI)
+datetxt1 <-climb_bc$Date
+datetxt1 <- as.Date(datetxt1)
+dataaf2 <- data.frame(Date=datetxt1, year=as.numeric(format(datetxt1, format="%Y")), month=as.numeric(format(datetxt1, format="%m")), day=as.numeric(format(datetxt1, format="%d")))
+merge2 <-merge(dataaf2, climb_bc, by=0)
+plot(PDSI~year, data=merge2, col="goldenrod", ylab="PDSI (Dry/Wet Scale)", xlab= "Time (Years)", xlim=c(1991,2012), ylim=c(-6,6), pch=18, cex=1.2)
+library(plotrix)
+model <- lm(PDSI~year, data=merge2)
+ablineclip(model, x1=min(merge2$year), x2=max(merge2$year), lty=1, lwd=2)
+```
+\
+Figure 3a.
+\
+Severity of Drought Before 2013 Flood
+\
+The Severity of drought is based on the Palmer Drought Severity Index (PDSI). This index ranges from -6 (being extreme drought) to +6 (being extreme moisture). PDSI is a measure of moisture supply. 
+```{r Figure 3b, echo=FALSE, warning=FALSE, message=FALSE}
+library(sciplot)
+library(doBy) #this is the correct package name
+library(xts)
+se2 <- function(x) sd(x)/sqrt(length(x))
+rain_agg2 <- summaryBy(PDSI~month, data=merge2, FUN=c(mean,se2))
+dd <-rnorm(20)
+try <- ts(rnorm(20), frequency = 12, start=2012)
+dd2 <- ts(dd, frequency = 12, start = 2012)
+# frame <- data.frame(YearMonth=seq(as.POSIXct("201308"), by="month", length.out=20, dd=rnorm(20)))
+# frame <-data.frame(month=seq(as.POSIXct("201308"), by="month", length.out=20, dd=rnorm(20))
+with(merge2[(merge2$YearMonth < 201308) & (merge2$YearMonth > 201201),], plot(PDSI.mean~month, rain_agg2, col="salmon", ylab= "PDSI (Dry/Wet Scale)", xlab="Months (Jan 2012-Aug 2013)", xaxt='n', xlim=c(1,12), ylim=c(-6,6), pch=16, cex=1))
+# dates <- seq(as.Date(201308, by="month", along=try), format(dates, "%Y%m"))
+with(rain_agg2, arrows(month, PDSI.mean, month, PDSI.mean+PDSI.se2, angle=90, length=0.07))
+with(rain_agg2, arrows(month, PDSI.mean, month, PDSI.mean-PDSI.se2, angle=90, length=0.07))
+axis(1, at=1:12, labels=monthaxis, las=3, paste(rep(2012:2013, each=12, rep(1:12,2))))
+axis(2)
+```
+\
+Figure 3b.Average Month PDSI Leading up to 2013 Flood
+The data extends from January 2012 to August 2013, just before the 2013 Flood in Boulder, Colorado. The PDSI (Palmer Drough Severity Index) values were averaged over these twenty months. Standar error is shown through error bars. 
+\
+\
+The Palmer Drought Severity Index (PDSI) is used to assess the severity of drought and long-term moisture supply. PDSI represents a monthly value for the severity of a dry or wet spell. The scale for PDSI is from -6 (a dry spell) to +6 (a wet spell). Therefore positive values represent moist seasons whereas negative values represent drought seasons. Extreme drought is classified as values greater than -4 and moderate drought is considered values greater than -2. Conversely, values greater than +2 are considered moderate levels of moist conditions and above +4 would be extreme moisture or wet spells. Between 1991 and 2016, Boulder, Colorado has gone from a little above a moderate wet spell to moderate drought as well as cases of extreme drought (Figure 3a). As of recently, the values of the PDSI are lower than ever before and are comparable to around 2002, where extreme drought occurred (Figure 3a). When these ecosystems are in extreme drought, the top layers of the soil are drying out. Water typically will flow on the surface of the soil rather than seeping in. In the event of highly moist top layers, organic matter can travel through winds to other locations. With that being said, the moisture supply is on a decline in Boulder Colorado (Figure 3a). Between January 2012 and August 2013, the average PDSI fluctuates minimally and remains relatively close to zero, yet the average PDSI values decrease slightly from January to March, increase in April, decrease in May, increase June-August, decrease slightly in September, decreases even further in November, but slightly increases in December (Figure 3b). Of course there appears to be some overlap between the average PDSI for each month.  Therefore, leading up to the Colorado Flood of 2013, the average levels of dry spells and moist spells are at equilibrium. May and June appear to be the closest to a dry spell, whereas August is the closest to a wet spell. Yet, the average PDSI does not show moderate or extreme cases of drought nor wet spells (Figure 3b).  
+\
+\
+```{r Figure 4, echo=FALSE, warning=FALSE, message=FALSE}
+merge2$month_season <- merge2$month
+merge2$season <- ifelse(merge2$month_season %in% c("9", "10", "11"),"fall", "other")
+merge2$season <- ifelse (merge2$month_season %in% c("12", "1", "2"), "winter", merge2$season)
+merge2$season <- ifelse(merge2$month_season %in% c("3", "4", "5"), "spring", merge2$season)
+merge2$season <- ifelse(merge2$month_season %in% c("6", "7", "8"), "summer", merge2$season)
+which(merge2$season=="other")
+merge2$season <- as.factor((merge2$season))
+mycol2 <- c("darkorange", "seagreen2", "red", "cornflowerblue")
+plot(PDSI~TAVG, data=merge2, xlab="Average Temperature (Degrees)", ylab="PDSI (Dry/Wet Scale)", col=mycol2[season], pch=18, cex=1)
+legend("bottomleft", levels(merge2$season), pch=18, inset=0.01, col=mycol2, bty='n')
+```
+\
+Figure 4. Severity of Drought Based on Average Temperature
+\
+The Palmer Drought Severity Index (PDSI) was used to assess moisture supply and evaluated based on average temperature over 65 years (from 1948-2013). Fall is shown as orange, spring is shown as green, summer is shown as red, and winter is shown as blue. 
+\
+\
+As expected, the average temperature fluctuates throughout the year. The range of PDSI is largest at higher temperatures, typically during the summer season (Figure 4). The range of PDSI–moisture supply–is smallest and least extensive during the winter season (Figure 4). In Boulder Colorado, the average temperature during the winter typically ranged from 20 degrees to low 40’s, spring and winter were variant but lied between the ranges of 35 degrees to low 60’s for spring and between low 30’s to mid 60’s for fall, and summer was generally 65 degrees and above. The Palmer Drought Severity Index varied in spite of changes in temperature (Figure 4). During the winter season, the PDSI, which is a hourly assessment, doesn’t go above a 4–meaning that there doesn’t appear to ever be extreme moisture during the winter season (Figure 4). While there are instances of extreme drought during the winter, in most instances, the PDSI fluctuates between moderate drought and moderate moisture during the winter (Figure 4). Similarly, in the spring and fall, there are not many instances which exceed moderate drought nor moderate moisture–thus meaning that there are only a few cases during the fall in particular when there is extreme drought or extreme moisture (Figure 4). There is only both extreme drought and extreme moisture at high average temperatures, which occur during the summer season (Figure 4). Therefore, at high temperatures, there are both dry spells and wet spells. It is said that there is a correlation between dry soils during a drought and potential for flooding because the water will not be absorbed in the ground due to the dryness of the top layer of soil, thus leading to the propensity to flood. Taking that into consideration, leading up to the 2013 Flood, as summer was transitioning into fall, the average temperature was considerably high and extreme drought would likely augment the probability of flooding. 
+\
+\
+```{r Figure 5a, echo=FALSE, warning=FALSE, message=FALSE}
+plot(PCP~PHDI, data =merge2, col=mycol2[season], pch=16, ylab="Precipitation (in)", xlab="Drought (PHDI)", ylim=c(0,6.25), xlim=c(-7,7), cex=1)
+legend("topleft", levels(merge2$season), pch=18, inset=0.01, col=mycol2, bty='n')
+model3 <- lm(PCP~PHDI, data=merge2)
+ablineclip(model3, x1=min(merge2$PHDI), x2=max(merge2$PHDI), lty=1, lwd=2)
+```
+\
+Figure 5a. Correlation of Precipitation (in) and Severity of Drought (PHDI)
+asdf
+\
+```{r Figure 5b, echo=FALSE, warning=FALSE, message=FALSE}
+plot(PCP~TAVG, data=merge2, pch=18, col=mycol2[season], cex=1.1, ylab="Precipitation (in)", xlab="Average Temperature (Degrees)", xlim=c(20,80), ylim=c(0,6.5))
+legend("topleft", levels(merge2$season), pch=18, inset=0.01, col=mycol2, bty='n')
+model4 <- lm(PCP~TAVG, data=merge2)
+ablineclip(model4, x1=min(merge2$TAVG), x2=max(merge2$TAVG), lty=1, lwd=2)
+```
+\
+Figure 5b.adsf
+The amount of precipitation, measured in inches, was assessed in correspondence to drought severity, measured through the Palmer Hydrological Drought Index (PHDI). This index ranged from -7 to +7, with the negative values being dry spells and the positive values being wet spells. Above -4 is considered extreme drought, between -2 and -4 is moderate drought. Conversely, between +2 and +4 is moderate moisture and above +4 is extreme moisture. Fall is shown in orange, spring in green, summer in red, and winter in blue.  
+\
+\
+The PHDI value, (Palmer Hydrological Drought Index) increases as precipitation increases (Figure 5a). However, there is variation around this trend. The PHDI can range from -7 to +7 (different from that of PDSI). Otherwise, these indexes have similar concepts in classifying dry spells and wet spells. During the winter season, the precipitation level is low and there are cases of moderate drought, extreme drought, and moderate moisture (Figure 5a). The fall also has considerably low levels of precipitation and varies in PHDI from -6 to 6–meaning that there are instances of extreme drought and extreme moisture (Figure 5a). While during the spring, PDHI reaches levels of extreme drought and extreme moisture, there are fewer cases than in other seasons (Figure 5a). With that being said, the spring typically doesn’t exceed PDHI values of -5 and +5. There does appear to be higher levels of precipitation during both the spring and summer season, but more so the summer season (Figure 5a). As moisture increases, the ability for the water to be held in the atmosphere decreases, thus explaining why it is likely for precipitation to increase gradually under moist conditions (Figure 5a). It is understood that as temperature increases, precipitation also increases (Figure 5b). 
+
+\
+\
+```{r Figure 6, echo=FALSE, warning=FALSE, message=FALSE}
+discharge <- read.csv("data/discharge_co.csv")
+discharge$disval_m<- discharge$disValue*0.0283168
+dislab <-expression(Stream~Discharge~~(m^3~s^-1))
+# class(discharge$datetime)
+# head(discharge$datetime)
+discharge$Date <-as.Date(discharge$datetime, format="%m/%d/%y") 
+new <- discharge[discharge$Date >="2013-09-01" & discharge$Date <="2013-09-30",] ##date order
+plot(disval_m~Date, data=new, col="dodgerblue",xlab="Discharge (ft^3/s)", ylab="Date (Days)")
+
+``` 
+\
+Figure 6.Stream Discharge Flow Around 2013 Colorado Flood
+\
+From Years 1986 to 2013, the amount of stream discharge was measured through the use of aquatic sensors. Stream discharge quantifies the volume of water moving down a stream in cubic feet per second or gallons per day-in this case, cubic ft per second. Discharge quantifies flow.
+\
+\
+Evidently, stream discharge increases during the time of a flood, as can be seen leading up to 2013 (Figure 6).Drought creates the ability for land to flood because the water is not absorbed in the soil and the addition of increased precipitation leads to more flooding and discharge. Therefore, as is expected, stream flow increases in the event of a flood.
