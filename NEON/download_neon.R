@@ -2,15 +2,15 @@
 #package not on Cran so we have to download from source
 #this requires devtools package
 
+install.packages("devtools")
 library(devtools)
+
 install_github("NEONScience/NEON-utilities/neonDataStackR", dependencies=TRUE)
 
 library (neonDataStackR)
 
+#Here is my example zip file saved in the NEON folder in my project
+#The first argument is the data product ID (look inside your zip file or see tutorial)
+#The second argument is the path to your zip file
 
-stackByTable("NEON/NEON_size-dust-particulate.zip")
-
-
-##I want data from leaf litter (desert, tropics, mountain, temperate)
-
-#rates and chemistry & weather tp match?
+stackByTable("DP1.10053.001.2016","NEON/NEON_isotope-foliar.zip")
