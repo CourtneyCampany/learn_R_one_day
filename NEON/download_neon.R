@@ -5,9 +5,9 @@
 install.packages("devtools")
 library(devtools)
 
-install_github("NEONScience/NEON-utilities/neonDataStackR", dependencies=TRUE)
+install_github("NEONScience/NEON-utilities/neonUtilities", dependencies=TRUE)
 
-library (neonDataStackR)
+library(neonUtilities)
 
 #Here is my example of a zip file saved in the NEON folder in my project
 #The first argument is the data product ID (look inside your zip file or see tutorial)
