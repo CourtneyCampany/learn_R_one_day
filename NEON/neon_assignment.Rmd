@@ -30,7 +30,7 @@ http://data.neonscience.org/home
 
 \
 
-We will be given a tutorial by the science educator at NEON, Dr. Megan Jones. Dr. Jones will also be added to our slack message board for the assignment period. NEON has developed an R package (details below) to help condense the data product you download into a usable format. 
+We will be given a tutorial by the science educator at NEON, Dr. Megan Jones. Dr. Jones will also be added to our slack message board for the assignment period. NEON has developed an R package to help condense the data product you download into a usable format. 
 
 \
 
@@ -39,7 +39,7 @@ Be strategic about your data search! First, make sure you choose something that 
 <img src="data-portal-comparison.jpg" height ="600" width="800">
 
 ## April 24^th^
-At our next scheduled lab session I will meet with you individually.  At this point, you must have selected and downloaded you chosen data set. We will informally discuss what you would like to investigate. In order to maintain reproducibility, I will collect your formatted data set before lab is finished the lab. Any last minute changes must be completed before you leave the lab.
+At our next scheduled lab session I will meet with you individually.  At this point, you must have selected and downloaded you chosen data set. We will informally discuss what you would like to investigate. In order to maintain reproducibility, I will collect your formatted data set before lab is finished. Any last minute changes must be completed before you leave the lab.
 
 \
 

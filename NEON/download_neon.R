@@ -9,7 +9,7 @@ install_github("NEONScience/NEON-utilities/neonDataStackR", dependencies=TRUE)
 
 library (neonDataStackR)
 
-#Here is my example zip file saved in the NEON folder in my project
+#Here is my example of a zip file saved in the NEON folder in my project
 #The first argument is the data product ID (look inside your zip file or see tutorial)
 #The second argument is the path to your zip file
 
