@@ -1,0 +1,170 @@
+---
+title: "Ecosystem response to elevated carbon dioxide"
+output:
+  word_document: 
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This study is an examination of the effects of elevated carbon dioxide levels on various aspects of an experiment. It is a FACE site where fumigation became fully operational in 2021. Rings are 25m diameter circular plots with controls being normal carbon dioxide levels of 396 ppm and experimental sites were at 546 ppm. 
+
+#Photosynthesis 
+Photosynthesis is known to increase with elevated carbon dioxide levels and this was seen in this experiment. From initial fumigation, plots with elevated carbon dioxide had higher photosynthesis rates (Figure 1). Although the photosynthetic rate varied over time, the elevated sites always had a higher rate. Photosynthesis was measured in discrete campaigns and the principal age class of leaves were present at each time point. Measurements were made using a set of Li-Cor model 6400 portable photosynthesis systems using infra-red gas analysis. 
+
+#Litterfall
+Total liter fall was also measured across sites.Dry mass of litterfall was collected on a monthly basis in .02m^2 collection baskets. This includes both foliage, twig, bark and seed litterfall. Samples were collected and sorted into components and weighed. All litter collections are reported in dry biomass (g). In two cases, large branches landed on the litter traps and were excluded from the biomass totals.The plots with elevated carbon dioxide had lower total litter fall across all years (Figure 2). However they did follow the same general trends in terms of the the ratios of the components between all sites with leaves making up the majority of the litter followed by twigs and bark, and with seeds being the smallest component by far. 
+
+#ANPP
+The above ground net primary productivity (ANPP) was measured in response to elevated carbon dioxide levels. ANPP was defined as the sum productivity of stemwood biomass production, fine twig production, seed production, and leaf production. Tree biomass was calculated from allometry. The diameter of each tree was measured at 1.3m height at approximately monthly intervals starting February 2021, two years prior to commencement of the full CO2 treatment. Manual band dendrometers were used to monitor stem diameter changes. The permanently placed bands consisted of plastic straps graduated with a vernier scale placed around a tree. These trees were surveyed annually (or more frequently) and annual values were used to compute tree biomass according to published allometric regressions. It was found that elevated carbon dioxide levels decreased biomass production across all years (Figure 3). Elevated carbon dioxide has a clear effect on ANPP but has the opposite effect as it had on photosynthesis. This site may have been limited by an additional factor such as water or nutrient levels that reduced biomass and litter production while not actually affecting photosynthesis. This may also explain why literfall was decreased in plots with elevated carbon dioxide and compared to controls. 
+
+#Insect Outbreaks
+This experimental site is also subject large insect outbreaks. Insects have caused several defoliation events during this time period. The differences in response to insect outbreaks varied by year.In almost all cases, the bugs lowered leaf litter to the same level regardless of if there was elevated carbon dioxide or not (Figure 4). The difference lies in the ability for the system to recover. In some cases the sites with elevated carbon dioxide recovered better and in other cases the controls recovered better. What determined this recovery is likely nutrient and water availability, the same facts that controlled the yearly biomass and litter production. 
+
+```{r photosynethesis, echo=FALSE, warning=FALSE, message =FALSE, cache=FALSE}
+library (doBy)
+library(sciplot)
+
+library(ggplot2)
+library(lubridate)
+setwd("~/Desktop/Projects")
+ps <- read.csv("FACE/data/face_photosynthesis.csv")
+ps$Date <- paste(ps$Date, "01", sep="")
+ps$Date <- as.Date(ps$Date, format="%b_%Y%d")
+ps$quarter <- round_date(ps$Date, unit="quarter")
+#calculate the difference between the two eco2 and aco2, plot that
+psA <- ps[ps$treatment=="aCO2",]
+psA$AnetA <- psA$Anet
+psA$Anet <- NULL
+psA <- droplevels(psA)
+psE <- ps[ps$treatment=="eCO2",]
+psE$AnetE <- psE$Anet
+psE$Anet <- NULL
+psE <- droplevels(psE)
+pss <- doBy::summaryBy(Anet ~ quarter + treatment, data=ps, FUN=c(mean, se), na.rm=TRUE)
+pss$ylo <- pss$Anet.mean - pss$Anet.se
+pss$yhi <- pss$Anet.mean + pss$Anet.se
+anetlab <- expression('A'[net]~(mu~mols~m^-2~s^-1))
+ggplot(data=pss, aes(x=quarter, y=Anet.mean, fill=treatment, shape=treatment, ymin=ylo, ymax=yhi)) +
+  geom_line() +
+  geom_point() +
+  geom_ribbon(alpha=0.5) +
+  theme_classic() +
+  theme(legend.position = "top") +
+  labs(fill="Treatment", shape="Treatment") +
+  labs(x="Year", y=anetlab)
+
+```
+
+Figure 1. Photosynthetic response to control and elevated carbon dioxide levels in FACE sites (umols m-2 s-1 ± SE) over three years. 
+
+
+
+```{r litterfall, echo=FALSE, warning=FALSE, message =FALSE, cache=FALSE}
+setwd("~/Desktop/Projects")
+lit <- read.csv("face/data/face_litter.csv")
+lit$Date <- as.Date(lit$Date, format="%d/%m/%Y")
+lit$year <- as.factor(year(lit$Date))
+#must add which treatment belongs to each ring
+lit$treatment <- as.factor(ifelse(lit$ring == 2 | lit$ring == 3 | lit$ring == 6, "aCO2", "eCO2"))
+#must remove 2 points when big branches fell into litter traps (twig is too big)
+lit <- lit[-which.max(lit$twig),]
+lit <- lit[-which.max(lit$twig),]
+#need to convert units to g C per year (not g biomass per month as it is now)
+#biomass in veg is ~50% C
+basket_size <- .2 #in m2
+c_frac <- .47 #conversion to carbon from biomass
+lit_carbon <- data.frame(lit[,c(1:3, 8:9)], (lit[,4:7] * c_frac) /  basket_size) # now it's gC m^-2 month^-1
+lit_mean_trap <- summaryBy(twig + bark+ seed + leaf ~ year + Date + ring + treatment,
+                           data=lit_carbon, FUN=mean, na.rm=TRUE, keep.names = TRUE) #summarizing by averaging all traps
+lit_bug <- summaryBy(leaf ~ Date + treatment, data=lit_mean_trap, FUN=mean, keep.names=TRUE, na.rm=TRUE)
+#add all months together within each year
+lit_annual <- summaryBy(twig + bark + seed + leaf ~ year + ring + treatment, data=lit_mean_trap, FUN=sum, na.rm=TRUE, keep.names = TRUE)
+#might want to write this because we'll need to merge with wood data later
+write.csv(lit_annual, "face/data/litter_annual.csv", row.names = FALSE)
+###lit stacked bar plot----------------------
+#CO2 effect for plotting
+lit_co2 <- summaryBy(twig + bark + seed + leaf ~ year + treatment, data=lit_annual, FUN=mean, keep.names = TRUE)
+lit_co2$group <- paste(lit_co2$treatment, lit_co2$year, sep=" ")
+lit_co22 <- lit_co2[,3:7]
+library(reshape2)
+lit_graph <- melt(lit_co22, id.var="group")
+litylab <- expression(~Litter(~g~C~m^-2~y^-1))
+lit_graph$group <- as.factor(lit_graph$group)
+levels(lit_graph$group) <- gsub(" ", "\n", levels(lit_graph$group))
+ggplot(lit_graph, aes(x=group, y=value, fill=variable)) +
+  geom_bar(stat="identity") +
+  theme_classic() +
+  theme(legend.position = "top") +
+  labs(fill="Component") +
+  labs(y= "Litter (g)", x="Treatment Group and Year")
+```
+
+Figure 2. Mean annual literfall (g) by year in plots with elevated and control carbon dioxide levels. Colors represent different litter components. 
+
+```{r ANPP, echo=FALSE, warning=FALSE, message =FALSE, cache=FALSE}
+setwd("~/Desktop/Projects")
+wood <- read.csv("face/data/face_woodbiomass.csv")
+ring_diameter <- 25 #ring diameter in m
+ring_area <- pi*(ring_diameter/2)^2 #get area
+c_frac <- 0.47 #carbon fraction conversion from biomass
+kg_to_g <- 1000
+total_wood_ring <- summaryBy(biomass_kg ~ year + Ring + treatment, data=wood, FUN=sum, na.rm=TRUE, keep.names=TRUE)
+total_wood_ring$Date <- paste(total_wood_ring$year, "/12/31", sep="")
+total_wood_ring$Date <- as.Date(total_wood_ring$Date, format = "%Y/%m/%d")
+dates <- unique(total_wood_ring$Date)
+dates <- dates[order(dates)]
+wood_npp <- total_wood_ring[total_wood_ring$Date != dates[1],]
+wood_npp$Start_date <- wood_npp$Date #not actually doing anything, just setting the column format up for the FOR Loop
+for (i in 1:length(wood_npp$Date)) {
+  
+  #set start data as the element before 'it' in the date vector. "it" is the date in wood_npp
+  wood_npp$Start_date[i] <- dates[which(dates == wood_npp$Date[i]) - 1]  
+  #uses our date vector
+  
+  # finds the previous years biomass for each ring @ right time
+  wood_npp$prev_biom_kg[i] <- total_wood_ring$biomass_kg[total_wood_ring$Ring == wood_npp$Ring[i] &
+                                                           as.numeric(total_wood_ring$Date-wood_npp$Start_date[i])==0]
+}
+#unit conversion g per carbon per year per m2
+wood_npp$wood_growth <- ((wood_npp$biomass_kg - wood_npp$prev_biom_kg) * c_frac * kg_to_g)/ring_area
+#length of period for wood growth (2019-2021 is a problem)
+wood_npp$timelength <- as.numeric(wood_npp$Date - wood_npp$Start_date)
+wood_npp$wood_yr <- ifelse(wood_npp$timelength == 365, wood_npp$wood_growth/1, wood_npp$wood_growth/2)
+#okay that was a pain but now we have annual wood biomass production, let's save it
+savewood <- wood_npp[, c(1:3, 5, 10)]
+write.csv(savewood, "face/data/wood_npp.csv", row.names=FALSE)
+#Now we need to combine wood with other litter data -----
+joinwood <- summaryBy(wood_yr ~ year+treatment, data=savewood)
+joinwood$group <- paste(joinwood$treatment, joinwood$year, sep=" ")
+anpp <- merge(joinwood, lit_co22)
+anpp$anpp <- anpp$wood_yr.mean + anpp$twig + anpp$bark + anpp$seed + anpp$leaf
+ggplot(data=anpp, aes(x=year, y=anpp, color=treatment, shape=treatment)) +
+  geom_line() +
+  geom_point() +
+  theme_classic() +
+  theme(legend.position="top") +
+  labs(y=expression(ANPP~(g~C~m^-2~year^-1)), x="Year", color="Treatment", shape= "Treatment") +
+  scale_x_continuous(breaks=c(2021, 2022, 2023))
+```
+
+Figure 3. Annual net primary productivity (sum stemwood, fine twig, seed, and leaf biomass production) (Cm-2 yr -1) across three years of control and elevated carbon dioxide. Colors correspond to the different treatments. 
+
+```{r bugs, echo=FALSE, warning=FALSE, message =FALSE, cache=FALSE}
+buglab <- expression(Leaf~Litter~(g~C~m^-1~month^-1))
+ggplot(data=lit_bug, aes(x=Date, y=leaf, color=treatment, shape=treatment)) +
+  geom_line() +
+  geom_point() +
+  theme_classic() +
+  theme(legend.position = "top") +
+  labs(x="", y=buglab, shape="Treatment", color="Treatment") +
+  geom_vline(xintercept=as.Date("20220115", format="%Y%m%d"), alpha=0.25) +
+  geom_vline(xintercept=as.Date("20221015", format="%Y%m%d"), alpha=0.25) +
+  geom_vline(xintercept=as.Date("20230315", format="%Y%m%d"), alpha=0.25) +
+  geom_vline(xintercept=as.Date("20231015", format="%Y%m%d"), alpha=0.25)
+
+```
+
+Figure 4. Leaf litter production following insect outbreaks (g C ^m-2 yr^ -1). Colors correspond to treatments. 

@@ -1,0 +1,199 @@
+---
+title: "Trees Fumigated with Elevated CO2 Levels Do Not Put Energy Towards Aboveground Biomass Despite Increase in Foliage Photosynthesis"
+author: "Marie Pugliese"
+date: "April 20, 2018"
+output:
+  word_document:
+   reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+```
+
+```{r, echo=FALSE}
+#packages
+library(doBy)
+library(sciplot)
+library(lubridate)
+
+#constants
+basket <- .2 #basket size in m2
+c_frac <- .47 #conversion to biomass carbon
+ring_diameter <- 25 #ring diameter m
+ring_area <- pi * (ring_diameter/2)^2 #ring total ground area m2
+kg_to_g <- 1000
+
+#photo format
+photo <- read.csv("data/face_photosynthesis.csv")
+photo$newdate <- paste(photo$Date, "01", sep="_")
+photo$newdate <- as.Date(photo$newdate, format="%b_%Y_%d")
+photo_co2 <- summaryBy(Anet ~ newdate + treatment, data=photo, FUN=c(mean, se))
+
+#litter format
+litter <- read.csv("data/face_litter.csv")
+litter$newdate <- as.Date(litter$Date, format="%d/%m/%Y")
+litter$year <- as.factor(year(litter$newdate))
+litter$ring <- as.factor(litter$ring)
+litter$treatment <- as.factor(ifelse(litter$ring == 2 |
+                                      litter$ring == 3 |
+                                      litter$ring == 6,
+                                      "aCO2", "eCO2"))
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
+litter_carbon <- data.frame(litter[,c(1, 3, 8, 9, 10)],
+                            (litter[,4:7] * c_frac)/basket)
+litter_mean_trap <- summaryBy(twig + bark + seed + leaf ~ year + newdate + ring + treatment,
+                              data=litter_carbon, FUN=mean, na.rm=TRUE, keep.names = TRUE)
+litter_annual <- summaryBy(twig + bark + seed + leaf ~ year + ring + treatment, 
+                           data=litter_mean_trap, FUN=sum, na.rm=TRUE, keep.names = TRUE)
+write.csv(litter_annual, "data/litter_annual.csv", row.names = FALSE)
+litter_annual$totalflux <- with(litter_annual, twig + bark + seed + leaf)
+litter_co2 <- summaryBy(twig + bark + seed + leaf + totalflux ~ year + treatment,
+                        data=litter_annual, FUN=mean, keep.names=TRUE)
+litter_fum <- droplevels(litter_co2[litter_co2$year != 2020,])
+
+#woodbiomass format
+wood_biomass <- read.csv("data/face_woodbiomass.csv")
+total_wood_ring <- summaryBy(biomass_kg ~ year + Ring + treatment,
+                             data=wood_biomass, FUN=sum, na.rm=TRUE,keep.names=T)
+total_wood_ring$Date <- paste(total_wood_ring$year, "/12/31", sep="")
+total_wood_ring$Date <- as.Date(total_wood_ring$Date, format = "%Y/%m/%d")
+dates <- unique(total_wood_ring$Date)
+dates <- dates[order(dates)]
+wood_npp <- total_wood_ring[total_wood_ring$Date !=dates[1],]
+  wood_npp$Start_date <- wood_npp$Date
+  for (i in 1:length(wood_npp$Date)) {
+    wood_npp$Start_date[i] <- dates[which(dates == wood_npp$Date[i]) - 1]  
+    wood_npp$prev_biom_kg[i] <- total_wood_ring$biomass_kg[total_wood_ring$Ring == wood_npp$Ring[i] &
+                                                             as.numeric(total_wood_ring$Date-wood_npp$Start_date[i])==0]
+  }
+  
+wood_npp$wood_growth <- ((wood_npp$biomass_kg - wood_npp$prev_biom_kg)* c_frac * kg_to_g)/ring_area
+wood_npp$timelength <- as.numeric(wood_npp$Date - wood_npp$Start_date)
+  
+wood_npp$wood_yr <- ifelse(wood_npp$timelength == 365, wood_npp$wood_growth/1, wood_npp$wood_growth/2)
+savedata <- wood_npp[, c(1:3, 5, 10)]
+write.csv(savedata, "data/wood_npp.csv", row.names = FALSE)
+
+#new datasets for figures
+photo_aco2 <- photo[photo$treatment == "aCO2",
+                    c("newdate", "Anet")]
+names(photo_aco2)[2] <- paste("aCO2")
+
+photo_eco2 <- photo[photo$treatment == "eCO2",
+                    c("newdate", "Anet")]
+names(photo_eco2)[2] <- paste("eCO2")
+photo_response <- merge(photo_aco2, photo_eco2)
+photo_response$response <- photo_response$eCO2/photo_response$aCO2
+photo_response_new <- summaryBy(response ~ newdate, data=photo_response, FUN=c(mean, se))
+
+litter_bar <- litter_fum[,3:6]
+
+wood_fum <- summaryBy(wood_yr ~ year + treatment,
+                      data=savedata, FUN=mean, keep.names=TRUE)
+ANPP <- merge(wood_fum, litter_fum, by=c("year", "treatment"))
+ANPP$anpp <- with(ANPP, wood_yr + twig + seed + leaf)
+
+#labels and colors
+photolab <- expression(Leaf~Net~Photosynthesis~~(mu~mol~m^-2~s^-1))
+meanphotolab1 <- expression(Mean~Leaf~Photosynthesis)
+meanphotolab2 <- expression((mu~mol~m^-2~s^-1))
+anpplab <- expression(Mean~ANPP~~(g~C~m^-2~yr^-1))
+leaflab <- expression(Leaf~Production~~(g~C~m^-2~yr^-1))
+litlab <- expression(Annual~Productivity~~(g~C~m^-2~yr^-1))
+treatmentcols <- c("cornflowerblue", "forestgreen")
+litcols <- c("saddlebrown", "darkgoldenrod4", "yellow", "forestgreen")
+litlegend <- c("Twig", "Bark", "Seed", "Leaf")
+```
+
+#A New FACE Experiment
+
+##Photosynthesis
+\ For the entire length of fumigation, mean leaf photosynthesis trended higher in trees fumigated with eCO2 than those with aCO2, suggesting not only that a positive response to eCO2 occurred, but also that it was sustained (Figure 1, top). In addition, the response ratio was calculated and found to be above 1 for the entire fumigation process, indicating again that a positive response to eCO2 occurred and was sustained (Figure 1, bottom).
+
+
+##Litterfall
+\ During the years of fumigation, a slight increase in litterfall occurred in all plots (Figure 2). When broken down into its components, various trends in the litterfall are observed. Leaf litterfall increased through the years; yet in every case, leaf biomass trended higher in trees fumigated with aCO2 than those with eCO2 (Figure 2). Though between fumigation types little difference existed, seed biomass was highest in 2021, then dropping to about 1/10 of the observed 2021 biomass in 2022 and 2023 (Figure 2). A slight increase in bark litterfall existed through the years, but no difference was observed between fumigation types (Figure 2). Very little change existed regarding the twigs both across years and between fumigation types (Figure 2).
+
+
+##ANPP
+\ During the course of fumigation, ANPP increased in all plots (Figure 3). A CO2 effect was observed in that for all three fumigation years, trees fumigated with aCO2 trended higher ANPP levels than those fumigated with eCO2 (Figure 3), differing from what was observed regarding photosynthesis in that eCO2-fumigated trees experienced higher amounts of foliage photosynthesis (Figure 1). Perhaps the extra energy the eCO2-fumigated plant revives as a result from increased photosynthesis is allotted to below ground net primary productivity.
+
+
+##Bug
+\ Insect outbreaks have caused a few defoliation events during the time in which fumigation occurred and can be visualized by observing the leaf biomass in litterfall, as the insects eat the leaves, the trees get sick, and they drop the leaves. Thus, high amounts of leaf litterfall are associated with insect outbreaks. The site experienced three insect outbreaks during the course of fumigation: two large events in October 2022 and October 2023, and a smaller event in January 2022 (Figure 4). Though both trees fumigated with aCO2 and eCO2 were affected by the smaller outbreak, there seems to be a CO2 effect in the larger outbreaks, as only trees fumigated with eCO2 were affected (Figure 4). A CO2 effect would be expected, as increased photosynthetic rates were observed in plants (Figure 1). Increased photosynthetic rates are generally coupled with a greater water use efficiency, as the trees need not keep their stomata open as much. The insects may have preferred to feast on such water-rich leaves.
+
+
+```{r, echo=FALSE}
+par(mfrow=c(2,1), mar=c(0,0,0,0), oma=c(5,5,1,1))
+plot(Anet.mean ~ newdate, data=photo_co2, xlab="", ylim=c(15, 31), xaxt='n', yaxt='n',
+     pch=19, col=treatmentcols[treatment])
+with(photo_co2, arrows(newdate, Anet.mean, newdate, Anet.mean+Anet.se, angle=90, length=0.03,
+                       col=treatmentcols[treatment]))
+with(photo_co2, arrows(newdate, Anet.mean, newdate, Anet.mean-Anet.se, angle=90, length=0.03,
+                       col=treatmentcols[treatment]))
+legend("bottomleft", levels(photo$treatment), pch=21, inset=(0.01), 
+       pt.bg=treatmentcols, bty='n')
+axis(2, cex.axis='0.75')
+mtext(meanphotolab1, side=2, line=3, cex=0.8)
+mtext(meanphotolab2, side=2, line=2, cex=0.7)
+par(mar=c(0,0,0,0))
+plot(response.mean ~ newdate, data=photo_response_new, ylim=c(1.1, 1.4), 
+     xlab="", pch=19, yaxt='n')
+with(photo_response_new, arrows(newdate, response.mean, newdate, 
+                                response.mean+response.se, angle=90, length=0.03))
+with(photo_response_new, arrows(newdate, response.mean, newdate, 
+                                response.mean-response.se, angle=90, length=0.03))
+axis(2, cex.axis='0.75')
+mtext("Response Ratio", side=2, line=3, cex=0.8)
+```
+\ 
+**Figure 1** Top: Mean leaf photosynthesis in plots fumigated with ambient and elevated CO2 levels for 2021-2024. Standard error bars have also been included. The years represent time in which fumigation occurred as well as a few months afterwards (2024 data). Plots were fumigated with CO2 levels representing either ambient CO2 levels (blue points) or elevated CO2 levels (green points.) Bottom: Response ratio between plots fumigated with ambient and elevated CO2 levels for 2021-2024. Standard error bars have also been included. The years represent time in which fumigation occurred as well as a few months afterwards (2024 data).
+
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+b <-barplot(t(as.matrix(litter_bar)), xaxt='n', xlab="", ylab=litlab, ylim=c(0,350),
+            col=litcols)
+legend("topleft", legend=litlegend, pch=21, inset=(0.00), 
+       pt.bg=litcols, bty='n')
+mtext("2021", side=1, line=2, at=1.3)
+mtext("2022", side=1, line=2, at=3.7)
+mtext("2023", side=1, line=2, at=6.1)
+mtext("aCO2", side=1, line=1, at=0.7)
+mtext("eCO2", side=1, line=1, at=1.9)
+mtext("aCO2", side=1, line=1, at=3.1)
+mtext("eCO2", side=1, line=1, at=4.3)
+mtext("aCO2", side=1, line=1, at=5.5)
+mtext("eCO2", side=1, line=1, at=6.7)
+box()
+```
+\ 
+**Figure 2** Annual productivity in plots fumigated with ambient and elevated CO2 levels for 2021-2023. Litterfall biomass was used to measure productivity. Components of litterfall - twig, bark, seed, and leaf biomass - are also shown as components of the total annual biomass (brown, gold, yellow, and green sections, respectively). The years represent time in which fumigation occurred.
+
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+bargraph.CI(year, anpp, group=treatment, data=ANPP, ylim=c(0.0, 350), 
+            col=treatmentcols, ylab=anpplab)
+legend("topleft", levels(ANPP$treatment),  pch=21, inset=(0.01),
+       pt.bg=treatmentcols, bty='n')
+box()
+```
+\ 
+**Figure 3** Mean aboveground net primary productivity (ANPP) in plots fumigated with ambient and elevated CO2 levels for 2021-2023. Stemwood, twig, seed, and leaf biomass production were used to measure aboveground net primary productivity. Plots fumigated with ambient CO2 levels (blue bars) and elevated CO2 levels (green bars) are shown. The years represent time in which fumigation occurred.
+
+
+```{r, echo=FALSE}
+par(mar=c(5,5,1,1))
+plot(leaf~newdate, data=litter_carbon, xlab="", ylab=leaflab,
+     pch=21, col=treatmentcols[treatment])
+legend("topleft", levels(litter_carbon$treatment),  pch=21, inset=(0.01),
+       pt.bg=treatmentcols, bty='n')
+```
+\ 
+**Figure 4** Leaf production in plots fumigated with ambient and elevated CO2 levels for 2021-2023. Leaf production is measured from leaf biomass in leaf litter, thus representing the amount of leaves dropped. Plots fumigated with ambient CO2 levels (blue points) and elevated CO2 levels (green points) are shown. The years represent time in which fumigation occurred.
+

@@ -1,0 +1,143 @@
+---
+title: "Elevated CO2 Promotes Foliage Photosynthesis and Diminishes Aboveground NPP"
+author: "Alexis Laskowski"
+date: "4/15/2018"
+output:
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+##Effect of CO2 Fertilization on Foliage Photosynthesis
+
+CO2 has a positive fertilization effect on foliage photosynthesis, as average leaf net photosynthesis is higher for eCO2 rings than for aCO2 rings across time even as photosynthetic rates fluctuate (Figure 1). The enhancement of photosynthesis by eCO2 is sustained over the three year time period 2021-2024 (Figure 1). The eCO2 response ratio fluctuates and does not always correspond to fluctuations in photosynthetic rates (Figure 1). From 2022 on the eCO2 response ratio tends to decrease when foliage photosynthesis decreases and to increase when foliage photosynthesis increases (Figure 1). Prior to 2022 the opposite trend is shown as the eCO2 response ratio increases as foliage photosynthesis increases and vice versa (Figure 1). The trend following 2022 shows that elevated CO2 responds at a higher rate compared to aCO2 when photosynthesis is elevated compared to when photosynthesis rates are lower. The trend prior to 2022 shows a more consistent response ratio that changes little in response to changes in foliage photosynthesis. The increased changes in the eCO2 response ratio following 2022 may suggest that eCO2 has a greater impact on photosynthesis compared to aCO2 on a more long term scale. The difference between foliage photosynthesis for eCO2 and aCO2 rings is clearly evident throughout the entire time period (Figure 1) but is more pronounced in later years than in earlier years.
+
+##Annual Productivity from 2021-2023
+
+There are noticeable trends in annual productivity for various litterfall components over time. Generally annual productivity seems to increase over time for both eCO2 and aCO2 rings, although the eCO2 rings experienced a decrease in productivity in 2022 (Figure 2). The decrease in productivity for eCO2 rings during 2022 may be explained by defoliation events caused by insect outbreaks. Ring 1, treated with eCO2, experienced a drastic decrease in leaf production in 2022 suggesting a large loss of foliage (Figure 4). Ring 2, which is not treated with CO2, also seems to experience a slight decrease in leaf production and may have also been affected by insect outbreaks (Figure 4). Interestingly, in contrast ring 6, another plot treated with eCO2, experiences a drastic increase during 2022 (Figure 4). The leaf production for the other rings (3,4, 5) do not seem to be affected and continue on a positive trend over time (Figure 4). The decreased leaf production in ring 1 and increased leaf production in ring 6 suggest that eCO2 rings may be more heavily affected, both positively and negatively, by disruptive events such as insect outbreaks. 2022 appears to be the only instance in which insect outbreaks may have had a noticeable effect on leaf production. One would expect an effect of insect outbreaks on CO2 as less foliage should prevent photosynthesis from being too high. The photosynthetic rates do decrease at times during the time period from 2021 to 2024, with the leaf photosynthesis for aCO2 reaching a minimum in 2022, which supports some kind of effect of insect outbreaks on CO2 (Figure 1).
+
+There are other noticeable patterns in annual productivity for both eCO2 and aCO2 rings. All of the rings seem to allocate the most energy to leaf growth as opposed to seed, bark and twig growth (Figure 2). Over time allocation to various components appears to shift as the plants seem to allocate more energy to leaf and bark production and less energy to seed and twig production (Figure 2). The changes in productivity makes sense as trees grow faster during the earlier stages of their lives. 
+
+##Trends in Annual Net Primary Production
+
+ANPP has a tendency to increase over time and aCO2 rings consistently have higher ANPP than eCO2 rings, a trend that is opposite to that found in photosynthesis (Figure 3). Fertilization with CO2 appears to have a negative effect on ANPP, a pattern that is sustained over all three years (Figure 3). The diminishing effect of CO2 fertilization on ANPP suggests that although plants treated with CO2 experience enhanced photosynthesis, the increased input is not necessarily being used to increase ANPP. The decreased ANPP for eCO2 rings may be due to other limiting factors, such as limitations to nutrients or water. The inputs from photosynthesis may also be being used elsewhere, perhaps being stored in the belowground biomass.
+
+
+##Figures
+
+```{r cars, include = FALSE}
+library(sciplot)
+library(doBy)
+
+se <- function(x) sd(x)/sqrt(length(x))
+
+mycols = c("royalblue3", "seagreen")
+mycols2 <- c("dodgerblue4", "blue3", "springgreen4", "springgreen")
+mycols3 <- c("red", "orange", "seagreen", "green", "blue", "blueviolet")
+```
+
+```{r}
+photo <- read.csv("face_photosynthesis.csv")
+
+photo$Date2 <- paste(photo$Date, "01", sep = "_")
+photo$Date2 <- as.Date(photo$Date2, format="%b_%Y_%d")
+
+photo_co2 <- summaryBy(Anet ~ Date2 + treatment, data=photo, FUN=c(mean, se))
+
+eCO2 <- subset(photo_co2, treatment == "eCO2")
+aCO2 <- subset(photo_co2, treatment == "aCO2")
+newphoto_co2 <- merge(eCO2, aCO2, by= "Date2", all = TRUE)
+newphoto_co2$response_ratio <- newphoto_co2$Anet.mean.x/newphoto_co2$Anet.mean.y
+
+photolab <- expression(italic(A)[net]~~(mu*mol~m^-2~s^-1))
+photolab2 <-expression(Response~Ratio~~(eCO^2/aCO^2))
+
+par(mar = c(0, 0, 0, 0), mfrow = c(2, 1), oma = c(4, 4, 1, 1))
+plot(Anet.mean ~ Date2, data=photo_co2, pch=18, 
+     xlab = photolab, ylab= '', col= mycols[photo_co2$treatment], ylim = c(14,32), xaxt='n', cex.axis= .7)
+legend("topright", levels(photo_co2$treatment), pch=18, col=mycols, cex=.7)
+arrows(photo_co2$Date2,photo_co2$Anet.mean- photo_co2$Anet.se,photo_co2$Date2, 
+       photo_co2$Anet.mean+photo_co2$Anet.se, code=3, length=0.02, angle = 90) 
+
+plot(response_ratio ~ Date2, data=newphoto_co2, pch=18, 
+     xlab = 'Response Ratio', ylab= '', col= "red", cex.axis= .7)
+mtext('Date', side = 1, outer = TRUE, line = 2, cex=.7)
+mtext(photolab , side = 2, outer = TRUE, line = 2, cex=.7, adj=1)
+mtext(photolab2, side=2, outer=T, line=2, cex=.7, adj=0)
+```
+
+**Figure 1. The average leaf net photosynthesis (umols m-2 s-1) and the elevated CO2 response ratio (eCO2/aCO2) of photosynthesis over time (2021-2024).** Photosynthesis rates were consistently higher for ring sites with elevated CO2 than for ring sites with atmospheric CO2. Photosynthesis rates fluctuated over time. The response ratio for eCO2 also fluctuated over time sometimes correlating with photosynthesis rates.
+
+```{r}
+litter <- read.csv("litter_annual.csv")
+
+litter_co2 <- summaryBy(twig+bark+seed+leaf ~ year+treatment,
+                        data=litter, FUN=mean, keep.names = TRUE)
+litter_co2$total <- litter_co2$twig + litter_co2$bark + litter_co2$seed + litter_co2$leaf
+litter_co2 <- droplevels(litter_co2[litter_co2$year != 2020,])
+
+litter_eCO2 <- subset(litter_co2, treatment == "eCO2")
+litter_aCO2 <- subset(litter_co2, treatment == "aCO2")
+littere <-litter_eCO2[,3:6]
+littera <- litter_aCO2 [,3:6]
+
+labels <- c("2021","2022","2023")
+litterlabel <- expression(Annual~Productivity~~(g~C~m^2~yr^-1))
+litterlabel2 <- expression(eCO^2~~~~~~~~~~~~~~~~~aCO^2)
+
+par(mar = c(2, 0, 0, 0), mfrow = c(1, 2), oma = c(4, 4, 4, 4))
+barplot(t(as.matrix(littere)), col=mycols2, names.arg = labels, legend.text=TRUE,
+        args.legend=list(x="topleft", cex=.35), cex.names=.8, cex.axis=.8)
+abline(h=0)
+barplot(t(as.matrix(littera)), col=mycols2, names.arg = labels, yaxt = 'n', cex.names=.8, cex.axis=.8)
+abline(h=0)
+mtext('Date', side = 1, outer = TRUE, line = 2, cex=.8)
+mtext(litterlabel2, side = 1, outer = TRUE, line = 1, cex=.8)
+mtext(litterlabel , side = 2, outer = TRUE, line = 2, cex=.8)
+```
+
+**Figure 2. Annual productivity ( g C m-2 yr -1) of litterfall components over time for elevated CO2 rings and atmospheric CO2 rings (2021-2023).** The aCO2 annual productivity increased over time while the eCO2 annual productivity decreased in 2022 before increasing once again. The leaf component was consistently the highest ratio of litterfall and increased in productivity over time. Seed and twig annual productivity had a tendency to decrease over time and bark annual productivity tended to increase over time. Apart from 2022 the total for the litterfall components were similar for eCO2 and aCO2 rings.
+
+
+```{r}
+wood <- read.csv("wood_npp.csv")
+
+wood_npp <- summaryBy(wood_yr ~ year+treatment,
+                        data=wood, FUN=mean, keep.names = TRUE)
+
+litter_co2 <- summaryBy(twig+bark+seed+leaf ~ year+treatment,
+                        data=litter, FUN=mean, keep.names = TRUE)
+litter_co2 <- droplevels(litter_co2[litter_co2$year != 2020,])
+
+anpp <- merge(litter_co2, wood_npp, by= c("year", "treatment"), all = TRUE)
+anpp$total_npp <- anpp$twig + anpp$bark + anpp$seed + anpp$leaf + anpp$wood_yr
+
+anpplabel <- expression(Aboveground~NPP~~(g~C~m^2~yr^-1))
+
+par(mar = c(4, 4, 1, 1), mfrow = c(1, 1))
+plot(total_npp ~ year, data=anpp, pch=18, 
+     xlab = "Year", ylab= anpplabel, col= mycols3[anpp$treatment], cex.axis = .8, cex=1.5, cex.lab = .8, 
+     xaxt= 'n')
+legend("topleft", levels(anpp$treatment), pch=18, col=mycols3, cex=.8)
+axis(1, at=seq(2021, 2023, by=1), cex.axis=.8)
+
+```
+
+**Figure 3. Above ground NPP ( g C m-2 yr -1) over time for elevated CO2 rings and atmospheric CO2 rings (2021-2023).** ANPP tended to increase over time. Atmospheric CO2 rings consistently had higher ANPP than elevated CO2 rings.
+
+```{r}
+litter_leaf <- read.csv("litter_annual.csv")
+
+leaflabel <- expression(Leaf~Production~~(g~C~m^2~yr^-1))
+
+plot(leaf ~ year, data=litter_leaf, pch=18, 
+     xlab = "Year", ylab= leaflabel, col= mycols3[litter_leaf$ring], cex.axis = .8, cex.lab = .8, xaxt= 'n')
+axis(1, at=seq(2020, 2023, by=1), cex.axis=.8)
+legend("topleft", legend = c("1","2","3","4","5","6"), pch=18, col=mycols3, cex=.8, title = "Ring")
+```
+
+**Figure 4. Leaf production ( g C m-2 yr -1) over time for elevated CO2 rings (1,5,6) and atmospheric CO2 rings (2,3,4) (2020-2023).** Leaf production tended to increase over time for the all of the rings. Rings 5 and 6 tended to have the highest leaf production. Ring 1 experienced a decrease in 2022 while ring 6 experienced a drastic increase. Ring 2 experienced a slight increase in 2021. Rings 3, 4, and 5 tended to increase steadily over time.
+

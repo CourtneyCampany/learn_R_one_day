@@ -1,0 +1,180 @@
+---
+title: "Photosynthetic, ANPP, and litter production responses between elevated and ambient CO~2~ treatments"
+author: "Keith Hankowsky"
+date: "February 27th, 2018"
+output: 
+  word_document:
+   reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+library(doBy)
+library(sciplot)
+library(lubridate)
+library(RColorBrewer)
+library(scales)
+```
+
+##Results
+```{r photosynthesis, echo=FALSE, message=FALSE, fig.width=6}
+photo <- read.csv("data/face_photosynthesis.csv")
+
+#Photosynthesis
+photo$Date <- paste(photo$Date, "01", sep="_")
+photo$CDate <- as.Date(photo$Date, format= "%b_%Y_%d")
+
+photo_co2 <- summaryBy(Anet ~ CDate + treatment, data=photo, FUN=c(mean, se))
+
+photolab <- expression(A[n]~~(umols~m^-2~s^-1))
+treatleg <- c(expression(eCO[2]), expression(aCO[2]))
+treatcol <- c("lightskyblue", "indianred2")
+
+
+#Response Ratio
+eANET <- data.frame(photo[,c(2,3,7,8)])
+eANET <- droplevels(eANET[eANET$treatment !="aCO2",])
+colnames(eANET)[3] <- "eAnet"
+aANET <- data.frame(photo[,c(2,3,7,8)])
+aANET <- droplevels(aANET[aANET$treatment !="eCO2",])
+colnames(aANET)[3] <- "aAnet"
+
+rr <- merge(eANET, aANET, by="CDate")
+rr$response_ratio <- rr$eAnet/rr$aAnet
+
+rr_co2 <- summaryBy(response_ratio ~ CDate, data=rr, FUN=c(mean, se))
+
+#plot
+par(mfrow=c(2,1), mar=c(0,0,0,0), oma=c(3,5,1,1))
+plot(Anet.mean ~ CDate, data=photo_co2, ylab=photolab,
+     ylim=c(14, 35), type='n', xaxt='n', las=2)
+points(Anet.mean ~ CDate, data=photo_co2[photo_co2$treatment=="eCO2",], type='b', 
+       bg="lightskyblue", pch=21)
+points(Anet.mean ~ CDate, data=photo_co2[photo_co2$treatment=="aCO2",],  type='b', 
+       bg="indianred2", pch=21)
+with(photo_co2, arrows(CDate, Anet.mean, CDate, Anet.mean+Anet.se, angle=90, 
+                       length=0.03))
+with(photo_co2, arrows(CDate, Anet.mean, CDate, Anet.mean-Anet.se, angle=90, 
+                       length=0.03))
+legend("topright", legend=treatleg, pch=21, pt.bg=treatcol, inset=0.02, cex=0.8)
+mtext(photolab, 2, 3, cex=0.8, at=25)
+text(x=min(photo$CDate), y=34, "a", font=2)
+
+plot(response_ratio.mean ~ CDate, data=rr_co2, type='b', 
+     ylim=c(1.05,1.55), xlab="", yaxt='n')
+with(rr_co2, arrows(CDate, response_ratio.mean, CDate, 
+                    response_ratio.mean+response_ratio.se, angle=90, length=0.03))
+with(rr_co2, arrows(CDate, response_ratio.mean, CDate, 
+                    response_ratio.mean-response_ratio.se, angle=90, length=0.03))
+axis(2, las=2, cex.axis=0.9)
+mtext("Response Ratio", 2, 3, cex=0.8, at=1.3)
+text(x=min(photo$CDate), y=1.5, "b", font=2)
+```
+**Figure 1.** **a**) Net leaf photosynthesis (umols m^-2^ s^-1^) between ambient CO~2~ concentrations (396 ppm) and elevated CO~2~ concentrations (546 ppm) from 2021 to 2024. Point color corresponds to CO~2~ concentration. **b**) Response ratio of  photosynthesis to elevated CO~2~ concentrations from 2021 to 2024. Values are treatment means (&pm; SE).
+
+
+```{r stack, echo=FALSE, message=FALSE, fig.width=6}
+litter_annual <- read.csv("data/litter_annual.csv")
+litter_co2 <- summaryBy(twig + bark+ seed + leaf ~ year + treatment, 
+                        data=litter_annual, na.rm=TRUE, keep.names = TRUE)
+litter_fum <- droplevels(litter_co2[litter_co2$year !=2020,])
+litter_fum$totalflux <- with(litter_fum, twig+bark+seed+leaf)
+litter_stack <- litter_fum[3:6]
+
+litcols <- brewer.pal(4, "BuGn")
+
+par(oma=c(0,0,0,0))
+par(mar=c(5,5,1,1), mfrow=c(1,1))
+b<-barplot(t(as.matrix(litter_stack)), col=litcols, xaxt="n", 
+        ylab="Annual Litter Production (g)", ylim=c(0,350))
+mtext(side=1, at=c(1.3,3.7,6.1), text=c("2021", "2022", "2023"), line=3)
+axis(1, at=b, labels=litter_fum[,2])
+box()
+legend("topleft", legend=c("Twigs", "Bark", "Seeds", "Leaves"), pt.bg=litcols, pch=22, 
+       inset=0.02, cex=0.7)
+```
+**Figure 2.** Annual litter production (g) between ambient CO~2~ concentrations (396 ppm) and elevated CO~2~ concentrations (546 ppm) from 2021 to 2023. Annual litter production is the sum of all litter fall components: twigs, bark, seeds, and leaves. 
+
+
+```{r ANPP, echo=FALSE, message=FALSE, fig.width=6}
+wood <- read.csv("data/wood_npp,csv")
+littera <- read.csv("data/litter_annual.csv")
+
+littera2 <- droplevels(littera[littera$year !=2020,])
+colnames(wood)[2] <- "ring"
+
+anpp <- merge(wood, littera2, by=c("year", "ring","treatment"))
+anpp$anpp <- anpp$wood_yr + anpp$twig + anpp$bark + anpp$seed + anpp$leaf
+
+anpplab <- expression(ANPP~~(g~C~m^-2~yr^-1))
+
+boxplot(anpp ~ year*treatment, data=anpp, ylab=anpplab, axes=FALSE, 
+        col=c("indianred2", "lightskyblue"))
+axis(1, at=c(1.5,3.5,5.5), labels=c("2021", "2022", "2023"))
+axis(2)
+box()
+legend("topright", legend=treatleg, pch=21, pt.bg=treatcol, inset=0.02)
+```
+**Figure 3.**  Aboveground net primary productivity (g C m^-2^ yr^-1^) between ambient CO~2~ concentrations (396 ppm) and elevated CO~2~ concentrations (546 ppm) from 2021 to 2023. ANPP is the sum of productivity of stemwood biomass production, fine twig production, seed production, and leaf production. 
+
+
+```{r bugs, echo=FALSE, message=FALSE, fig.width=6}
+litter <- read.csv("data/face_litter.csv")
+
+basket <- .2 #basket size in m2
+c_frac <- .47 #conversion to biomass carbon 
+
+litter$CDate <- as.Date(litter$Date, format= "%d/%m/%Y")
+litter$year <- as.factor(year(litter$CDate))
+litter$treatment <- as.factor(ifelse(litter$ring == 2 |
+                                       litter$ring == 3 |
+                                       litter$ring == 6,
+                                     "aCO2", "eCO2"))
+
+#Removing two data points that were outliers
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
+litter_bugs <- summaryBy(leaf ~ CDate + treatment, data=litter, FUN=sum, na.rm=TRUE, 
+                         keep.names = TRUE)
+polydate <- c(as.Date("2021-12-12"), as.Date("2022-03-13"), as.Date("2022-09-15"), 
+              as.Date("2022-11-12"), as.Date("2023-02-11"), as.Date("2023-04-17"), 
+              as.Date("2023-09-11"), as.Date("2023-11-23"))
+polycol <- alpha("grey", 0.5)
+
+plot(leaf~CDate, data=litter_bugs, type='n', xlab="", ylab="Leaf Litter Biomass (g)")
+points(leaf~CDate, data=litter_bugs[litter_bugs$treatment=="eCO2",], type='l', 
+       col="lightskyblue")
+points(leaf~CDate, data=litter_bugs[litter_bugs$treatment=="aCO2",], type='l', 
+       col="indianred2")
+legend("topleft", legend=treatleg, lty=1, col=treatcol, inset=0.02)
+polygon(c(polydate[1], polydate[1], polydate[2], polydate[2]),
+        c(0, 500.8436, 500.8436, 0), col=polycol, border=NA)
+polygon(c(polydate[3], polydate[3], polydate[4], polydate[4]),
+        c(0, 350.6681, 350.6681, 0), col=polycol, border=NA)
+polygon(c(polydate[5], polydate[5], polydate[6], polydate[6]),
+        c(0, 311.5512, 311.5512, 0), col=polycol, border=NA)
+polygon(c(polydate[7], polydate[7], polydate[8], polydate[8]),
+        c(0, 677.8300, 677.8300, 0), col=polycol, border=NA)
+```
+**Figure 4.** Leaf litter biomass (g) between ambient CO~2~ concentrations (396 ppm) and elevated CO~2~ concentrations (546 ppm) from 2020 to 2024. Grey bars indicate defoliation events. 
+
+\newline  \newline
+              
+##Discussion 
+  Net leaf photosynthesis (umols m^-2^ s^-1^) was greater in the elevated CO~2~ treatment (Fig 1a). The increased net leaf photosynthesis with elevated CO~2~ is likely due to increased efficiency of CO~2~ uptake through the stomata, which can result in stomata being open for short periods of time, decreasing water loss. Increased stomatal efficiency would result in greater productivity as there is more CO~2~ available and less water lost through the stomata. The response ratio of photosynthesis to elevated CO~2~ concentrations was highest in the spring of 2022 and 2023 (Fig 1b). The higher response ratio in spring could indicate that plant growth occurs faster in elevated CO~2~ environments. The response ratio in the spring of 2024 is much lower than the two previous years (Fig 1b). The lower response ratio in 2024 could mean that higher growth rates in elevated CO~2~ environments are not sustained and that plants could become accustomed to the elevated CO~2~ environments. 
+  
+  
+  Annual Litter production (g) was greater in ambient CO~2~ treatments across years and was dominated by leaf production (Fig 2). There does not seem to be any difference in carbon allocation among litter components between the ambient and elevated CO~2~ treatments. Norby et al. (2001) found a 7.1% lower leaf nitrogen concentration and 6.5% increase in leaf lignin in elevated CO~2~ environments. Decreased litter production in elevated CO~2~ systems compared to ambient CO~2~ environments could be due to nutrient limitation. 
+  
+  
+  Aboveground net primary productivity (g C m^-2^ yr^-1^) was greater in elevated CO~2~ environment than ambient CO~2~ environments in 2021 and 2023, but not 2022 (Fig 3). Aboveground net primary productivity (ANPP) being greater in elevated CO~2~ treatments was likely due to  increased photosynthetic efficiency due to increased stomatal efficiency resulting in greater biomass production. The elevated CO~2~ treatment having lower ANPP in 2022 could be driven be a result of climatic variables leading to nutrient limitation during that year. Long-term research should be conducted to see how elevated CO~2~ impacts ANPP and other metrics of plant productivity over longer time scales.
+  
+  
+  Four major defoliation events were observed across the four years, but leaf litter biomass (g) did not vary much between elevated and ambient CO~2~ treatments (Fig 4). The 2022 winter event showed no difference between CO~2~ treatments. The fall 2022 event experienced 200g difference between the ambient and elevated CO~2~, while the 2023 spring event saw greater defoliation in the elevated CO~2~ treatment. The largest defoliation event occurred in the fall of 2023 with an almost 200g difference between ambient and elevated CO~2~ environments. Elevated CO~2~ environments seem to respond better to insect outbreaks, perhaps because plants are able to photosynthesize more efficiently they are less stress and are able to allocate more to defense strategies  in elevated CO~2~ systems. 
+  
+  
+\newline  \newline
+
+##References
+Norby, R. J., Cotrufo, M. F., Ineson, P., O'Neil E. G., Canadell J. G. (2001). Elevated CO~2~, litter chemistry, and decomposition: a synthesis. *Oecologia* 127:153-165. 

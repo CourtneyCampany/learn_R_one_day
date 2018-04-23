@@ -1,0 +1,189 @@
+---
+output: 
+  word_document:
+    reference_docx: manuscriptstyle.docx
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# FACE Experiments 
+Shana Shapiro
+April 20, 2018
+\
+Climate change has the potential to alter ecosystem processes and damage productivity. There have been many FACE experiments to evaluate the sink capacity and potential of various forests under ambient and elevated carbon dioxide emissions. This experiment observes the fertilization effect of carbon dioxide on photosynthesis and aboveground NPP. 
+\
+\
+When carbon dioxide was applied to the forest site, there was a higher photosynthetic response (Figure 1). Time is a critical component in evaluating FACE sites because a result at an early stage of the experiment may not be representative of its productivity at a mature and steady state. However, the site showed a phototosynthesis response ratio of eCO2/aCO2 that remained greater than 1 throughout the three years (Figure 3). This suggests increased carbon dioxide may stimulate photosynthesis in a forest. 
+\
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=6}
+##photosynthesis data
+
+photo <- read.csv("data/face_photosynthesis.csv")
+
+photo$Date <- paste(photo$Date, "01", sep="_")
+photo$Date2 <- as.Date(photo$Date, format= "%b_%Y_%d")
+
+library(doBy)
+library(sciplot)
+library(ggplot2)
+se <- function(x) sd(x)/sqrt(length(x))
+
+photo_co2 <- summaryBy(Anet ~ Date2 + treatment, data = photo, FUN=c(mean, se))
+  
+ele <- photo_co2[photo_co2$treatment == "eCO2", 1:3]
+amb <- photo_co2[photo_co2$treatment == "aCO2", 1:3]
+
+names(ele)[2] <- "treatment_e"
+names(ele)[3] <- "photo_ele"
+names(amb)[2] <- "treatment_a"
+names(amb)[3] <- "photo_amb"
+
+newphoto <- cbind(ele, amb [,2:3])
+newphoto$ratio <- with(newphoto, photo_ele/photo_amb)
+
+#plot
+
+photolab <- expression(Leaf~Net~Photosynthesis~(umols~m^-2~s^-1))
+
+mycols <- c("aquamarine4", "violetred2")
+par(mfrow = c(2,1), mar = c(0,0,0,0), oma = c(6,6,2,2))
+
+plot(Anet.mean ~ Date2, data = photo_co2, pch = 16, col = c(mycols[treatment]), xlab = "", ylab = "mean CO2 Response", xaxt = "n")
+legend("topright", levels(photo_co2$treatment), pch=16, inset=0.005, col = mycols, bty='n')
+with(photo_co2, arrows(Date2, Anet.mean, Date2, Anet.mean + Anet.se, angle=90, length=.03,
+                       cols=mycols[treatment], alpha=0.75))
+with(photo_co2, arrows(Date2, Anet.mean, Date2, Anet.mean - Anet.se, angle=90, length=.03,
+                       cols=mycols[treatment], alpha = 0.75))
+
+mtext(side = 2, at = 23, line = 3, text = photolab, xpd = TRUE, cex = 1)
+mtext(side = 2, at = 7, line = 3, text = "Response Ratio", xpd = TRUE, cex = 1)
+mtext(side = 1, line = 15, text = "Year", xpd = TRUE, cex = 1)
+
+axis(1, labels = FALSE)
+plot(ratio ~ Date2, data = newphoto, pch = 16, col = "slategrey", xlab = "Year", ylab = "Response Ratio", type = "o")
+```
+**Figure 1. Elevated carbon dioxide stimulates photosynthesis over three years.** 
+\
+\
+Throughout the duration of this experiment, the net annual litterfall increase over time. There appeared to be a steady increase over time with the exception of 2021. Additionally, there was an approximately equal net litterfall between treatment types (Figure 2). Though results have shown that elevated carbon dioxide may stimulate photosynthesis, it may not have as drastic of an effect on litterfall. Litterfall can potentially impact soil organic matter, which may determine how soil responds to elevated carbon dioxide levels. According to these results, increased carbon dioxide may not necessarily determine litterfall rates. 
+\
+```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.height=6}
+# litter data 
+litter <- read.csv("data/face_litter.csv")
+
+# packages 
+library(doBy)
+library(lubridate)
+library(ggplot2)
+
+# constants. Nice so they're descriptive, nice, and have notes attached! 
+basket <- .2 #basket size in m2
+c_frac <- .47 #conversion to biomass carbon 
+
+ 
+litter$Date <- as.Date(litter$Date, format = "%d/%m/%Y")
+litter$year <- as.factor(year(litter$Date)) 
+
+litter$treatment <- as.factor(ifelse(litter$ring == 2 | 
+                                         litter$ring == 3 | 
+                                         litter$ring == 6,
+                                         "aCO2", "eCO2"))
+  
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
+
+line.num <- which.max(litter$twig) 
+litter <- litter[-line.num,]
+
+litter_carbon <- data.frame(litter[,c(1:3, 8:9)], (litter[,4:7] * c_frac/basket))
+ 
+litter_mean_trap <- summaryBy(twig + bark+ seed + leaf ~ year + Date + ring +treatment,
+                                data=litter_carbon, FUN=mean, na.rm=TRUE, keep.names = TRUE)
+
+lit_annual <- summaryBy(twig + bark + seed + leaf ~ year + ring + treatment, 
+                          data=litter_mean_trap, FUN=sum, na.rm=TRUE, keep.names = TRUE)
+
+litter_co2 <- summaryBy(twig +bark +seed + leaf ~ year + treatment, 
+                        data = lit_annual,FUN = mean, keep.names = TRUE) 
+
+lit_annual$annual_prod <- with(lit_annual, twig + bark + seed + leaf)
+
+ggplot(data = lit_annual, aes(y = annual_prod,x = year,fill = treatment)) +
+  geom_bar(stat = "identity") +
+  xlab("Year") +
+  ylab("Total Biomass (kg)")
+```
+**Figure 2. Litterfall increases throughout the experiment but does not differ between treatment types.**
+\
+\
+Over the course of the experiment, aboveground net primary production varied. While productivity increased then decreased, there does not appear to be a trend (Figure 3). Additionally, there does not appear to be a trend with regard to treatment type. This does not match our photosynthesis results, as one may expect there to be an increase in productivity when there is an increase in photosynthesis in the same site. There may be a disconnect between photosynthetic processes and primary productivity because ANPP measures biomass production aboveground. Increased photosynthesis takes in more carbon overall, but plants must also allocate biomass to roots, which may affect the ANPP aboveground. 
+```{r, echo = FALSE, message = FALSE, fig.width = 6, fig.height = 6}
+wood_npp <- read.csv("data/wood_npp.csv")
+
+ylab <- expression(C~(m^-2~yr^-1)) 
+
+ggplot(data = wood_npp, aes(y = wood_yr, x = year, fill = treatment)) +
+  geom_bar(stat = "identity") +
+  xlab("Year") +
+  ylab(ylab) + 
+  scale_fill_manual(values=c("violetred4", "turquoise3"))
+```
+**Figure 3. Elevated carbon dioxide does not stimulate ANPP in the same way that it stimulates photosynthesis.**
+\
+Along with climate change effects, insect oubreaks can influence ecosystem processes and overall biomass. In this site, insects caused influential defoliation events in 2022 and 2023 that drastically decreased leaf mass (Figure 4). While the defoliation event in 2023 appeared to correspond with a decrease in photosynthesis, the defoliation event in 2022 actually corresponds with a time of an increase in photosynthesis (Figure 1, Figure 4). One would not expect a difference in insect activity according to carbon dioxide elevation because there is similar above ground production in both carbon dioxide scenarios. There would be the same amount of biomass availability for insects to exploit, which could have devastating effects in either carbon dioxide scenario. 
+```{r, echo = FALSE, message = FALSE, fig.width = 6, fig.height = 6}
+# litter data 
+litter <- read.csv("data/face_litter.csv")
+
+# packages 
+library(doBy)
+library(lubridate)
+library(ggplot2)
+
+# constants. Nice so they're descriptive, nice, and have notes attached! 
+basket <- .2 #basket size in m2
+c_frac <- .47 #conversion to biomass carbon 
+
+# format litter data ----- 
+litter$Date <- as.Date(litter$Date, format = "%d/%m/%Y")
+litter$year <- as.factor(year(litter$Date)) 
+
+# litter$ring <- as.factor(litter$ring)
+litter$treatment <- as.factor(ifelse(litter$ring == 2 | 
+                                       litter$ring == 3 | 
+                                       litter$ring == 6,
+                                     "aCO2", "eCO2"))
+
+# remove two data point where big branches fell into litter basket 
+line.num <- which.max(litter$twig)
+litter <- litter[-line.num,]
+
+line.num <- which.max(litter$twig) 
+litter <- litter[-line.num,]
+
+# UNIT CONVERSION: .2m2 biomass month-1 to g C m2 month-1 ------------ 
+
+# new dataframe, keep the categories and convert the data variables 
+litter_carbon <- data.frame(litter[,c(1:3, 8:9)], (litter[,4:7] * c_frac/basket))
+
+# to get annual litter flux lets take the mean of litter traps at each time point 
+# then sum up for the year 
+litter_mean_trap <- summaryBy(twig + bark+ seed + leaf ~ year + Date + ring +treatment,
+                              data=litter_carbon, FUN=mean, na.rm=TRUE, keep.names = TRUE)
+
+leaf_mean <- summaryBy(leaf ~ Date, data = litter_mean_trap, FUN = mean, na.rm=TRUE, keep.names =TRUE)
+
+polydates <- c(as.Date("2022-01-14"), as.Date("2022-01-14"), as.Date("2022-03-13"), as.Date("2022-03-13"))
+polydates2 <- c(as.Date("2023-10-16"), as.Date("2023-10-16"), as.Date("2023-11-23"), as.Date("2023-11-23"))
+
+plot(leaf ~ Date, data = leaf_mean, pch = 16, type ="o", col = "turquoise4", 
+     xlab = "Year", ylab = "Leaf Biomass (kg)") 
+polygon(x=polydates, y= c(3.222807, 42.158530, 42.158530, 3.222807), col=rgb(1, 0, 0,0.3), border=NA)
+polygon(x=polydates2, y= c(15.716310, 56.105369, 56.105369,15.716310), col=rgb(1,0,0,0.3), border=NA)
+
+```
+**Figure 4. Insect-caused defoliation events throughout the experiment.** 
+
+Over the course of this experiment, there were changes in photosynthesis, litterfall, and aboveground biomass production that would indicate a strong carbon sink potential for this forest. In a future with elevated carbon dioxide levels, this forest would have increased photosynthesis. However, the biomass production in an elevated carbon dioxide scenario did not suggest a strong carbon sink potential, so it would be useful to further belowground processes to determine the exact strength of this forest's carbon sink capacity.
