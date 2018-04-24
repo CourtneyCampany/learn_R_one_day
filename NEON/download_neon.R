@@ -13,4 +13,4 @@ library(neonUtilities)
 #The first argument is the data product ID (look inside your zip file or see tutorial)
 #The second argument is the path to your zip file
 
-stackByTable("DP1.10053.001.2016","NEON/NEON_isotope-foliar.zip")
+stackByTable("DP1.00003.001","NEON/NEON_temp-air-triple.zip")
