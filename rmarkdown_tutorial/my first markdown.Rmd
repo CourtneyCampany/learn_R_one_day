@@ -6,13 +6,12 @@ output: word_document
 ---
 
 ```{r setup, include=FALSE}
-library(knitr)
-opts_knit$set(root.dir = '../')
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction to Rmarkdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. . The knitr package (as used by RStudio) will take a markdown-formatted text file and produce nicely-formatted output. Go ahead and install it if you dont have it. Thats is really all you need to know.
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. The knitr package (as used by RStudio) will take a markdown-formatted text file and produce nicely-formatted output. Go ahead and install it if you dont have it. Thats is really all you need to know.
 
 ## Here are the basics for typing in a markdown file
 
