@@ -1,0 +1,20 @@
+---
+title: "Rmarkdown Tutorial HTML"
+author: "Court Campany"
+date: "February 1, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+opts_knit$set(root.dir = '../')
+```
+
+# Introduction to Rmarkdown
+
+
+
+```{r starwars,echo=FALSE, message=FALSE, warning=FALSE, fig.width=7, fig.height=7}
+source("rmarkdown_tutorial/starwars_figure.R")
+```
+
+
