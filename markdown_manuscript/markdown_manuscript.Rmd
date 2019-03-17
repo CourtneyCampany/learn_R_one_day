@@ -9,13 +9,34 @@ csl: plant-cell-environment.csl
 bibliography: references.bib
 ---
 
+```{r, results="asis", echo=FALSE, warning=FALSE}
+library(knitr)
+opts_knit$set(root.dir = '../')
+```
+
+```{r, printfigures, echo=FALSE, message=FALSE, warning=FALSE}
+# Set Flag to include figures in text or not. This is great when submitting
+includeFigs <- FALSE
+```
+
+```{r, globaldata, echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+#load data
+starwars <- read.csv("markdown_manuscript/data/star_wars.csv")
+#load packages
+library(pixiedust)
+library(broom)
+library(plotrix)
+
+```
+
+
 \
 Rey NoLastNameYet^1^, Han Solo^1^, Obi-Wan Kenobi^1^, Leia Organa^2^, Luke Skywalker^3^.
 
 \
 ^1^ Department of Biology, Colgate University, Hamilton, NY, USA 13446
 \
-^2^ Centre of Excellence for a Peacful Universer, Planet Alderaan
+^2^ Center of Excellence for a Peaceful Universe, Planet Alderaan
 \
 ^2^ Jedi Extraordinaire, Planet Tatooine
 
@@ -39,27 +60,27 @@ Come to the light side
 
 #Introduction
 
-The YAML for a proper manuscript is more complicated than the basic markdown. These new options allow you to output a standard looking word document, set the formatting rules for you word document, access citations to cite properly and generate a bibliography and make sure your bibliography is generated in the style of your choosen mansucript.  In the methods sections I will step through how each of these work.  Importantly, you now have all the bits and pieces, so just adapt this template to your first manuscript.
+The YAML for a proper manuscript is more complicated than the basic markdown. These new options allow you to output a standard looking word document, set the formatting rules for you word document, access citations to cite properly and generate a bibliography and make sure your bibliography is generated in the style of your chosen manuscript.  In the methods sections I will step through how each of these work.  Importantly, you now have all the bits and pieces, so just adapt this template to your first manuscript.
 
 \
 
-Remember the goal.  With R, we can summarize, analyze and visualize our data. Then R markdown conveintly allows us to insert our work (as code) around a text! This means you no longer have to use excel, sigmaplot, SPSS/SAS and Endnote independently to make a manuscript.  If this doesnt convince you to code, then I dont know what will.
+Remember the goal.  With R, we can summarize, analyze and visualize our data. Then R markdown conveniently allows us to insert our work (as code) around a text! This means you no longer have to use Excel, Sigmaplot, SPSS/SAS and EndNote independently to make a manuscript.  If this doesn't convince you to code, then I don't know what will.
 
 ## Text tricks
 
-Typing in markdown becomes second nature when you dont have to repeatedly use your mouse to highlight and format individual characters in your text.  Here, are some of the basics again:
+Typing in markdown becomes second nature when you don't have to repeatedly use your mouse to highlight and format individual characters in your text.  Here, are some of the basics again:
 
 \
 
-Wrap text with ~ and ^ for ~subscript~ or a ^superscipt^. Wrapping text in one or two \*asterisks\ allows you to **bold** or *italicise* text.  There will be some rare instances where you want characters that also hold special meaning in markdown (i.e. asterisks). You can backslash around the characters to print the literal symbol (hardly ever need to do this).
+Wrap text with ~ and ^ for ~subscript~ or a ^superscript^. Wrapping text in one or two asterisks (\*) allows you to **bold** or *italicise* text.  There will be some rare instances where you want to use characters that also hold special meaning in markdown. Just place a backslash in front of the characters to print the literal symbol (asterisk = \*).
 
 \
 
-Look the the code for the first page of the manuscript. You can easily add line breaks with backslashes to make your document look like you want. If you manually add space (or not) above and below the backslashes your document will render differently.  Just play around with them.
+Look the the code for the first page of the manuscript. You can easily add line break/s with backslashes to make your document look like you want. If you manually add space (or not) above and below the backslashes in markdown your document will render differently.  Just play around with them.
 
 \
 
-Equations and special symbols are not so bad either.  Just like in any word processor, the crazier the equation to the more difficult they are to make. Markdown using Latex to generate them, so they format may be familiar to some.  Wrap your equations in double dollar signs.  Markdown nicely previews what it will look like. Here are some examples:
+Equations and special symbols are not so bad either. Just like in any word processor, the crazier the equation, the more difficult they are to make. Markdown uses Latex type coding to generate them, so they format may be familiar to some.  Wrap your equations in double dollar signs. Markdown nicely previews what it will look like. Here are some examples:
 
 \
 Equation (1)
@@ -67,7 +88,7 @@ $$K_L = \frac{E_L}{\Psi_{pd}~-\Psi_L}$$
 
 \
 
-Because markdown is using Latex, subscripts and superscripts are a little different.  I have provided examples of both with the fraction above.  This should cover nearly all your basic equation needs. In mathm mode, ^ means supercript and _ means subscript.  If you can multiple characters that need either, wrap them in {}.
+Because markdown is using Latex, subscripts and superscripts are a little different.  I have provided examples of both with how to add a fraction above.  This should cover nearly all your basic equation needs. In math mode, ^ means superscript and _ means subscript.  If you need to sub- or superscript multiple characters, wrap them in {}. See how this works with the equation below:
 
 \
 Equation (2)
@@ -75,7 +96,7 @@ $$\Delta_o = \alpha^i - \Gamma{gm} - \Delta^ef - \tau^{abc}$$
 
 \
 
-Here is one last ridiulous equation:
+Here is one last ridiculous equation that adds in multiple layers of wrapping in parenthesis:
 
 \
 Equation (3)
@@ -85,22 +106,29 @@ g_m = \left(\frac{1+t}{1-t}\left(b-a_i-\frac{eR_d}{A+R_d}\right)\frac{A}{C_a}\ri
 \end{aligned}
 $$
 
-Greek symbols are easily inserted using math mode, both in equations (see above) and in text  For text, just wrap them in single dollar signs.  Note the use of the backslash, which tells markdown to use the symbols. Rememeber that there can be different symbols for upper or lower case greek letters. Here are some examples of putting text tricks together to represent abbreviations or units in your manscript. Leaves used for gas exchange were immediately sampled for midday water potential ($\Psi_L$). Leaf water potentials and transpiration (*E*~L~, mmol m^-2^ s^-1^) from gas exchange in the leaf cuvette were then used to calculate leaf-specific hydraulic conductance (*K*~L~, mmol m^-2^ s^-1^ MPa^-1^).*A*~max~ measurements were made at a PPFD of 1800 $\mu$mol m^-1^ s^-1^ and [CO~2~] of 1800 $\mu$l l^-1^, with leaf temperature held constant at 25 &deg;C.  
+Greek symbols are easily inserted using math mode, both in equations (see above) and in text  For text, just wrap them in single dollar signs. Note the use of the backslash, which tells markdown to use the actual symbols. Remember that there are sometimes different symbols for upper or lower case Greek letters.
 
 \
 
-There are some special symbols you may have to look up. The &deg; and &permil; symbols are some of them (but now you have it!). Since markdown has so many outputs (pdf, html and word) it accepts all kind of html, css, unicode or latex input for special symbols.  All of them are easily found on Google.  Here is the degree symbol using hex and html codes I found online (make sure and remember the & and ;): 15 &#xb0; 17 &#176; 21 &deg;. Look at https://www.w3schools.com/html/html_symbols.asp for some more examples. The HTML Entity codes are the best (&uarr; , &larr;, &reg;), as they will be easy to recognize and re-use.
+Previously we had mentioned that using \* means something special in markdown.  We use them to make bulleted list. Here are some examples of putting text tricks together to represent abbreviations or units in your manuscript: 
+
+* Leaves used for gas exchange were immediately sampled for midday water potential ($\Psi_L$). 
+* Leaf water potentials and transpiration (*E*~L~, mmol m^-2^ s^-1^) from gas exchange in the leaf cuvette were then used to calculate leaf-specific hydraulic conductance (*K*~L~, mmol m^-2^ s^-1^ MPa^-1^).
+* *A*~max~ measurements were made at a PPFD of 1800 $\mu$mol m^-1^ s^-1^ and [CO~2~] of 1800 $\mu$l l^-1^, with leaf temperature held constant at 25 &deg;C.  
+\
+
+There are some special symbols you may have to look up. The &deg; and &permil; symbols are some of them (but now you have it!). Since markdown has so many outputs (PDF, html and word) it accepts all kind of html, css, Unicode or latex input for special symbols.  All of them are easily found on Google.  Here is the degree symbol using hex and html codes I found online (make sure and remember the & and ;): 15 &#xb0; 17 &#176; 21 &deg;. Look at https://www.w3schools.com/html/html_symbols.asp for some more examples. The HTML Entity codes are the best (&uarr; , &larr;, &reg;), as they will be easy to recognize and re-use.
 
 \
 
-That is basically it for text tricks.  Once you start learning to type in markdown (which takes very little time), you will loath having to type while using a mouse to highlight and change things.  Some of you are likely using google docs, which means you may be learning key board shortcuts.  This will feel right at home for you.  
+That is basically it for text tricks.  Once you start learning to type in markdown (which takes very little time), you will loath having to type while using a mouse to highlight and change things.  Some of you are likely using Google docs, which means you may be learning key board shortcuts.  This will feel right at home for you.  
 
 
 # Methods
 
 ## manuscriptstyle.docx
 
-Look back up in the YAML.  In addition to setting 'word' as an output we have an additioanl agrument: **reference_docx: manuscriptstyle.docx**.  This command is telling markdown to use the *manuscriptstyle.docx* file as a source to format our rendered word document.  Notice how we no longer render the ugly word document with blue font.  No look in the folder for this markdown file and find the file.  Click on it and open it up. This file is just a simple word file with a few sections.  Markdown *steals* the formatting in this document and applies it to yours.
+Look back up in the YAML.  In addition to setting 'word' as an output we have an additional argument: **reference_docx: manuscriptstyle.docx**.  This command is telling markdown to use the *manuscriptstyle.docx* file as a source to format our rendered word document.  Notice how we no longer render the ugly word document with blue font.  No look in the folder for this markdown file and find the file.  Click on it and open it up. This file is just a simple word file with a few sections.  Markdown *steals* the formatting in this document and applies it to yours.
 
 \
 
@@ -108,33 +136,34 @@ Think about what this really means and how awesome it is.  Let's say that your p
 
 \
 
-Importantly, when updating *manuscriptstyle.docx* you must actually change the formatting style of the document, meaning highlighting text and changing style will not necessarily work.  Make sure you are changing the global style of the document.  You have control over everything here, such as simple things like line spacing to more detailed formatting of paragrpahs and headings.  All will be *stolen* by markdown.  If you have a *manuscriptstyle.docx* that is built for a specific journal then you can easily change the filename for ease of use: *natureclimatechangestyle.docx*. Just remember to make the change in the YAML too.
+Importantly, when updating *manuscriptstyle.docx* you must actually change the formatting style of the document, meaning highlighting text and changing style will not necessarily work.  Make sure you are changing the global style of the document. You have control over everything here, such as simple things like line spacing to more detailed formatting of paragraphs and headings (our headings all start on a new page). All will be *stolen* by markdown. If you have a *manuscriptstyle.docx* that is built for a specific journal then you can easily change the file name for ease of use: *natureclimatechangestyle.docx*. Just remember to make the change in the YAML too.
 
 ## Citing
 
-Citing in the text is actually very straightforward and is compataible with all your major bibliography generating software (Zotero, Mendeley, Endnote, etc). The reason is that all of these software can easily export a bibtex library file.  So nothing in the way you organize your citations needs to change. For example, here are the basic instructions for outputting the library from Zotero:
+Citing in the text is actually very straightforward and is compatible with all your major bibliography generating software (Zotero, Mendeley, EndNote, etc). The reason is that all of these software can easily export a BibTeX library file.  So nothing in the way you organize your citations needs to change. For example, here are the basic instructions for outputting the library from Zotero:
 
 \
 
-- Select the library you wish to export to BibTex in Zotero
-- From Zotero toolbar dropdown menu, select Export Library
-- On the next screen, choose format BibTex, and click OK
-- Navigate to the directory where you want to save your file, save it as     filename.bib
+* Select the library you wish to export to BibTeX in Zotero
+* From Zotero toolbar drop-down menu, select Export Library
+* On the next screen, choose format BibTeX, and click OK
+* Navigate to the directory where you want to save your file, save it as     filename.bib
 
 \
 
-For our use, save the BibTex libary in the folder with the markdown file. Here it is named **references.bib**. Go ahead and click on it.  It is just a list of all the BibTex entries from your citing library.  If you clean up any errors in Zotero (for example) the BibTex will be updated.  You can also easily fix them in Rstudio, if needed. For example, I sometimes need to change CO2 to [CO\textsubscript{2}] (using Latex) in an entry.  Ok, look up at your YAML and you will see **bibliography: references.bib**.  This supplies markdown with all of our possible citations and will automatically generate a bibliography at the bottom of the document.  The bibliography will only be created with the citations that we actually use.  
+For our use, save the BibTeX library in the folder with the markdown file. Here it is named **references.bib**. Go ahead and click on it.  It is just a list of all the BibTeX entries from your citing library.  If you clean up any errors in Zotero (for example) the BibTeX will be updated.  You can also easily fix them in Rstudio, if needed. For example, I sometimes need to change CO2 to [CO\textsubscript{2}] (using Latex) in an entry.  Ok, look up at your YAML and you will see **bibliography: references.bib**.  This supplies markdown with all of our possible citations and will automatically generate a bibliography at the bottom of the document.  The bibliography will only be created with the citations that we actually use.  
 
-\ 
+\
 
-Ok, time to cite.  The format for citing in the text is very easy and uses the **'ID'** of each Bibtex entry. Navigate back to **references.bib** and simply find the **'ID'** after the start of the entry Article{yourIDishere,. To cite, just place the ID with the @ symbol inside square brackets [@barton2010whole].  You can combine as many as you need [@brooks1996effects, @bowling2003tunable, @bickford2009high]. You separate the citations with whatever the journal requires (, or ; ). Often you may have some qualifiers with your citation. These can be inserted inside the brackets [see @barton2010whole Figure 1] Last, you may want to cite in-line. There are a couple of ways to do this.  First, @barton2010whole mentions that the best way is just remove the brackets. Alternately, Bowling et al. [-@bowling2003tunable] states to type the name but insert a minus sign inside the []. I would stick to removing the [] for inline because typing the name does not have the formatting for the journal (look at the differences in 'et al.'). Last, look down at the end of this document.  I have created a section called **Bibliogrpahy**.  Markdown will generated a citation list in the rendered document based on what you cite.
+Ok, time to cite.  The format for citing in the text is very easy and uses the **'ID'** of each BibTeX entry. Navigate back to **references.bib** and simply find the **'ID'** after the start of the entry Article{yourIDishere,. To cite, just place the ID with the @ symbol inside square brackets [@barton2010whole].  You can combine as many as you need [@brooks1996effects, @bowling2003tunable, @bickford2009high]. You separate the citations with whatever the journal requires (, or ; ). Often you may have some qualifiers with your citation. These can be inserted inside the brackets [see @barton2010whole Figure 1] Last, you may want to cite in-line. There are a couple of ways to do this.  First, @barton2010whole mentions that the best way is just remove the brackets. Alternately, Bowling et al. [-@bowling2003tunable] states to type the name but insert a minus sign inside the []. I would stick to removing the [] for inline because typing the name does not have the formatting for the journal (look at the differences in 'et al.'). Last, look down at the end of this document.  I have created a section called **Bibliogrpahy**.  Markdown will generated a citation list in the rendered document based on what you cite.
 
 ## CSL: citation formatting
 
 The last bit of information in are YAML involves the formatting for our citations, both in the text and in our **Bibliogrpahy**.  
 
+\
 
-Notice that when you render the document, the 'et al.' of these two inline citations look different.  **csl: plant-cell-environment.csl** in our YAML sets the style and the actual file is in our markdown folder, with everything else. CSL stands for Citation Style Language and every single citing software uses them.  Often when you Zotero (or whatever) you search for a journal style and add it to you software's collection.  All you are doing is downloading a CSL. There are plenty of places to download them (https://www.zotero.org/styles). So find the one you need and stick it in the folder and change the YAML. In the off chance your paper gets rejected, download the next one and update your YAML.  When you render the document, it will make the changes for you. Voila!!
+Notice that when you render the document, the 'et al.' of the two inline citations used above look different.  **csl: plant-cell-environment.csl** in our YAML sets the style and the actual file is in our markdown folder, with everything else. CSL stands for Citation Style Language and every single citing software uses them.  Often when you Zotero (or whatever) you search for a journal style and add it to you software's collection.  All you are doing is downloading a CSL. There are plenty of places to download them (https://www.zotero.org/styles). So find the one you need and stick it in the folder and change the YAML. In the off chance your paper gets rejected, download the next one and update your YAML.  When you render the document, it will make the changes for you. Voila!!
 
 # Results
 
@@ -142,9 +171,14 @@ Notice that when you render the document, the 'et al.' of these two inline citat
 
 Place your awesome results here
 
+## Statistical analysis
+
+When you start using R for analyzing and writing manuscripts, always remember to cite R and any statistical packages you use. The easiest way to obtain them is to just type citation() for R itself [@Rcore]. It prints a BibTeX entry we you can add to your library (note that you will have to add an ID). Do the same thing for packages; citation("vegan"). Principal component analysis, utilizing the ‘vegan’ package [@vegan], was used to explore how measured functional Jedi
+traits were distributed and co-varied among Star Wars characters.
+
 # Discussion
 
-Change the world with your awesome insight here
+Change the world with your awesome insights here
 
 # Acknowledgements
 
@@ -152,10 +186,68 @@ We do not thank Darth Vader.  He is a pain in the ass
 
 # Author Contributions
 
-Rey did just about everything.  Everyone else on the author list has moved to the afterlife
+Rey did just about everything. Everyone else on the author list has moved to the afterlife
 
-# Tables
+# List of Tables
 
-# Figures
+Making tables in markdown with a Microsoft word output is probably the biggest flaw of this workflow. There are many packages to help, but most of them aim to produce tables to be used in web-based outputs. I use a package called 'pixiedust', both for its awesome name and because it gets pretty close. You will have to do some post processing, but not that much. For example, you might have to add a section break, change the page orientation and/or add a few border lines. Make tables in code chunks, just like we do for making figures. It works best if you have a dataframe that is prepped and ready. Below I will use pixiedust to make a data table and then use a cool package called 'broom' to make a nice table of a model output.
+
+\
+
+Table 1. Body features of star wars characters. We use pipes (%>%) to chain functions of the 'pixiedust' package together. We first 'dust' are table and then 'sprinkle' various options. They should be self-explanatory. Notice I have indexed the star wars dataframe to include only the rows and columns I want.
+```{r, starwarstan, echo=FALSE, warning=FALSE}
+starwars$mass_lb <- round(starwars$mass_lb, digits = 1)
+starwars$height_in <- round(starwars$height_in, digits = 1)
+
+dust(starwars[1:10, c(1:4, 9:10)])%>%
+  sprinkle_colnames("Name", 
+                    "Hair Color", 
+                    "Skin Color",
+                    "Eye Color",
+                    "Body Mass (lb)",
+                    "Height (in)") %>%
+  sprinkle(rows= 1, part="head",bold=TRUE)%>%
+  sprinkle_print_method("markdown")
+```
+
+\
+
+Table 2. Anova table representing the relationship between body mass and skin color across the Star Wars universe. Jabba the Hut is excluded from this analysis.
+
+```{r, anova, echo=FALSE}
+star_nojabba <- droplevels(starwars[!starwars$name == "Jabba Desilijic Tiure",])
+
+#there are some missing values for mass, lots drop them for fun
+star_nojabba_nona <- star_nojabba[complete.cases(star_nojabba$mass_lb),]
+
+#better use metric
+star_nojabba_nona$mass_kg <- star_nojabba_nona$mass_lb/2.205
+star_nojabba_nona$height_m <- star_nojabba_nona$height_in/3.281
+
+#run a simple model, but on metric units
+starwars_mod <- lm(height_m ~ mass_kg,data=star_nojabba_nona)
+
+#lets use the tidy argument in the broom package to make an anova table
+dust(tidy(starwars_mod))%>%
+  sprinkle(rows= 1, part="head",bold=TRUE)%>%
+  sprinkle_print_method("markdown")
+```
+
+# List of Figures
+
+```{r, fig1, fig.width=7, fig.height=7, echo=FALSE,  dev="png", dpi=600,eval=includeFigs}
+
+par(mar=c(5,5,1,1),cex.axis=0.8, las=1)
+plot(height_m ~ mass_kg, data=star_nojabba_nona, xlab="Body Mass  (kg)",
+     ylab = "Height  (m)", ylim=c(0, 40), xlim=c(0, 200),
+     pch=21, cex=1.5, bg="grey")
+#use ablineclip function from plotrix package for model line
+#note the model object and new data already exists from Table 2!!!
+plotrix::ablineclip(starwars_mod, x1 = min(star_nojabba_nona$mass_kg),
+                    x2 = max(star_nojabba_nona$mass_kg),
+                    lwd=2, col="royalblue")
+
+```
+Figure 1. Height is positively correlated with body mass across the star wars universe
 
 # Bibliography
