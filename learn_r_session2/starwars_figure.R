@@ -1,19 +1,20 @@
-###(3) Using 'data3.csv' explore the relationship between height and mass of Stars Wars characters
-### that reside on planets 'Tatooine' and 'Naboo'. On your figure, please distinguish between both
-### the homeworld and species of each character. Please make sure height and mass are 
-### presented in metric units.
+### Explore the relationship between height and mass of Stars Wars characters
+### that reside on planets 'Tatooine' and 'Naboo' (star_wars.csv). 
+### On your figure, please distinguish between both the homeworld and species 
+### of each character. 
+### Please make sure height and mass are presented in metric units.
 
-starwars_chars <- read.csv("rmarkdown_tutorial/data/data3.csv")
+starwars_chars <- read.csv("raw_data/star_wars.csv")
   #unit conversion
   starwars_chars$mass_kg <- starwars_chars$mass_lb * 2.20462
   starwars_chars$height_m <- starwars_chars$height_in * .0254
 
 #home planet subsets
-twoplanets <- droplevels(starwars_chars[starwars_chars$homeworld  %in% c("Tatooine", "Naboo"),])
+twoplanets <- droplevels(starwars_chars[starwars_chars$homeworld  
+                                        %in% c("Tatooine", "Naboo"),])
 
 #plot bits:
 library(scales)
-library(wesanderson)
 swcols <- c("gold", "cornflowerblue", "forestgreen")
 swcols2 <- alpha(swcols, .75)
 pchs <- c(21, 22)  
