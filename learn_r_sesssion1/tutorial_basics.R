@@ -166,7 +166,6 @@ sum((nums1 - mean(nums1))^2) / (length(nums1) - 1)
 # How would you calculate the SE of vec1????
 sd(nums1)/sqrt(length(nums1))
 
-
 # remember vectors can be characters too
 # useful for making objects for plotting labels and colors
 mycols <- c("red","forestgreen","cornflowerblue","gold","pink")
@@ -275,13 +274,7 @@ names(traits) #you often need to rename variable names
 names(traits)[1] <- "Location"
 
 # rename 1st and 2nd:
-names(traits)[1:2] <- c("Place","Date")
-
-# rename all the variables with a vector:
-names(traits) <- c("Place","Date", "species","niche","individual",
-                   "frond_length_cm","stipe_length_cm", "lamina_length_cm", 
-                   "lamina_area_cm2", "chlorophyll_mg_m2")
-
+names(traits)[1:2] <- c("Place","Date") 
 
 
 
@@ -324,13 +317,13 @@ traits[4,4] #the value for the 4th row in the 4th column
 traits[,3]  # all rows of the 3rd column
 
 traits[1:5, 4:7] #use variable name
-traits[1:5, c("species", "individual", "frond_length_cm")]
+traits[1:5, c("species", "plant_no", "frond_length_cm")]
 
 # common error:
 traits[1:5, stipe_length_cm] #object not found = you need quotations
 
 # chorophyll content of largest leaf 
-traits[which.max(traits$lamina_area_cm2) , "chlorophyll_mg_m2"] 
+traits[which.max(traits$lamina_area_cm2) , "chl_mg_m2"] 
 
 # new dataframe of chlorophyll data
 fern_chl <- traits[, c(1:5, 10)] 
@@ -338,13 +331,13 @@ fern_chl <- traits[, c(1:5, 10)]
 # dataframe with chlorophyll content of only epiphytes
 levels(traits$niche)
 chl_epi <- traits[traits$niche=="epiphyte", 
-                  c("individual", "chlorophyll_mg_m2", "niche")]
+                  c("plant_no", "chl_mg_m2", "niche")]
 
 str(traits)
 traits_nochl <- traits[,-10] #new dataframe without chl variables
 
 # one dimensional index with dataframe
-highchlspecies <- traits$species[traits$chlorophyll_mg_m2 > 500]
+highchlspecies <- unique(droplevels(traits$species[traits$chl_mg_m2 > 700]))
 # you could use this object to index another dataset
 
 

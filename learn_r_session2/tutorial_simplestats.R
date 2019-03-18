@@ -1,26 +1,42 @@
-###BASIC STATS
+# BASIC STATS -----------
 
 traits <- read.csv("raw_data/fern_traits.csv")
 
 mean(traits$lamina_area_cm2)
 var_la <- var(traits$lamina_area_cm2)
-sqrt(var_la) #stand dev 0r ....
+sqrt(var_la)
 sd(traits$lamina_area_cm2)
 median(traits$lamina_area_cm2)
 quantile(traits$lamina_area_cm2)
-#these functions might fail with NA's s0 remember na.rm=TRUE)
+#these functions might fail with NA's so remember to check for na.rm=TRUE)
 
 
-#calculate a confidence inteval (perhaps subset a specific niche)
+# calculate a confidence inteval (perhaps subset a specific niche)
+
 alpha_level <- 0.05 # 95% confidence interval
-xbar <- mean(traits$lamina_area_cm2)
-s <- sd(traits$lamina_area_cm2)
-n <- length(traits$lamina_area_cm2)
-half.width <- qt(1-alpha_level/2, n-1)*s/sqrt(n)
-# Confidence Interval
-c(xbar - half.width, xbar + half.width)
+mean_lamina <- mean(traits$lamina_area_cm2) #sample mean
+sd_lamina <- sd(traits$lamina_area_cm2) #sample standard deviation
+n <- length(traits$lamina_area_cm2) #sample size
+half.width <- qt(1-alpha_level/2, n-1)*sd_lamina/sqrt(n) #tail points of t distrib.
 
-qqnorm(traits$lamina_area_cm2)
+# Confidence Interval
+ci_lamina <- c(xbar - half.width, xbar + half.width)
+
+
+
+# hypothesis testing ----- 
+
+#we may ask if fern leaf size is consistent with global leaf size
+t.test(traits$lamina_area_cm2, mu=315, conf.level = 0.90) #i made this number up
+
+# depending on our data type, we usually check for a normal distribution
+hist(traits$lamina_area_cm2)
+qqplot(traits$lamina_area_cm2)
+
+wilcox.test(traits$lamina_area_cm2, mu=315)
+
+# compare 2 populations
+
 
 
 # simple linear regression ------------------------------------------------
