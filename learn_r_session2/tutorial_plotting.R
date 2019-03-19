@@ -38,7 +38,7 @@ plot(frond_length_cm ~ lamina_area_cm2, data=traits,
 
 levels(traits$niche) #how many colors do we need?
 
-mycols <- c("firebrick","forestgreen","dodgerblue","gold")
+mycols <- c("firebrick","forestgreen","dodgerblue")
 
 length(mycols)
 

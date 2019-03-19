@@ -1,38 +1,35 @@
 ### Learn R assignment #1
 
-### All figures need to be uploaded as PDF's and should be of publication quality
+### All figures should be of publication quality
   ### use help files if you get stuck
-  ### Post any questions on SLACK, do not email me directly
+  ### Post any questions or helpful code on slack
 
 
-###(1) Using the 'data1.csv' dataframe, make a figure with raw data points and a regression line
-### make sure and code all necessary information to distinguish between 'Species"
 
-flowers <- read.csv("raw_data/data1.csv")
+### all data sets are in your raw data folder
 
-###(2) Using 'data2.csv' make a boxplot/boxplots that summarizes the fuel efficiency of different 
-###cars based on the number of engine cylinders (hwy/city)
-?boxplot()
 
-cars <- read.csv("raw_data/data2.csv")
 
-###(3) Using 'data3.csv' explore the relationship between height and mass of Stars Wars characters
-### that reside on planets 'Tatooine' and 'Naboo'. On your figure, please distinguish between both
-### the homeworld and species of each character. Please make sure height and mass are 
-### presented in metric units.
+###(1) Using the 'flowers.csv' dataframe, make a figure with raw data points 
+###    add a regression line
+###    distinguish between 'Species" on your Figure
+
+flowers <- read.csv("raw_data/flowers.csv")
+
+###(2) Using 'car_mpg.csv' make a boxplot/boxplots that summarizes 
+###    the fuel efficiency of different cars (both hwy & city)
+###    based on the number of engine cylinders 
+###    par(mfrow = c(1,2)) will allow you to put to plots together (give it a try)
+
+cars <- read.csv("raw_data/car_mpg.csv")
+
+
+###(3) Using 'star_wars.csv' explore the relationship between height and mass 
+###    of Stars Wars characters that reside on planets 'Tatooine' and 'Naboo'. 
+###    Distinguish between both the homeworld and species of each character. 
+###    Please make sure height and mass are presented in metric units.
 
 starwars_chars <- read.csv("raw_data/data3.csv")
 
 
-###ONCE you have your plots finished, use:
-
-pdf("output/yourname_assignment1.pdf", onefile = TRUE)
-
-codeforplot1
-
-codeforplot2
-
-codeplot3
-
-dev.off()
 

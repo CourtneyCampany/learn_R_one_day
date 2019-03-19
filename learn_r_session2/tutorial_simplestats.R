@@ -24,77 +24,119 @@ ci_lamina <- c(xbar - half.width, xbar + half.width)
 
 
 
-# hypothesis testing ----- 
+
+# hypothesis testing -----------
 
 #we may ask if fern leaf size is consistent with global leaf size
 t.test(traits$lamina_area_cm2, mu=315, conf.level = 0.90) #i made this number up
 
 # depending on our data type, we usually check for a normal distribution
 hist(traits$lamina_area_cm2)
-qqplot(traits$lamina_area_cm2)
 
+#we can run non-parametric tests if we determine a ttest is not appropriate
 wilcox.test(traits$lamina_area_cm2, mu=315)
 
 # compare 2 populations
+hist(traits$frond_length_cm)
+levels(traits$niche)
+
+#practive making 2 objects of frond length for epiphytes and terrestrial species 
+frond_epi <- traits[traits$niche == "epiphyte",]
+frond_terr <- traits[traits$niche == "terrestrial",]
+
+#compare frond length between them
+t.test(frond_epi$frond_length_cm, frond_terr$frond_length_cm, var.equal = TRUE)
 
 
 
-# simple linear regression ------------------------------------------------
 
-##lets assume that our previous plot looked remotely linear
-model <- lm(frond_length_cm ~ lamina_area_cm2, data=traits)
-summary(model)
+# simple linear regression -----------
 
-plot(frond_length_cm ~ lamina_area_cm2, data=traits, xlim=c(0, 1800))
-abline(model)
+#we visualized this relationship earlier...
+plot(frond_length_cm ~ lamina_area_cm2, data=traits)
 
-##we can plot the model object to get some diagnostics of the fit
-plot(model)
-library(car)
-qqPlot(model) #with confidence intervals to better understand departures from normality
-norm <- residuals(model)
+
+# lets assume that our previous plot looked remotely linear
+# lets setup a linear model investigated  the linear relationship between them
+
+leaf_model <- lm(frond_length_cm ~ lamina_area_cm2, data=traits)
+summary(leaf_model)
+
+# It is necessary to examine how well our model fits the data
+# R provides many ways to do this, man of them based on the residuals
+
+#diagnoistics plots 
+
+plot(leaf_model) #there should be not structure on the scale-location plot
+norm <- residuals(leaf_model)
 hist(norm)
 
-traits$loglamina <- log10(traits$lamina_area_cm2)
+# the car package has some of the best ones
+library(car)
+qqPlot(leaf_model) #uses confidence intervals to see departures from normality
+residualPlot(leaf_model)
 
-###we could perform a data transformation
+#often you may need a data transformation, lets visualize with a log transformation
+
+windows()
+plot(frond_length_cm ~ lamina_area_cm2, data=traits, log='xy')
+
+#lets refit the model with the log transformation
 logmodel <- lm(log10(frond_length_cm) ~ log10(lamina_area_cm2), data=traits)
+
+qqPlot(logmodel) 
+residualPlot(logmodel)
+#R points out the row numbers of possible outliers on diagnostic plots
+
+#it is easy to extract bits from the model summary
 summary(logmodel)
-plot(logmodel)
-#R points out the row numbers of the outliers on diagnostic plots
+coef(logmodel)
 
+#lots of things you can extract
+str(summary(logmodel))
+
+#lets keep the R2 value
+myr2 <- summary(logmodel)$r.squared
+
+
+# lets remake our figure with a regression line
 plot(log10(frond_length_cm) ~ log10(lamina_area_cm2), data=traits)
-abline(logmodel)
+abline(logmodel) #draws a line from point a - b (look at help file)
 
-###Lets remake our figure with regression line
-###regression line CAN NOT exceed data points, so we will use another package function
+
+# regression line CAN NOT exceed data points, 
+# so we will use another package function from plotrix
+library(scales)
+library(plotrix)
 
 LAlabel <- expression(Lamina~area~~(cm^2))
 FLlabel <- "Frond Length (cm)"
-library(scales)
-library(plotrix)
-mycols2 <- alpha(mycols, .75)
-#extract the R2 value
-r2mod <- round(summary(model)$r.squared, 2)
-r2lab <- paste(expression(R^2), r2mod, sep = " = ")
 
-#R prints things on plots in the order you code them, so for practive I want to put 
-## regression line underneath points
-## I will need to make an empty plot first
+mycols <- c("firebrick", "forestgreen", "dodgerblue")
+mycols2 <- alpha(mycols, .75)
+
+# make a nice r2 object to place on the graph
+r2lab <- paste(expression(R^2), round(myr2,2), sep = " = ")
+
+# R prints things on plots in the order you code them, 
+# so for practice I want to put regression line underneath points
+# I will need to make an empty plot first = type='n'
 
 windows(7,7)
 par(mar=c(4,4,1,1), cex.axis=.8, cex.lab=1.1, mgp=c(2.5, 1, 0))
 
-plot(frond_length_cm ~ lamina_area_cm2, data=traits,ylim=c(0, 180), xlim=c(0, 1800),
-      ylab=FLlabel, xlab=LAlabel, type = 'n') 
+plot(log10(frond_length_cm) ~ log10(lamina_area_cm2), data=traits,
+     ylab=FLlabel, xlab=LAlabel, type = 'n') 
 
+points(log10(frond_length_cm) ~ log10(lamina_area_cm2), data=traits,
+       bg=mycols2[niche], pch=21, cex=1.5)
 
-points(frond_length_cm ~ lamina_area_cm2, data=traits, bg=mycols2[niche], pch=21, cex=1.5)
-ablineclip(model, x1=min(traits$lamina_area_cm2), x2=max(traits$lamina_area_cm2),
-           lty=2, lwd=2, col="black")
+ablineclip(logmodel, x1=min(log10(traits$lamina_area_cm2)), 
+                  x2=max(log10(traits$lamina_area_cm2)),
+                  lty=2, lwd=2, col="black")
 
 legend("bottomright", levels(traits$niche), pch=21,inset=0.01, 
        pt.bg=mycols2, bty='n')
 
-#adding text to the figure
-text(1600, 170, "r2 =.56")
+#adding r2 object to the figure
+text(1.5, 2.1, r2lab )
