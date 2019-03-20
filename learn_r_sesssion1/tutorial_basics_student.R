@@ -1,377 +1,375 @@
-##tutorial with Fern data
+##Tutorial with Fern data
 
-#install R (R cran) and R studio for FREE
 
-#setup R studio in a convienent way (tools:global options:pane layout)
-#1. source is where most of your work goes, you will write scripts here
-#2. console is a tool to perform quicker options you likely dont want to save
-## console also prints output of code you run in source
-#3. environment allows you to see what you currently have loaded (datasets, objects, etc.)
 
-# R basics ----------------------------------------------------------------
-##comment with at least one # (no code will be run, useful formaking notes or stopping code)
+# install R (R cran) and R studio for FREE-----------
 
-##R works has a calculator (these operations will prin in console)
+# setup R studio in a convienent way (tools:global options:pane layout)
+
+# 1. source is where most of your work goes, you will write scripts here
+
+# 2. console is a tool to perform quicker options you likely dont want to save
+#    type date() in the console
+
+# 3. environment allows you to see what you currently have loaded 
+#    (datasets, objects, etc.)
+
+
+
+# Projects -----------
+
+#  skipping a lot of intro steps to learn the ease of using Rprojects 
+#  just like a pc desktop - folder based system
+
+#  start a new project: top right corner and call it "r_workshop"
+
+#  go ahead and setup folders for raw_data, scripts, functions, output, etc..
+
+# IMPORTANTLY your working directory starts in the project (super easy)
+#  What is the working directory (where you are located on your computer)
+#  getwd() and setwd()
+
+
+
+# R basics -----------
+
+# comment with at least one # 
+# (no code will be run, useful for making notes)
+
+# R works has a calculator (these operations will print in console)
 
 # Arithmetic
-
+12 * (10 + 1)
 
 # pi is a built-in constant
-
+sin(pi/2)
 
 # Absolute value
-
+abs(-10)
 
 # Square root
-
+sqrt(225)
 
 # Exponents
+15^2
 
 
-# Projects ----------------------------------------------------------------
+# First script -----------
 
-##skipping a lot of intro steps to learn the ease of using Rprojects 
-## just like a pc desktop - folder based system
+# what is a script? A text file with code that allows for reproducibility
 
-##go ahead and setup folders for raw_data, scripts, functions, output, etc..
-
-##IMPORTANTLY your working directory starts in the project (super easy)
-## What is the working directory (where you are located)
-## getwd() and setwd()
-
-
-# First script ------------------------------------------------------------
-
-#what is a script? A text file with code that allows for reproducibility
-
-#Scripts should be saved with .R extenstion (i.e. tutorial.R)
-#will work autmatically when you save
-
-
-# OBJECTS -----------------------------------------------------------------
-
-#objects make the scripting world go round. They are name variables that can hold
-# different values.  Can be a single value, many or a whole dataset!
-
-#lets make a few: define them, hit ctrl+enter(or run) and watch them appear in environment
-#once they are in the environment you can reuse them (until you quit R or clear environment) 
-#use  "<-"
+# scripts will/should be saved with .R extenstion (i.e. tutorial.R)
 
 
 
-#do some calculations
+# OBJECTS -----------
+
+# objects make the scripting world go round. 
+# They are name variables that can hold different values.  
+# Can be a single value, many values or a whole dataset!
+
+# lets make a few: define them and set them equal to something with "<-"
+# hit ctrl+enter(or run) and watch them appear in global environment
+# once they are in the environment you can reuse them 
+# until you quit R or clear environment) 
+
+x <- 23  # get really used to typing <-
+y <- -15
+
+#do some calculations: 
 
 
 
-#rewrite a new 'x':
+z <- 
+
+# rewrite a new 'x':
+
+x <- "I am sooo awesome"
+message(x)
 
 
 
-# VECTORS -----------------------------------------------------------------
+# VECTORS -----------
 
-#vector is a string of numbers or bits of text (but not a combination of both). 
-#The power of R is that most functions can use a vector directly as input
+# vector = a string of numbers or bits of text 
+# The power of R is that most functions can use a vector directly as input
 
-
+nums1 <- c(1,4,2,8,11,100,8)
 
 # Get the sum of a vector:
-
+sum(nums1)
 
 # Get mean, standard deviation, number of observations (length):
+mean()
+sd()
+length()
+
+# how would you reuse or save the output of one of these operations??????
+cs_nums1 <- cumsum() # cumulative sum as new object
 
 
+# vectorized operations: perform operations on multiple vectors
+
+# results in another vector
+# operation on one elements of the vector at a time)
+
+nums1 * y
+nums1^2
+
+# calculations with two vectors of same length
+nums2 <- c(7,11,12,8,14,10,80)
+
+# pairwise calculations: divide our 2 vectors and see what happens
 
 
-
-#how would you reuse or save the output of one of these operations??????
-
-# cumulative sum as new object
-
-##Vectorized operations: perform operations on multiple vectors
-##results in another vector (operation on one elements of the vector at a time)
-
-
-
-#calculations with two vectors of same length
-
-
-#pairwise calculations
-
-
-#there are so many logical functions to apply to vectors which are key to learn
+# there are so many logical functions to apply to vectors 
+# each are key to learm
+# Page 18 in manual
 length()
 sort()
 order()
 head()
 tail()
 unique()
-round()
+round(nums1, digits=2)
+
 which.max()
-max() #note the difference (one is the value the other is the location in the vector)
+max() #note the difference 
+# one is the value the other is the location in the vector)
+
 which.min()
 min()
 mean()
 var()
 sd()
 
-##you can use multiple functions in one line of code: 
+# if you need to dig deeper look at the help file
+?mean() #type in the console 
+# mean function has an option to remove missing values if they exists
+# the default is to stop working if it encounters a 'NA', we can change this:
+mean(nums2, na.rm=TRUE)
+
+
+# you can use multiple functions in one line of code: 
 
 # Mean of the vector, *then* square it:
-
+mean(nums1)^2
 
 # Mean of the log of vec2:
-
+mean(log10(nums1))
 
 # The sum of squared deviation from the sample mean:
-
+sum((nums1 - mean(nums1))^2)
 
 # The sample variance:
+sum((nums1 - mean(nums1))^2) / (length(nums1) - 1)
+
+# How would you calculate the SE of vec1????
 
 
-###How would you calculate the SE of vec1????
+# remember vectors can be characters too
+# useful for making objects for plotting labels and colors
+mycols <- c("red","forestgreen","cornflowerblue","gold","pink")
+sort(mycols)
+nchar(mycols)
+
+#extract one element of any vector
+mycols[]
 
 
-##remember vectors can be characters too...useful for plotting labels and colors
 
 
-
-
-#extract one element of a vector
-
-
-# making data -------------------------------------------------------------
+# Creating Data -----------
 
 # we can use c() to ’concatenate’ (link together) a series of numbers
+nums3 <- c(nums1, nums2)
 
-
-#generate sequences of numbers using (1) : (2) seq and  (3) rep 
+# generate sequences of numbers and words is easy and useful
  
-# Sequences of integer numbers using the ":" operator:
-1:10 # Numbers 1 through 10
+# 1. Sequences of integer numbers using the ":" operator:
+  1:10 # Numbers 1 through 10
 
-# Examples using seq()
+# 2. Examples using seq()
+seq(from=,to=,by=)
 
+# what are the inner bits of seq()?  lets look at help
+?seq() #there should always be working examples at the bottom of the help page
 
-##what are the inner bits of seq()?  lets look at help
-?seq()
-
-# Replicate 
+# 3. Replicate 
+rep(2, times = 10)
+rep(c(4,5), each=3)
 ?rep()
+#set up the colors for a plotting legend
+legendcols <- c(rep("blue", 4), "black", rep("yellow", 4))
 
-# generate random numbers using the runif function. 
+# 4. generate random numbers using the runif function. 
 # draws from a uniform distribution,
 # meaning there is an equal probability of any number being chosen.
 
+runif(10)
+
+plot(runif(1000))
 
 # Lots of random numbers between 100 and 1000
+a <- runif(425, 100, 1000)
 
 
-##workspace quickies
+
+
+# workspace quickies -----------
+
 ls() #what is loaded in your environment, can also just look
-rm(x) #delete objects
+rm(a) #delete objects
 
-# learn how to read in dataframes -----------------------------------------------
 
-#in R we mostly use csv.files, which are just 1 sheet excel files
-#you need to tell R to read in the file and where it is located:
+
+
+# learn how to read in dataframes -----------
+
+# in R we mostly use csv.files, which are just 1 sheet excel files
+# you need to tell R to read in the file and where it is located:
+
 mydata <- read.csv("pathtofile.csv")
+
 # read.csv() is the most common function, which everyone uses
 # ?read.csv() shows lots of options, but the defaults are mostly fine
 # we have to tell it a file path.....in Rprojects this is super easy
 
 traits <- read.csv("raw_data/fern_traits.csv")
-#set up your project to have a raw_data folder and put the data file in there manually
+# setup your project to have a raw_data folder
+# put the data file in there manually
 
 # read in the dataframe and save it as an object (you choose the name)
 # the 'traits' object is a dataframe (rows + columns)
-# just one more dimensions added to the vector format
+# just one more dimension (rows) added to the vector format
 
-##lets inspect the data several ways (i usally do these operations in console)
+# Always inspect your data first!!!!
+# Do these operations in console (not in script)
+
 traits
-head(traits) #first 6 rows (good to see that nothings is broken)
-str(traits) #inspection of variables
-summary(traits) #base level stats
-nrow(traits)
-ncol(traits)
+head() #first 6 rows (good to see that nothings is broken)
+str() #inspection of variables
+summary() #base level stats
 
-#we can also make dataframes ourselves:
-newdata <-  #here x & y are the column/variable names
-rm(newdata)
+# count of the number of rows and columns
+nrow()
+ncol()
 
-# working with data ----------------------------------------------------------
+# we can also make dataframes ourselves:
+newdata <- data.frame(mynums1=nums1, mynums2=nums2) 
 
-# (1) Read in (2) Inspect (3) Clean (4) Format (5) make calculations, subset, etc.
+# here mynums1 & mynums2 are the column/variable names
+colnames()
+
+rm()
+
+# Working with data -----------
+
+# (1) Read in (2) Inspect (3) Clean (4) Format 
+# (5) Manipulate (6) write, analyze and visualize
 
 # column names
-names(traits)
+names() #you often need to rename variable names
 
-names(traits) <- #c("S","D","SP","N","Pno", "g", "h' ")
   
 # rename first vairable
-
+names()[] <- "Location"
 
 # rename 1st and 2nd:
+names()[] <- c("Place","Date") 
 
 
-#INDEXING (super mega very important) ****PAY ATTENTION*****---------------------------
 
-#Individual elements of a vector can be extracted using square brackets, [ ]
+#INDEXING (super mega very important) ****PAY ATTENTION***** -----------
 
-#[rows,columns] #in the beginning you will forget the comma often
+# Individual elements of a vector can be extracted using square brackets [ ]
 
-
+nums1[1:3]
 
 # Select a few elements of a vector (reusable)
-
+selectthese <- c(1,5,7)
+nums1[]
+nums2[]
 
 # Remove the first element:
-
+nums1[]
+newnums1 <- nums1[]
 
 #logical indexing (almost endless possibilities)
 
-#since nums1 is a vector (one dimenson) we only need one argument inside brackets
+nums2[nums2 > 10]
+nums2[nums2 >= 11]
+nums1[nums1 == 8] #note the use of "=="
+
+nums2[nums2 > 5 & nums2 < 10] #two arguments together
+nums2[nums2 < 8 | nums2 > 20] #either 
+
+nums1[nums1 != 100] #does not equal
+
+nums1[nums1 %in% c(1,4,11)] #includes
+
+# write a new legend object that does not include the color black
+legendcols2 <- 
+
+  
+#extract any number from nums2 that is greater than 10 but does not equal 80
 
 
-  #two arguments together
-  #either 
 
-  #does not equal
-  #includes
+# For dataframes we have 2 dimensions [rows,columns] 
+# in the beginning you will forget the comma often
 
+traits[4,4] #the value for the 4th row in the 4th column
+traits[,3]  # all rows of the 3rd column
 
-#subsetting (can use subset function but better to learn indexing)
-# read about it and practice in R lab book
+traits[1:5, 4:7] #use column no
+traits[1:5, c("species", "plant_no", "frond_length_cm")] #or variable name
 
-#remember = dataframe[rows, columns]
-
- #the value for the 4th row in the 4th column
-
-#use variable name
-
-
-#common error:
+# common error:
 traits[1:5, stipe_length_cm] #object not found = you need quotations
 
-fern_chl <- traits[, c("site", "niche", "plant_no","chl_mg_m2")] #new dataframe
+# chorophyll content of largest leaf 
+traits[which.max(traits$lamina_area_cm2) , "chl_mg_m2"] 
 
- #logical indexing at its best
+# new dataframe with treatment variables and only chl_mg_m2
+fern_chl <- 
 
-#what is the cholorophyll content of the longest leaf? 
-#This is evaluated as the the row number, in the chl column, which has the largest lamina length
-
-#useful example: dataframe with chlorophyll content of epiphytes
+  
+# dataframe with treatment variables and chl_mg_m2, but only epiphytes
 levels(traits$niche)
-chl_epi <- traits[traits$niche=="epiphyte", c("plant_no", "chl_mg_m2", "niche")]
+chl_epi <- 
+  
 
-#new datafrae without chl variables
+# new dataframe without chl variable
+str(traits)
+traits_nochl <-
 
-##EXPORTING:-------------------------------------------
+  
+# one dimensional index with dataframe
+highchlspecies <- unique(droplevels(traits$species[traits$chl_mg_m2 > 700]))
+# you could use this object to index another dataset
+
+
+# subsetting (can use subset function but better to learn to index)
+?subset()
+# read about it and practive in R manual if you want
+
+
+
+
+##EXPORTING new data -----------
 
 #now that we made new dataframes (datasets)...we can save them for later use
 
-write.csv(chl_epi, "calculated_data/chl_data.csv", row.names = FALSE)
+write.csv(traits_nochl, "working_data/cholorphyll.csv", row.names = FALSE)
 #just like read.csv, but in reverse
+?write.csv()
 
 # good data science practices : 
-#     (1) NO spaces in file/variable ames
+#     (1) NO spaces in file/variable names
 #     (2) use lowercase as much as possible (efficiency)
 #     (3) always always always keep raw data intact !!!!!!!!
-#     (4) I make a folder for new data = "calculated_data"
+#     (4) I make a folder for new data = "working_data"
 
-
-#classes --------------------------------------------------------------------------
-
-#Variables have different classes: all of which are important
-#numeric, character, factor(categorical), logical, date, POSIXct (date+time) are the main ones
-
-str(traits)
-
-#R tries to assign character classes at factors (but you can always do it yourself)
-
-str(traits$site)
-
-traits$site <- as.character(traits$site)
-traits$site <- as.factor(traits$site)
-
- #factor levels are important (zeros, deleting data)
-
-
-#if you delete a certain factor in your dataframe all the factors levels will still remain
-
- #this can be very important for stats
- #if you want it really gone.
-
-
-
-#Manipulating data-----------------------------------------------------
-
-#1. Combining character vectors (columns) with paste()
-
-?paste()
-dfr$trt <- paste(dfr$co2, dfr$wp, sep="-") #this is the format
-
-#lets pretend that we had different sites for the traits dataset
-
-
-
-#or use with()
-
-
-
-#another useful function is gsub() for formatting (find and replace)
-traits$species2 <- gsub("_", " ", traits$species)
-
-traits$genus <- as.factor(gsub("_.*","", traits$species)) #uses regular expression
-
-#2, make new variables (unit conversions are a great example)
-
-
-
-#3.changing variable classes
-
-#for example: you have 2 CO2 treatments which are read as numeric
-dfr$co2 <- as.factor(dfr$co2)
-
-#4. DATES: there is a standard format for dates with coding:
-
-##: "1969-08-18 09:00:00"
-
-## most of the time we forget to do this and R often classifies our Date column as factor
-
-# Dates simple
-sometime <- as.Date("1980-6-19")
-str(sometime)
-
-#format date for traits dataframe
-head(traits$date)
-?as.Date
-?strptime
-
-
-
-#did it work?
-max(traits$date)
-str(traits$date)
-
-max(traits$date) - min(traits$date) 
-
-# missing values ----------------------------------------------------------
-
-#missing values are represented with NA,indicating the data is simply 'Not Available'.
-
-myvec1 <- c(11,13,5,6,NA,9)
-mean(myvec1) #functions may not work with missing values, check help file
-mean(myvec1, na.rm=TRUE)
-
-#super useful to check your data...
-is.na()
-which(is.na())
-
-is.na()
-which(is.na())
-
-#if you want the dataframe with only rows that have no missing values (BE CAREFUL)
-
-traits_nona <- traits[complete.cases(traits),] #this deletes real data too!!!!
 
 

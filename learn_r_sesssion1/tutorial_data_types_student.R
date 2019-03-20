@@ -44,16 +44,22 @@ dfr$newvar <- paste(dfr$co2, dfr$light, sep="-") #this is the format,
 
 #lets pretend that we had different sites for the traits dataset
 traits$id <- 
+  
 #or use with()
+  
 traits$id2 <- with(traits, paste("site", "niche", sep="."))
 
 #another useful function is gsub() for formatting (find and replace)
-traits$species2 <- gsub("_", " ", traits$species)
 ?gsub()
 
+#make a new variable species2, replace the '-' with a space
+traits$species2 <- 
+
+
 traits$genus <- as.factor(gsub("_.*","", traits$species)) 
-#uses regular expression for complex patterns in strings
-#this one says remove everything after "_"
+# uses regular expression for complex patterns in strings
+# this code removes everything after "_"
+# when requiring regular expression, consult Google
 
 
 #2, make new variables (often for unit conversions)
@@ -71,7 +77,7 @@ newdata$co2 <-
 
 #4. DATES: there is a standard format for dates with coding:
 # "1969-08-18 09:00:00"
-#  most of the time we forget to do this because we are AMERICAN!!!
+# most of the time we forget to do this because we are AMERICAN!!!
 # R often classifies our Date column as factor
 
 # Dates simple
