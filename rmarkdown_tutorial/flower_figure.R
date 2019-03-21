@@ -1,7 +1,7 @@
 
 
 #read data
-flowers <- read.csv("rmarkdown_tutorial/data/data1.csv")
+flowers <- read.csv("raw_data/flowers.csv")
 
 #simple linera model:
 petal_mod <- lm(Petal.Length ~ Petal.Width, data=flowers)
@@ -19,7 +19,7 @@ widthlab <- "Petal Width (mm)"
 
 # windows()
 # 
-# jpeg(filename = "rmarkdown_tutorial/output/flowers.jpeg",
+# jpeg(filename = "rmarkdown_tutorial/flowers.jpeg",
 #      width = 7, height =7, units = "in", res= 400)
 
 par(mar=c(4,4,1,1))

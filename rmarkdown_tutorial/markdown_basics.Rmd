@@ -1,8 +1,8 @@
 ---
-title: "Rmarkdown tutorial with Microsoft word output"
+title: "Rmarkdown tutorial with multiple outputs"
 author: "Your Name"
 date: "Some Date"
-output: word_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -16,6 +16,10 @@ opts_knit$set(root.dir = '../')
 # Introduction to Rmarkdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. . The knitr package (as used by RStudio) will take a markdown-formatted text file and produce nicely-formatted output. Go ahead and install it if you dont have it. Thats is really all you need to know.
+
+\
+
+The uses of Markdown in an academic setting are many.  Perhaps the most powerful is to write a scientific paper.  In addition, Markdown provides a modern way (html) to both present, create and assign data related exercises/topics. This modern tool is useful for improving and practicing science communication for both faculty and students.
 
 ## Here are the basics for typing in a markdown file
 
@@ -107,11 +111,15 @@ source("rmarkdown_tutorial/flower_figure.R")
 We can also just insert a premade figure as an image. This is proabably not the best option, but it works.
 
 ```{r flowers4, echo=FALSE}
-#just insert the image using afunction in the knitr pacakge
+#just insert the image using a function in the knitr pacakge
 
 knitr::include_graphics("output/flowers.jpeg")
 
 ```
+
+Last, we can insert an image directly without a code chunk. The code is simple but the ability to tweak is limited:
+
+![](flowers.jpeg)
 
 ## Make your own image with the built in ChickWeight dataset
 
