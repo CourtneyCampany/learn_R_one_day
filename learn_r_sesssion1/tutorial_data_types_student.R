@@ -47,7 +47,7 @@ traits$id <-
   
 #or use with()
   
-traits$id2 <- with(traits, paste("site", "niche", sep="."))
+traits$id2 <- with(traits, paste())
 
 #another useful function is gsub() for formatting (find and replace)
 ?gsub()
