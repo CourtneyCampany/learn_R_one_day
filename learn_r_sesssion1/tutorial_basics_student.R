@@ -36,7 +36,7 @@
 # comment with at least one # 
 # (no code will be run, useful for making notes)
 
-# R works has a calculator (these operations will print in console)
+# R works as a calculator (these operations will print in console)
 
 # Arithmetic
 12 * (10 + 1)
@@ -94,6 +94,7 @@ message(x)
 # vector = a string of numbers or bits of text 
 # The power of R is that most functions can use a vector directly as input
 
+#we use c() to ’concatenate’ (link together) a series of numbers
 nums1 <- c(1,4,2,8,11,100,8)
 
 # Get the sum of a vector:
@@ -122,8 +123,8 @@ nums2 <- c(7,11,12,8,14,10,80)
 # pairwise calculations: divide our 2 vectors and see what happens
 
 
-# there are so many logical functions to apply to vectors 
-# each are key to learm
+# there are many logical functions to apply to vectors 
+# each are key to learn
 # Page 18 in manual
 length()
 sort()
@@ -139,9 +140,7 @@ max() #note the difference
 
 which.min()
 min()
-mean()
 var()
-sd()
 
 # if you need to dig deeper look at the help file
 ?mean() #type in the console 
@@ -167,7 +166,8 @@ sum((nums1 - mean(nums1))^2) / (length(nums1) - 1)
 # How would you calculate the SE of vec1????
 
 
-# remember vectors can be characters too
+
+# vectors can be characters too
 # useful for making objects for plotting labels and colors
 mycols <- c("red","forestgreen","cornflowerblue","gold","pink")
 sort(mycols)
@@ -181,7 +181,7 @@ mycols[]
 
 # Creating Data -----------
 
-# we can use c() to ’concatenate’ (link together) a series of numbers
+# we use c() to ’concatenate’ (link together) a series of numbers
 nums3 <- c(nums1, nums2)
 
 # generate sequences of numbers and words is easy and useful
@@ -192,15 +192,21 @@ nums3 <- c(nums1, nums2)
 # 2. Examples using seq()
 seq(from=,to=,by=)
 
+    #can use with letters too
+    str(letters)
+    letters[]
+    LETTERS[seq( from = , to =  )]
+
 # what are the inner bits of seq()?  lets look at help
 ?seq() #there should always be working examples at the bottom of the help page
 
 # 3. Replicate 
+?rep()
 rep(2, times = 10)
 rep(c(4,5), each=3)
-?rep()
-#set up the colors for a plotting legend
-legendcols <- c(rep("blue", 4), "black", rep("yellow", 4))
+
+#set up the colors for a plotting legend (4 blue,1 black, 4 yellow)
+legendcols <- 
 
 # 4. generate random numbers using the runif function. 
 # draws from a uniform distribution,
@@ -246,7 +252,6 @@ traits <- read.csv("raw_data/fern_traits.csv")
 # Always inspect your data first!!!!
 # Do these operations in console (not in script)
 
-traits
 head() #first 6 rows (good to see that nothings is broken)
 str() #inspection of variables
 summary() #base level stats
@@ -266,7 +271,7 @@ rm()
 # Working with data -----------
 
 # (1) Read in (2) Inspect (3) Clean (4) Format 
-# (5) Manipulate (6) write, analyze and visualize
+# (5) Manipulate (6) Write, analyze and visualize
 
 # column names
 names() #you often need to rename variable names
@@ -308,7 +313,7 @@ nums1[nums1 != 100] #does not equal
 
 nums1[nums1 %in% c(1,4,11)] #includes
 
-# write a new legend object that does not include the color black
+# make a new legend object that does not include the color black
 legendcols2 <- 
 
   
@@ -322,7 +327,7 @@ legendcols2 <-
 traits[4,4] #the value for the 4th row in the 4th column
 traits[,3]  # all rows of the 3rd column
 
-traits[1:5, 4:7] #use column no
+traits[1:5, 4:7] #use column number
 traits[1:5, c("species", "plant_no", "frond_length_cm")] #or variable name
 
 # common error:
@@ -347,8 +352,9 @@ traits_nochl <-
   
 # one dimensional index with dataframe
 highchlspecies <- unique(droplevels(traits$species[traits$chl_mg_m2 > 700]))
-# you could use this object to index another dataset
+# you could use this object to index another dataset:
 
+# newdata2 <- newdata[newdata$species %in% highchlspecies,]
 
 # subsetting (can use subset function but better to learn to index)
 ?subset()

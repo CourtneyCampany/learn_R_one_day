@@ -36,7 +36,7 @@
 # comment with at least one # 
 # (no code will be run, useful for making notes)
 
-# R works has a calculator (these operations will print in console)
+# R works as a calculator (these operations will print in console)
 
 # Arithmetic
 12 * (10 + 1)
@@ -94,6 +94,7 @@ message(x)
 # vector = a string of numbers or bits of text 
 # The power of R is that most functions can use a vector directly as input
 
+#we use c() to ’concatenate’ (link together) a series of numbers
 nums1 <- c(1,4,2,8,11,100,8)
 
 # Get the sum of a vector:
@@ -121,8 +122,8 @@ nums2 <- c(7,11,12,8,14,10,80)
 # pairwise calculations
 nums1/nums2
 
-# there are so many logical functions to apply to vectors 
-# each are key to learm
+# there are many logical functions to apply to vectors 
+# each are key to learn
 # Page 18 in manual
 length(nums1)
 sort(nums1)
@@ -138,9 +139,7 @@ max(nums1) #note the difference
 
 which.min()
 min()
-mean()
 var()
-sd()
 
 # if you need to dig deeper look at the help file
 ?mean() #type in the console 
@@ -166,7 +165,7 @@ sum((nums1 - mean(nums1))^2) / (length(nums1) - 1)
 # How would you calculate the SE of vec1????
 sd(nums1)/sqrt(length(nums1))
 
-# remember vectors can be characters too
+# vectors can be characters too
 # useful for making objects for plotting labels and colors
 mycols <- c("red","forestgreen","cornflowerblue","gold","pink")
 sort(mycols)
@@ -190,6 +189,11 @@ nums3 <- c(nums1, nums2)
 
 # 2. Examples using seq()
 seq(from=1,to=67,by=8)
+
+    #can use with letters too
+    str(letters)
+    letters[]
+    LETTERS[seq( from = , to =  )]
 
 # what are the inner bits of seq()?  lets look at help
 ?seq() #there should always be working examples at the bottom of the help page
